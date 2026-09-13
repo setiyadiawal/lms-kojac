@@ -109,8 +109,9 @@ export function useReadingProgress() {
       setProgressByReadingId(next);
     } catch (loadError) {
       if (loadSequenceRef.current !== sequence) return;
+      console.error('Reading progress load failed', loadError);
       setProgressByReadingId({});
-      setError(loadError instanceof Error ? loadError.message : 'Gagal memuat progress Reading.');
+      setError('Progress Reading belum dapat dimuat. Silakan coba lagi.');
     } finally {
       if (loadSequenceRef.current === sequence) setLoading(false);
     }
@@ -139,12 +140,15 @@ export function useReadingProgress() {
     });
 
     if (rpcError) {
-      const detail = [rpcError.message, rpcError.details, rpcError.hint].filter(Boolean).join(' — ');
-      throw new Error(detail || 'Progress Reading belum berhasil disimpan.');
+      console.error('Reading progress save failed', rpcError);
+      throw new Error('Progress Reading belum berhasil disimpan. Silakan coba lagi.');
     }
 
     const row = (Array.isArray(data) ? data[0] : data) as ReadingProgress | null;
-    if (!row?.reading_id) throw new Error('Supabase tidak mengembalikan progress Reading yang tersimpan.');
+    if (!row?.reading_id) {
+      console.error('Reading progress save returned no persisted row');
+      throw new Error('Progress Reading belum berhasil disimpan. Silakan coba lagi.');
+    }
 
     setProgressByReadingId((current) => ({ ...current, [row.reading_id]: row }));
     return row;
