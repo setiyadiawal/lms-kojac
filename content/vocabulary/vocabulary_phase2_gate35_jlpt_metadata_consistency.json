@@ -1,0 +1,153 @@
+{
+  "phase": "VOCABULARY_PHASE_2_GATE_3_5",
+  "status": "PASS",
+  "runtime_supports_n4_bridge": false,
+  "decision": "NORMALIZE_TO_N4",
+  "reason_summary": "Vocabulary runtime does not load or use jlpt_level, while project-level JLPT helpers/types use canonical enumerated N-level labels and no actual runtime/source reference recognizes N4-bridge.",
+  "actual_project_source": "kojac-lms-v2(4).zip",
+  "runtime_evidence": [
+    {
+      "file": "src/features/vocabulary/useVocabulary.ts",
+      "lines": "36-42,106-116,127-140,194-210",
+      "logic": "VocabularyItem/query omit jlpt_level; SRS progress is keyed by item UUID and review RPC rating, not level."
+    },
+    {
+      "file": "src/pages/VocabularyPage.tsx",
+      "lines": "357-370",
+      "logic": "Vocabulary filtering is search + progress only; no JLPT-level filter/label/grouping."
+    },
+    {
+      "file": "src/features/vocabulary/VocabularyQuiz.tsx",
+      "lines": "entire file search",
+      "logic": "No jlpt/N4/N5/N4-bridge reference; quiz uses item content/category/jenis, not level."
+    },
+    {
+      "file": "src/features/grammar/grammarData.ts",
+      "lines": "1",
+      "logic": "GrammarJlptLevel is the explicit union 'N5' | 'N4' | 'N3'."
+    },
+    {
+      "file": "src/pages/GrammarPage.tsx",
+      "lines": "37-45,335-340",
+      "logic": "LevelFilter/LEVELS enumerate ALL/N5/N4/N3 and compare exact level equality."
+    },
+    {
+      "file": "src/features/kanji/useKanji.ts",
+      "lines": "5,124-126,258-265",
+      "logic": "KanjiLevel enumerates N5..N1; validator and Supabase query use exact canonical level equality."
+    },
+    {
+      "file": "supabase/migrations/009_fix_learning_review_item_id_ambiguity.sql",
+      "lines": "103-110",
+      "logic": "Vocabulary SRS/mastery eligibility checks UUID, item_type and published status; jlpt_level is not used."
+    }
+  ],
+  "n4_bridge_occurrences_in_actual_src_and_supabase": 0,
+  "affected_items_count": 7,
+  "affected_items": [
+    {
+      "id": "c8926bf3-4600-42fc-963a-0da8c948811a",
+      "chapter_number": 28,
+      "prompt": "両立する",
+      "reading": "りょうりつする",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "17db3b9a-8c1d-4dd9-bd1f-7b04ceb5b7a9",
+      "chapter_number": 28,
+      "prompt": "通話する",
+      "reading": "つうわする",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "a2a0fbe2-f053-4d41-a4b7-22bcb152a6c4",
+      "chapter_number": 29,
+      "prompt": "済ませる",
+      "reading": "すませる",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "e91eb49c-d1b3-438e-a2a2-53aff736153d",
+      "chapter_number": 29,
+      "prompt": "仕上げる",
+      "reading": "しあげる",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "439181a2-1c03-4965-9062-4e42cb2e6eae",
+      "chapter_number": 29,
+      "prompt": "点検する",
+      "reading": "てんけんする",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "af29fbdc-8799-406e-91c2-45798692a859",
+      "chapter_number": 30,
+      "prompt": "目指す",
+      "reading": "めざす",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    },
+    {
+      "id": "cc4022e3-d997-4cc0-be38-2c0b9d4ce8e2",
+      "chapter_number": 30,
+      "prompt": "実現する",
+      "reading": "じつげんする",
+      "before_jlpt_level": "N4-bridge",
+      "after_jlpt_level": "N4",
+      "uuid_unchanged": true,
+      "other_fields_unchanged": true
+    }
+  ],
+  "manifest_items": 2020,
+  "uuid_count": 2020,
+  "uuid_changed": 0,
+  "uuid_regenerated": 0,
+  "exact_manifest_field_differences_vs_gate3": 7,
+  "difference_fields": [
+    "jlpt_level"
+  ],
+  "duplicate_uuid": 0,
+  "duplicate_prompt_reading": 0,
+  "jlpt_level_counts_after": {
+    "N5": 1058,
+    "N4": 962
+  },
+  "n4_bridge_after": 0,
+  "old_manifest_sha256": "fc021b207bec74a2576b416a927cca22ac3c71d318e7b2a10bcb10fb345c58e8",
+  "manifest_sha256": "2afa2a820c5397ddaf91ba6148e8671524b2ce76d19d94aa2a5f493708a1bba0",
+  "old_sql_sha256": "22ad960df2c4ad19b9cbdf274beb20cf671bfa8af70b72ce108472700caf2daf",
+  "sql_sha256": "3b4b536dbe326a1602f0344b4f05ae749439c41f7265f2b2a968844966975953",
+  "serialization_mismatch": 0,
+  "sql_rows": 2020,
+  "database_modified": false,
+  "sql_executed": false,
+  "migration_created": false,
+  "gate4_started": false,
+  "actual_project_reference_sha256": {
+    "src/features/vocabulary/useVocabulary.ts": "03a6c43d5029858585927199d6cd815a9b937ba00a110e2e5e024d673d689837",
+    "src/pages/VocabularyPage.tsx": "92f3dbdd6d0f5c9b9064ecb32af9b2ff2bf5c357d890a8b40f291f4ca65703cb",
+    "src/features/vocabulary/VocabularyQuiz.tsx": "d9100e97641adeb03ccf20836e45eca697834580dafe720d0f3251515eafe6ea",
+    "src/features/grammar/grammarData.ts": "8d914b13489db51cfe54eeb94d02f9ef064a6b7c942ccba3e9966d19608b7924",
+    "src/pages/GrammarPage.tsx": "13e08ea854898bc0082562a7cb891cd6d9e5aebde28ff7ad30372cd3b61af020",
+    "src/features/kanji/useKanji.ts": "42f465f2bc8498ab80908cfc254f5560f738c8f75d2ffaef04f46f652d7c15d9",
+    "supabase/migrations/009_fix_learning_review_item_id_ambiguity.sql": "cd1bd14f325de08b932af29bd3511d08b67eb1a69cbb6e85d4e4da46b6e423de"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2D",
+  "stage": "FINAL_CONTENT_VERIFICATION_PRE_UUID",
+  "status": "PASS",
+  "verification_passed": true,
+  "source_gate2c_count": 2035,
+  "final_verified_preuuid_count": 2020,
+  "projected_including_bab1": 2100,
+  "content_fixes": {
+    "removed": 15,
+    "corrected": 89
+  },
+  "manual_review_evidence": {
+    "gate2b_candidates_reviewed": "2380 / 2380",
+    "gate2c_new_items_reviewed": "53 / 53",
+    "gate2d_final_unresolved_review_state": 0
+  },
+  "warnings": {
+    "found": 19,
+    "reviewed": 19,
+    "fixed": 0,
+    "reviewed_acceptable": 19,
+    "unreviewed": 0,
+    "gate2c_warnings_reverified": 18,
+    "new_gate2d_warning_chapters": [
+      9
+    ]
+  },
+  "quality": {
+    "japanese_form_errors": 0,
+    "kana_errors": 0,
+    "romaji_errors": 0,
+    "meaning_errors": 0,
+    "jenis_errors": 0,
+    "category_errors": 0,
+    "grammar_as_vocabulary_unresolved": 0
+  },
+  "duplicate_quiz": {
+    "exact_prompt_reading": 0,
+    "bab1_collision": 0,
+    "orthographic_semantic_duplicate": 0,
+    "global_undifferentiated_meaning": 0,
+    "quiz_exact_meaning_ambiguity": 0
+  },
+  "uuid": {
+    "assigned": 0,
+    "missing": 2020
+  },
+  "database": {
+    "modified": false,
+    "sql_executed": false,
+    "migration": false,
+    "review_progress_modified": false
+  },
+  "runtime": {
+    "changed": false
+  },
+  "categories": [
+    "Aktivitas",
+    "Bahasa",
+    "Benda",
+    "Budaya",
+    "Dokumen",
+    "Hobi",
+    "Hubungan",
+    "Informasi",
+    "Jumlah",
+    "Kata tanya",
+    "Kesehatan",
+    "Kondisi",
+    "Kontak",
+    "Makanan",
+    "Orang",
+    "Pakaian",
+    "Pekerjaan",
+    "Rumah",
+    "Sekolah",
+    "Sifat",
+    "Teknologi",
+    "Tempat",
+    "Transportasi",
+    "Ungkapan",
+    "Waktu"
+  ],
+  "chapter_counts": {
+    "2": 65,
+    "3": 67,
+    "4": 68,
+    "5": 64,
+    "6": 65,
+    "7": 65,
+    "8": 66,
+    "9": 58,
+    "10": 67,
+    "11": 68,
+    "12": 65,
+    "13": 64,
+    "14": 65,
+    "15": 57,
+    "16": 50,
+    "17": 53,
+    "18": 62,
+    "19": 59,
+    "20": 57,
+    "21": 56,
+    "22": 65,
+    "23": 55,
+    "24": 56,
+    "25": 57,
+    "26": 58,
+    "27": 53,
+    "28": 50,
+    "29": 54,
+    "30": 44,
+    "31": 55,
+    "32": 61,
+    "33": 54,
+    "34": 58,
+    "35": 59
+  },
+  "errors": [],
+  "notes": []
+}

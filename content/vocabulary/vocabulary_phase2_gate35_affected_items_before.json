@@ -1,0 +1,86 @@
+[
+  {
+    "id": "c8926bf3-4600-42fc-963a-0da8c948811a",
+    "chapter_number": 28,
+    "prompt": "両立する",
+    "reading": "りょうりつする",
+    "meaning_id": "menjalankan dua hal secara seimbang",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 48,
+    "romaji": "ryouritsusuru",
+    "jenis": "KK",
+    "category": "Aktivitas"
+  },
+  {
+    "id": "17db3b9a-8c1d-4dd9-bd1f-7b04ceb5b7a9",
+    "chapter_number": 28,
+    "prompt": "通話する",
+    "reading": "つうわする",
+    "meaning_id": "berbicara melalui telepon",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 50,
+    "romaji": "tsuuwasuru",
+    "jenis": "KK",
+    "category": "Kontak"
+  },
+  {
+    "id": "a2a0fbe2-f053-4d41-a4b7-22bcb152a6c4",
+    "chapter_number": 29,
+    "prompt": "済ませる",
+    "reading": "すませる",
+    "meaning_id": "menyelesaikan / membereskan",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 49,
+    "romaji": "sumaseru",
+    "jenis": "KK",
+    "category": "Aktivitas"
+  },
+  {
+    "id": "e91eb49c-d1b3-438e-a2a2-53aff736153d",
+    "chapter_number": 29,
+    "prompt": "仕上げる",
+    "reading": "しあげる",
+    "meaning_id": "menyelesaikan hingga tuntas",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 52,
+    "romaji": "shiageru",
+    "jenis": "KK",
+    "category": "Aktivitas"
+  },
+  {
+    "id": "439181a2-1c03-4965-9062-4e42cb2e6eae",
+    "chapter_number": 29,
+    "prompt": "点検する",
+    "reading": "てんけんする",
+    "meaning_id": "memeriksa kondisi / melakukan pengecekan",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 54,
+    "romaji": "tenkensuru",
+    "jenis": "KK",
+    "category": "Aktivitas"
+  },
+  {
+    "id": "af29fbdc-8799-406e-91c2-45798692a859",
+    "chapter_number": 30,
+    "prompt": "目指す",
+    "reading": "めざす",
+    "meaning_id": "menargetkan / bercita-cita menuju",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 43,
+    "romaji": "mezasu",
+    "jenis": "KK",
+    "category": "Pekerjaan"
+  },
+  {
+    "id": "cc4022e3-d997-4cc0-be38-2c0b9d4ce8e2",
+    "chapter_number": 30,
+    "prompt": "実現する",
+    "reading": "じつげんする",
+    "meaning_id": "mewujudkan / merealisasikan",
+    "jlpt_level": "N4-bridge",
+    "sort_order": 44,
+    "romaji": "jitsugensuru",
+    "jenis": "KK",
+    "category": "Pekerjaan"
+  }
+]

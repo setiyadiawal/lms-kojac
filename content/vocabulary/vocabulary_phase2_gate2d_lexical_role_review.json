@@ -1,0 +1,258 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2D",
+  "review_type": "FINAL_LEXICAL_ROLE_AUDIT",
+  "final_items_reviewed": 2020,
+  "blocked_grammar_constructions_found": [],
+  "grammar_as_vocabulary_unresolved": 0,
+  "inflected_kk_rows_found": [],
+  "canonical_form_unresolved": 0,
+  "fixed_expression_exceptions": [
+    {
+      "chapter": 13,
+      "prompt": "写真を撮る",
+      "reading": "しゃしんをとる",
+      "meaning": "mengambil foto",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Common fixed collocation; meaning is not arbitrary and is taught as one practical expression."
+    },
+    {
+      "chapter": 24,
+      "prompt": "世話をする",
+      "reading": "せわをする",
+      "meaning": "merawat / membantu",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Lexicalized collocation meaning to care for/look after."
+    },
+    {
+      "chapter": 24,
+      "prompt": "持って来る",
+      "reading": "もってくる",
+      "meaning": "membawakan datang",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Common compound/directional verb expression; retained as a practical lexical unit."
+    },
+    {
+      "chapter": 31,
+      "prompt": "気をつける",
+      "reading": "きをつける",
+      "meaning": "berhati-hati / memperhatikan",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Idiomatic fixed expression meaning to be careful/pay attention."
+    },
+    {
+      "chapter": 24,
+      "prompt": "すみません",
+      "reading": "すみません",
+      "meaning": "maaf / permisi",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Lexicalized polite formula; ます-like ending is part of the fixed expression, not a conjugated vocabulary row."
+    },
+    {
+      "chapter": 26,
+      "prompt": "恐れ入ります",
+      "reading": "おそれいります",
+      "meaning": "mohon maaf / terima kasih (sangat sopan)",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Lexicalized polite service formula; retained under fixed-expression exception."
+    },
+    {
+      "chapter": 20,
+      "prompt": "じゃあまた",
+      "reading": "じゃあまた",
+      "meaning": "sampai jumpa lagi",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Fixed leave-taking expression."
+    },
+    {
+      "chapter": 25,
+      "prompt": "予定通り",
+      "reading": "よていどおり",
+      "meaning": "sesuai rencana",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Conventional adverbial expression meaning as planned."
+    },
+    {
+      "chapter": 33,
+      "prompt": "条件次第",
+      "reading": "じょうけんしだい",
+      "meaning": "tergantung syarat / kondisi",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Conventional expression meaning depending on conditions."
+    },
+    {
+      "chapter": 34,
+      "prompt": "初心者向け",
+      "reading": "しょしんしゃむけ",
+      "meaning": "untuk pemula",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Common lexicalized ～向け expression used in labels/product descriptions."
+    },
+    {
+      "chapter": 28,
+      "prompt": "ながら作業",
+      "reading": "ながらさぎょう",
+      "meaning": "melakukan tugas sambil melakukan hal lain",
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_UNIT",
+      "reason": "Established noun for multitasking/doing another task simultaneously; not stored as the grammar pattern ～ながら itself."
+    }
+  ],
+  "productive_lexical_compound_groups": [
+    {
+      "group": "productive status compound ～中",
+      "count": 21,
+      "items": [
+        {
+          "chapter": 4,
+          "prompt": "午前中",
+          "meaning": "sepanjang pagi"
+        },
+        {
+          "chapter": 4,
+          "prompt": "夜中",
+          "meaning": "tengah malam"
+        },
+        {
+          "chapter": 5,
+          "prompt": "途中",
+          "meaning": "di tengah perjalanan"
+        },
+        {
+          "chapter": 10,
+          "prompt": "中",
+          "meaning": "bagian dalam / di dalam"
+        },
+        {
+          "chapter": 15,
+          "prompt": "授業中",
+          "meaning": "selama pelajaran"
+        },
+        {
+          "chapter": 15,
+          "prompt": "使用中",
+          "meaning": "sedang digunakan"
+        },
+        {
+          "chapter": 15,
+          "prompt": "工事中",
+          "meaning": "sedang dalam pengerjaan"
+        },
+        {
+          "chapter": 15,
+          "prompt": "故障中",
+          "meaning": "sedang rusak"
+        },
+        {
+          "chapter": 23,
+          "prompt": "最中",
+          "meaning": "sedang berlangsung / di tengah-tengah"
+        },
+        {
+          "chapter": 28,
+          "prompt": "休憩中",
+          "meaning": "sedang istirahat"
+        },
+        {
+          "chapter": 28,
+          "prompt": "外出中",
+          "meaning": "sedang keluar"
+        },
+        {
+          "chapter": 28,
+          "prompt": "食事中",
+          "meaning": "sedang makan"
+        },
+        {
+          "chapter": 28,
+          "prompt": "電話中",
+          "meaning": "sedang menelepon"
+        },
+        {
+          "chapter": 28,
+          "prompt": "会議中",
+          "meaning": "sedang rapat"
+        },
+        {
+          "chapter": 28,
+          "prompt": "作業中",
+          "meaning": "sedang bekerja / proses kerja"
+        },
+        {
+          "chapter": 28,
+          "prompt": "移動中",
+          "meaning": "sedang dalam perjalanan"
+        },
+        {
+          "chapter": 28,
+          "prompt": "運転中",
+          "meaning": "sedang mengemudi"
+        },
+        {
+          "chapter": 28,
+          "prompt": "集中",
+          "meaning": "konsentrasi"
+        },
+        {
+          "chapter": 29,
+          "prompt": "準備中",
+          "meaning": "sedang persiapan"
+        },
+        {
+          "chapter": 31,
+          "prompt": "勉強中",
+          "meaning": "sedang belajar"
+        },
+        {
+          "chapter": 35,
+          "prompt": "世の中",
+          "meaning": "dunia / masyarakat"
+        }
+      ],
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_COMPOUNDS"
+    },
+    {
+      "group": "completion/status compound ～済み",
+      "count": 5,
+      "items": [
+        {
+          "chapter": 29,
+          "prompt": "予約済み",
+          "meaning": "sudah dipesan"
+        },
+        {
+          "chapter": 29,
+          "prompt": "使用済み",
+          "meaning": "sudah digunakan"
+        },
+        {
+          "chapter": 29,
+          "prompt": "支払い済み",
+          "meaning": "sudah dibayar"
+        },
+        {
+          "chapter": 29,
+          "prompt": "片付け済み",
+          "meaning": "sudah dibereskan"
+        },
+        {
+          "chapter": 29,
+          "prompt": "確認済み",
+          "meaning": "sudah dikonfirmasi"
+        }
+      ],
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_COMPOUNDS"
+    },
+    {
+      "group": "audience-oriented compound ～向け",
+      "count": 1,
+      "items": [
+        {
+          "chapter": 34,
+          "prompt": "初心者向け",
+          "meaning": "untuk pemula"
+        }
+      ],
+      "status": "REVIEWED_ACCEPTABLE_LEXICAL_COMPOUNDS"
+    }
+  ],
+  "status": "PASS"
+}

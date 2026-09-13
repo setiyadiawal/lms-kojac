@@ -1,0 +1,341 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2C",
+  "status": "PASS",
+  "gate2c_complete": true,
+  "content_manifest_status": "READY_FOR_FINAL_UUID_FREEZE_REVIEW",
+  "uuid_freeze_performed": false,
+  "database_modified": false,
+  "sql_executed": false,
+  "migration_created": false,
+  "runtime_vocabulary_code_changed": false,
+  "hard_target_backfill_enabled": false,
+  "starting_retained": 1982,
+  "new_candidates_considered": 80,
+  "new_candidates_accepted": 53,
+  "rejected_during_enrichment": 27,
+  "final_bab2_35": 2035,
+  "projected_including_bab1": 2115,
+  "targeted_chapters_reviewed": 19,
+  "new_items_manually_reviewed": 53,
+  "unreviewed_new_items": 0,
+  "provenance_counts": {
+    "grammar_grounded": 22,
+    "reading_grounded": 2,
+    "listening_grounded": 2,
+    "practical_curated": 27,
+    "kanji_supported": 0
+  },
+  "errors": [],
+  "duplicate_report": {
+    "exact_prompt_reading_duplicates": 0,
+    "new_vs_bab1_collisions": 0,
+    "gate2b_removed_reintroduced": 0,
+    "unresolved_semantic_duplicates": 0,
+    "reviewed_acceptable_homophones": 4,
+    "homophone_reviews": [
+      {
+        "reading": "かえる",
+        "new_item": "変える",
+        "existing_item": "帰る",
+        "existing_chapter": 5,
+        "status": "REVIEWED_ACCEPTABLE_HOMOPHONE"
+      },
+      {
+        "reading": "なおる",
+        "new_item": "治る",
+        "existing_item": "直る",
+        "existing_chapter": 25,
+        "status": "REVIEWED_ACCEPTABLE_HOMOPHONE"
+      },
+      {
+        "reading": "かわる",
+        "new_item": "代わる",
+        "existing_item": "変わる",
+        "existing_chapter": 19,
+        "status": "REVIEWED_ACCEPTABLE_HOMOPHONE"
+      },
+      {
+        "reading": "はる",
+        "new_item": "貼る",
+        "existing_item": "春",
+        "existing_chapter": 12,
+        "status": "REVIEWED_ACCEPTABLE_HOMOPHONE"
+      }
+    ]
+  },
+  "quiz_safety": {
+    "exact_same_meaning_issues": 0,
+    "near_ambiguity_reviews": [
+      {
+        "chapter": 19,
+        "prompts": [
+          "変える",
+          "変わる"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "transitive mengubah vs intransitive berubah"
+      },
+      {
+        "chapter": 19,
+        "prompts": [
+          "増やす",
+          "増える"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "transitive menambah vs intransitive bertambah"
+      },
+      {
+        "chapter": 19,
+        "prompts": [
+          "減らす",
+          "減る"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "transitive mengurangi vs intransitive berkurang"
+      },
+      {
+        "chapter": 24,
+        "prompts": [
+          "預かる",
+          "預ける"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "menerima titipan vs menitipkan"
+      },
+      {
+        "chapter": 25,
+        "prompts": [
+          "逃げる",
+          "避難する"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "melarikan diri/menjauh dari bahaya vs melakukan evakuasi"
+      },
+      {
+        "chapter": 28,
+        "prompts": [
+          "集中する",
+          "集中"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "verb berkonsentrasi vs noun konsentrasi"
+      },
+      {
+        "chapter": 28,
+        "prompts": [
+          "移動する",
+          "移動中"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "berpindah vs sedang dalam perjalanan"
+      },
+      {
+        "chapter": 28,
+        "prompts": [
+          "外出する",
+          "外出中"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "keluar/bepergian vs sedang keluar"
+      },
+      {
+        "chapter": 29,
+        "prompts": [
+          "仕上げる",
+          "仕上げ"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "menyelesaikan sampai tuntas vs tahap akhir/penyelesaian"
+      },
+      {
+        "chapter": 29,
+        "prompts": [
+          "済ませる",
+          "済む"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "menuntaskan sesuatu vs selesai/beres"
+      },
+      {
+        "chapter": 29,
+        "prompts": [
+          "残す",
+          "残り"
+        ],
+        "status": "REVIEWED_DISTINCT",
+        "distinction": "menyisakan vs sisa"
+      }
+    ],
+    "unresolved_quiz_ambiguity": 0
+  },
+  "lexical_quality": {
+    "grammar_as_vocabulary_unresolved": 0,
+    "curriculum_mismatch_unresolved": 0,
+    "kana_issues": 0,
+    "romaji_issues": 0,
+    "meaning_issues": 0,
+    "jenis_issues": 0,
+    "category_issues": 0,
+    "kanji_placement_issues": 0
+  },
+  "warnings": {
+    "initial_targeted_warnings": 19,
+    "warnings_after_enrichment": 18,
+    "fixed": 1,
+    "reviewed_acceptable": 18,
+    "unreviewed": 0,
+    "fixed_items": [
+      {
+        "code": "TARGETED_WARNING_RESOLVED_BY_ENRICHMENT",
+        "chapter": 32,
+        "count": 61
+      }
+    ],
+    "reviewed_acceptable_items": [
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 15,
+        "count": 57,
+        "review": "Existing rules/signage/state vocabulary plus cumulative verbs already supports permission, prohibition, and ～ています. Project source gaps are mostly inflected forms or previously taught words; adding more would be filler."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 16,
+        "count": 50,
+        "review": "This chapter is deliberately compositional: it links verbs/adjectives already learned. Existing routine/connective vocabulary is sufficient; forcing new words would duplicate earlier lexical capability."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 17,
+        "count": 54,
+        "review": "Health, deadline, document, and obligation domains are already covered. The project-grounded 制服 candidate was removed in Gate 2B and is intentionally not reintroduced."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 19,
+        "count": 59,
+        "review": "A real gap remained in independent change/transitivity and life-change verbs. Added lexical verbs for spending time, changing quantities/states, settling down, and recovery; no ～になる constructions were restored."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 20,
+        "count": 57,
+        "review": "Plain-form practice is morphological and reuses cumulative nouns, verbs, and adjectives. New lexical inventory is not required to practice the grammar meaningfully."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 21,
+        "count": 56,
+        "review": "The chapter had many abstract nouns but lacked enough independent verbs/adverbs for prediction, checking, correcting, informing, and discussion. Weather-prediction verbs are grounded in the actual Listening pilot."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 23,
+        "count": 55,
+        "review": "Temporal vocabulary is already broad (sequence, departure/arrival, before/after, automatic events). Grammar patterns mainly combine this with cumulative action vocabulary."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 24,
+        "count": 56,
+        "review": "The retained set was noun-heavy. Added independent help/entrust/delivery/care verbs so ～てあげる／～てもらう／～てくれる can be practiced with real actions."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 25,
+        "count": 57,
+        "review": "Emergency nouns were strong, but dynamic hazard/state verbs were thin. Added common independent hazard verbs/adjective for realistic conditional sentences."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 26,
+        "count": 58,
+        "review": "Procedural, document, counter/service, and inquiry vocabulary is already dense enough; polite-request grammar can reuse cumulative action verbs."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 27,
+        "count": 54,
+        "review": "Ability/limit nouns are already extensive and potential forms must be generated by grammar, not duplicated as vocabulary. Cumulative verbs provide the actions to transform."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 28,
+        "count": 50,
+        "review": "Gate 2B correctly removed many ながら/ので/ために phrases. Gate 2C adds only independent simultaneous-activity lexemes (commuting, concentrating, moving, balancing activities, going out, calling)."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 29,
+        "count": 55,
+        "review": "Many former candidates were ～てあります／～ておきます constructions. Added independent transitive preparation/completion verbs that naturally produce result-state examples without storing the grammar pattern."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 30,
+        "count": 44,
+        "review": "The low count is intentional after removing intention/～ようになる constructions. Existing career/goal nouns and cumulative verbs already cover most practice; only 目指す and 実現する fill genuine goal-directed lexical gaps. No N3-heavy career padding was added."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 31,
+        "count": 56,
+        "review": "Health, habit, time-management, advice, and decision vocabulary is already sufficient. The grammar deliberately reuses prior action verbs to form habits and recommendations."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 33,
+        "count": 55,
+        "review": "Contrast/condition abstractions are already strong. Added simple opposite outcomes 勝つ／負ける; rejected 逆 because 逆に already exists in the same chapter and would increase quiz ambiguity."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 34,
+        "count": 58,
+        "review": "This chapter intentionally derives ～方, ～やすい／～にくい, and ～すぎる from cumulative lexical items. The retained method/tool vocabulary is already sufficient; derived grammar forms must not be reinserted."
+      },
+      {
+        "code": "COUNT_BELOW_PRACTICAL_GUIDANCE",
+        "chapter": 35,
+        "count": 59,
+        "review": "The retained community/workplace inventory plus cumulative verbs is sufficient for passive, ～ところ, ～ばかり, and change-over-time patterns. 人口 was previously removed and is intentionally not reintroduced."
+      }
+    ]
+  },
+  "chapter_counts": {
+    "2": 65,
+    "3": 67,
+    "4": 68,
+    "5": 65,
+    "6": 65,
+    "7": 65,
+    "8": 66,
+    "9": 65,
+    "10": 67,
+    "11": 68,
+    "12": 65,
+    "13": 65,
+    "14": 65,
+    "15": 57,
+    "16": 50,
+    "17": 54,
+    "18": 62,
+    "19": 59,
+    "20": 57,
+    "21": 56,
+    "22": 66,
+    "23": 55,
+    "24": 56,
+    "25": 57,
+    "26": 58,
+    "27": 54,
+    "28": 50,
+    "29": 55,
+    "30": 44,
+    "31": 56,
+    "32": 61,
+    "33": 55,
+    "34": 58,
+    "35": 59
+  }
+}

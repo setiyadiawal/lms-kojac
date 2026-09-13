@@ -1,0 +1,1404 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2D",
+  "source_count": 2035,
+  "removed": [
+    {
+      "chapter": 5,
+      "prompt": "次の駅",
+      "reading": "つぎのえき",
+      "reason": "Compositional phrase; not a canonical lexical unit.",
+      "old": {
+        "id": null,
+        "chapter_number": 5,
+        "chapter_title": "Perpindahan dan Transportasi",
+        "sort_order": 29,
+        "jlpt_level": "N5",
+        "prompt": "次の駅",
+        "reading": "つぎのえき",
+        "romaji": "tsuginoeki",
+        "meaning_id": "stasiun berikutnya",
+        "jenis": "KB",
+        "category": "Transportasi",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_supplement"
+        ],
+        "assignment_basis": "curated_supplement",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "七月",
+      "reading": "しちがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 54,
+        "jlpt_level": "N5",
+        "prompt": "七月",
+        "reading": "しちがつ",
+        "romaji": "shichigatsu",
+        "meaning_id": "Juli",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "三月",
+      "reading": "さんがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 55,
+        "jlpt_level": "N5",
+        "prompt": "三月",
+        "reading": "さんがつ",
+        "romaji": "sangatsu",
+        "meaning_id": "Maret",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "九月",
+      "reading": "くがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 56,
+        "jlpt_level": "N5",
+        "prompt": "九月",
+        "reading": "くがつ",
+        "romaji": "kugatsu",
+        "meaning_id": "September",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "二月",
+      "reading": "にがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 57,
+        "jlpt_level": "N5",
+        "prompt": "二月",
+        "reading": "にがつ",
+        "romaji": "nigatsu",
+        "meaning_id": "Februari",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "五月",
+      "reading": "ごがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 58,
+        "jlpt_level": "N5",
+        "prompt": "五月",
+        "reading": "ごがつ",
+        "romaji": "gogatsu",
+        "meaning_id": "Mei",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "八月",
+      "reading": "はちがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 59,
+        "jlpt_level": "N5",
+        "prompt": "八月",
+        "reading": "はちがつ",
+        "romaji": "hachigatsu",
+        "meaning_id": "Agustus",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "六月",
+      "reading": "ろくがつ",
+      "reason": "Bab 9 filler: month name unrelated to likes/ability/reason curriculum.",
+      "old": {
+        "id": null,
+        "chapter_number": 9,
+        "chapter_title": "Kesukaan, Kemampuan, dan Alasan",
+        "sort_order": 60,
+        "jlpt_level": "N5",
+        "prompt": "六月",
+        "reading": "ろくがつ",
+        "romaji": "rokugatsu",
+        "meaning_id": "Juni",
+        "jenis": "KB",
+        "category": "Benda",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "fallback_manually_profiled",
+          "working_level_balanced_fallback"
+        ],
+        "assignment_basis": "fallback_reassigned_by_curriculum_profile",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "休みの日",
+      "reading": "やすみのひ",
+      "reason": "Compositional phrase; canonical 休み already exists.",
+      "old": {
+        "id": null,
+        "chapter_number": 13,
+        "chapter_title": "Keinginan dan Tujuan Pergi",
+        "sort_order": 9,
+        "jlpt_level": "N5",
+        "prompt": "休みの日",
+        "reading": "やすみのひ",
+        "romaji": "yasuminohi",
+        "meaning_id": "hari libur",
+        "jenis": "KB",
+        "category": "Waktu",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "working_reading_listening_help_earliest_evidence"
+        ],
+        "assignment_basis": "reading_listening_help_earliest_evidence",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 22,
+      "prompt": "入口近く",
+      "reading": "いりぐちちかく",
+      "reason": "Compositional phrase; 入口 and 近く already exist canonically.",
+      "old": {
+        "id": null,
+        "chapter_number": 22,
+        "chapter_title": "Klausa yang Menerangkan Kata Benda",
+        "sort_order": 59,
+        "jlpt_level": "N4",
+        "prompt": "入口近く",
+        "reading": "いりぐちちかく",
+        "romaji": "iriguchichikaku",
+        "meaning_id": "dekat pintu masuk",
+        "jenis": "KB",
+        "category": "Tempat",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_expansion"
+        ],
+        "assignment_basis": "curated_expansion",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 29,
+      "prompt": "忘れ物確認",
+      "reading": "わすれものかくにん",
+      "reason": "Arbitrary workflow collocation; not sufficiently lexicalized for canonical Vocabulary.",
+      "old": {
+        "id": null,
+        "chapter_number": 29,
+        "chapter_title": "Keadaan Hasil, Penyelesaian, dan Persiapan",
+        "sort_order": 18,
+        "jlpt_level": "N4",
+        "prompt": "忘れ物確認",
+        "reading": "わすれものかくにん",
+        "romaji": "wasuremonokakunin",
+        "meaning_id": "pengecekan barang tertinggal",
+        "jenis": "KB",
+        "category": "Aktivitas",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_expansion"
+        ],
+        "assignment_basis": "curated_expansion",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "おすすめ方法",
+      "reading": "おすすめほうほう",
+      "reason": "Arbitrary compositional collocation; not needed as a standalone lexical item.",
+      "old": {
+        "id": null,
+        "chapter_number": 31,
+        "chapter_title": "Kebiasaan, Saran, dan Keputusan",
+        "sort_order": 39,
+        "jlpt_level": "N4",
+        "prompt": "おすすめ方法",
+        "reading": "おすすめほうほう",
+        "romaji": "osusumehouhou",
+        "meaning_id": "cara yang disarankan",
+        "jenis": "KB",
+        "category": "Informasi",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_expansion"
+        ],
+        "assignment_basis": "curated_expansion",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 17,
+      "prompt": "すぐに",
+      "reading": "すぐに",
+      "reason": "Lexical/orthographic variant of earlier canonical すぐ; one canonical introduction retained.",
+      "old": {
+        "id": null,
+        "chapter_number": 17,
+        "chapter_title": "Bentuk ない dan Kewajiban",
+        "sort_order": 33,
+        "jlpt_level": "N5",
+        "prompt": "すぐに",
+        "reading": "すぐに",
+        "romaji": "suguni",
+        "meaning_id": "segera",
+        "jenis": "UNG",
+        "category": "Waktu",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_supplement"
+        ],
+        "assignment_basis": "curated_supplement",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 27,
+      "prompt": "会話能力",
+      "reading": "かいわのうりょく",
+      "reason": "Semantically redundant with earlier 会話力 for this curriculum; later duplicate concept removed.",
+      "old": {
+        "id": null,
+        "chapter_number": 27,
+        "chapter_title": "Kemampuan dan Batasan",
+        "sort_order": 44,
+        "jlpt_level": "N4",
+        "prompt": "会話能力",
+        "reading": "かいわのうりょく",
+        "romaji": "kaiwanouryoku",
+        "meaning_id": "kemampuan percakapan",
+        "jenis": "KB",
+        "category": "Sifat",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_expansion"
+        ],
+        "assignment_basis": "curated_expansion",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    },
+    {
+      "chapter": 33,
+      "prompt": "一方で",
+      "reading": "いっぽうで",
+      "reason": "Discourse variant of earlier canonical 一方 with the same learner meaning; earlier canonical row retained.",
+      "old": {
+        "id": null,
+        "chapter_number": 33,
+        "chapter_title": "Kondisi Lanjutan dan Pertentangan",
+        "sort_order": 50,
+        "jlpt_level": "N4",
+        "prompt": "一方で",
+        "reading": "いっぽうで",
+        "romaji": "ippoude",
+        "meaning_id": "di sisi lain",
+        "jenis": "UNG",
+        "category": "Ungkapan",
+        "curriculum": "KOJAC",
+        "dataset": "vocabulary_phase2_b02_35",
+        "review_status": "gate2b_manual_reviewed_keep",
+        "authoring_provenance": [
+          "curated_expansion"
+        ],
+        "assignment_basis": "curated_expansion",
+        "gate2b_review_note": "Reviewed against chapter curriculum; retained as a lexical item."
+      }
+    }
+  ],
+  "corrected": [
+    {
+      "chapter": 25,
+      "prompt": "直る",
+      "reason": "Natural Indonesian correction for intransitive 直る.",
+      "before": {
+        "meaning_id": "menjadi baik / terperbaiki"
+      },
+      "after": {
+        "meaning_id": "menjadi baik / kembali normal"
+      }
+    },
+    {
+      "chapter": 28,
+      "prompt": "打ち合わせ",
+      "reason": "Natural Indonesian correction; rapatan is unnatural.",
+      "before": {
+        "meaning_id": "rapatan / koordinasi"
+      },
+      "after": {
+        "meaning_id": "rapat / koordinasi"
+      }
+    },
+    {
+      "chapter": 28,
+      "prompt": "特に",
+      "reason": "Adverb; was incorrectly classified as KB/Benda.",
+      "before": {
+        "jenis": "KB",
+        "category": "Benda"
+      },
+      "after": {
+        "jenis": "UNG",
+        "category": "Informasi"
+      }
+    },
+    {
+      "chapter": 30,
+      "prompt": "予定日",
+      "reason": "Natural Indonesian correction.",
+      "before": {
+        "meaning_id": "tanggal rencana"
+      },
+      "after": {
+        "meaning_id": "tanggal yang dijadwalkan"
+      }
+    },
+    {
+      "chapter": 30,
+      "prompt": "開始予定",
+      "reason": "Natural Indonesian correction.",
+      "before": {
+        "meaning_id": "rencana mulai"
+      },
+      "after": {
+        "meaning_id": "rencana mulai / jadwal mulai"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "決まる",
+      "reason": "Natural Indonesian correction for intransitive 決まる.",
+      "before": {
+        "meaning_id": "menjadi diputuskan"
+      },
+      "after": {
+        "meaning_id": "diputuskan / menjadi pasti"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "継続",
+      "reason": "Keep noun meaning consistent with KB classification.",
+      "before": {
+        "meaning_id": "kelanjutan / meneruskan"
+      },
+      "after": {
+        "meaning_id": "kelanjutan / keberlanjutan"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "選択",
+      "reason": "Keep noun meaning consistent with KB classification.",
+      "before": {
+        "meaning_id": "pilihan / memilih"
+      },
+      "after": {
+        "meaning_id": "pilihan / pemilihan"
+      }
+    },
+    {
+      "chapter": 33,
+      "prompt": "結果的",
+      "reason": "Natural Indonesian correction; secara hasil is unnatural.",
+      "before": {
+        "meaning_id": "pada akhirnya / secara hasil"
+      },
+      "after": {
+        "meaning_id": "pada akhirnya / sebagai hasilnya"
+      }
+    },
+    {
+      "chapter": 34,
+      "prompt": "必要性",
+      "reason": "Natural Indonesian correction.",
+      "before": {
+        "meaning_id": "kebutuhan / tingkat perlunya"
+      },
+      "after": {
+        "meaning_id": "kebutuhan / tingkat kebutuhan"
+      }
+    },
+    {
+      "chapter": 7,
+      "prompt": "ローマ字",
+      "reason": "Category normalized to language domain.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Bahasa"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "上京",
+      "reason": "Category normalized to travel/movement domain.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Transportasi"
+      }
+    },
+    {
+      "chapter": 15,
+      "prompt": "安定",
+      "reason": "Category normalized from generic Benda to condition/state.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Kondisi"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "今度",
+      "reason": "Temporal noun/adverb; Benda was not appropriate.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Waktu"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "仕組み",
+      "reason": "Mechanism/system concept fits information domain.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Informasi"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "代表",
+      "reason": "Representative is a person-role in this chapter context.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Orang"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "会員",
+      "reason": "Member is a person-role.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Orang"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "全体",
+      "reason": "Abstract whole/overall concept, not a physical object.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Informasi"
+      }
+    },
+    {
+      "chapter": 22,
+      "prompt": "公立",
+      "reason": "Curriculum use is public-school/institution context.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Sekolah"
+      }
+    },
+    {
+      "chapter": 23,
+      "prompt": "初夏",
+      "reason": "Seasonal time expression.",
+      "before": {
+        "category": "Sifat"
+      },
+      "after": {
+        "category": "Waktu"
+      }
+    },
+    {
+      "chapter": 24,
+      "prompt": "味方",
+      "reason": "Ally/own side is relational vocabulary.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Hubungan"
+      }
+    },
+    {
+      "chapter": 26,
+      "prompt": "料金",
+      "reason": "Fee/tariff is a monetary amount domain.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Jumlah"
+      }
+    },
+    {
+      "chapter": 27,
+      "prompt": "理解",
+      "reason": "Understanding/capability vocabulary in ability chapter.",
+      "before": {
+        "category": "Sifat"
+      },
+      "after": {
+        "category": "Bahasa"
+      }
+    },
+    {
+      "chapter": 28,
+      "prompt": "注目",
+      "reason": "Attention/focus is informational/discourse vocabulary.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Informasi"
+      }
+    },
+    {
+      "chapter": 30,
+      "prompt": "知識",
+      "reason": "Knowledge is an information concept.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Informasi"
+      }
+    },
+    {
+      "chapter": 30,
+      "prompt": "私立",
+      "reason": "Curriculum use is private-school/institution context.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Sekolah"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "自身",
+      "reason": "Self/person referent.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Orang"
+      }
+    },
+    {
+      "chapter": 32,
+      "prompt": "質",
+      "reason": "Quality/attribute concept.",
+      "before": {
+        "category": "Benda"
+      },
+      "after": {
+        "category": "Sifat"
+      }
+    },
+    {
+      "chapter": 2,
+      "prompt": "車",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mobil"
+      },
+      "after": {
+        "meaning_id": "mobil / kendaraan"
+      }
+    },
+    {
+      "chapter": 2,
+      "prompt": "プレゼント",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "hadiah"
+      },
+      "after": {
+        "meaning_id": "hadiah (loanword)"
+      }
+    },
+    {
+      "chapter": 5,
+      "prompt": "目的地",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tujuan perjalanan"
+      },
+      "after": {
+        "meaning_id": "tujuan perjalanan / destinasi"
+      }
+    },
+    {
+      "chapter": 5,
+      "prompt": "自動車",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mobil"
+      },
+      "after": {
+        "meaning_id": "mobil / kendaraan bermotor"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "散歩",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "jalan-jalan"
+      },
+      "after": {
+        "meaning_id": "jalan-jalan / berjalan santai"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "買い物",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "belanja"
+      },
+      "after": {
+        "meaning_id": "belanja / kegiatan belanja"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "お茶",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "teh hijau"
+      },
+      "after": {
+        "meaning_id": "teh / teh hijau (umum)"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "昼ご飯",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "makan siang"
+      },
+      "after": {
+        "meaning_id": "makan siang (sehari-hari)"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "晩ご飯",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "makan malam"
+      },
+      "after": {
+        "meaning_id": "makan malam (sehari-hari)"
+      }
+    },
+    {
+      "chapter": 6,
+      "prompt": "洗濯",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mencuci pakaian"
+      },
+      "after": {
+        "meaning_id": "cucian / kegiatan mencuci pakaian"
+      }
+    },
+    {
+      "chapter": 7,
+      "prompt": "お母さん",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "ibu"
+      },
+      "after": {
+        "meaning_id": "ibu (sapaan / orang lain)"
+      }
+    },
+    {
+      "chapter": 8,
+      "prompt": "易しい",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mudah"
+      },
+      "after": {
+        "meaning_id": "mudah (tingkat kesulitan)"
+      }
+    },
+    {
+      "chapter": 8,
+      "prompt": "重い",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "berat"
+      },
+      "after": {
+        "meaning_id": "berat (sifat benda)"
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "スポーツ",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "olahraga"
+      },
+      "after": {
+        "meaning_id": "olahraga / cabang olahraga"
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "釣り",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "memancing"
+      },
+      "after": {
+        "meaning_id": "memancing / kegiatan memancing"
+      }
+    },
+    {
+      "chapter": 9,
+      "prompt": "少し",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "sedikit"
+      },
+      "after": {
+        "meaning_id": "sedikit / sebentar"
+      }
+    },
+    {
+      "chapter": 10,
+      "prompt": "中",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "dalam"
+      },
+      "after": {
+        "meaning_id": "bagian dalam / di dalam"
+      }
+    },
+    {
+      "chapter": 10,
+      "prompt": "外出",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "keluar rumah / bepergian"
+      },
+      "after": {
+        "meaning_id": "kegiatan keluar rumah / bepergian"
+      }
+    },
+    {
+      "chapter": 12,
+      "prompt": "少ない",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "sedikit"
+      },
+      "after": {
+        "meaning_id": "sedikit / jumlahnya sedikit"
+      }
+    },
+    {
+      "chapter": 12,
+      "prompt": "危険",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "berbahaya"
+      },
+      "after": {
+        "meaning_id": "bahaya / berisiko"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "ショッピング",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "belanja"
+      },
+      "after": {
+        "meaning_id": "belanja (shopping, loanword)"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "散歩する",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "jalan-jalan"
+      },
+      "after": {
+        "meaning_id": "berjalan-jalan / berjalan santai"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "釣る",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "memancing"
+      },
+      "after": {
+        "meaning_id": "memancing (ikan)"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "留学",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "belajar di luar negeri"
+      },
+      "after": {
+        "meaning_id": "studi di luar negeri"
+      }
+    },
+    {
+      "chapter": 13,
+      "prompt": "旅行先",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tujuan perjalanan"
+      },
+      "after": {
+        "meaning_id": "destinasi perjalanan / tempat tujuan"
+      }
+    },
+    {
+      "chapter": 14,
+      "prompt": "手伝い",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "bantuan"
+      },
+      "after": {
+        "meaning_id": "bantuan / kegiatan membantu"
+      }
+    },
+    {
+      "chapter": 15,
+      "prompt": "マナー",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tata krama"
+      },
+      "after": {
+        "meaning_id": "etika / tata krama sosial"
+      }
+    },
+    {
+      "chapter": 16,
+      "prompt": "それから",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "setelah itu"
+      },
+      "after": {
+        "meaning_id": "kemudian / setelah itu"
+      }
+    },
+    {
+      "chapter": 16,
+      "prompt": "次に",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "berikutnya"
+      },
+      "after": {
+        "meaning_id": "selanjutnya / kemudian"
+      }
+    },
+    {
+      "chapter": 17,
+      "prompt": "締め切り",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "batas waktu"
+      },
+      "after": {
+        "meaning_id": "batas waktu / deadline"
+      }
+    },
+    {
+      "chapter": 18,
+      "prompt": "直す",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "memperbaiki"
+      },
+      "after": {
+        "meaning_id": "membetulkan / memperbaiki (umum)"
+      }
+    },
+    {
+      "chapter": 19,
+      "prompt": "変化",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "perubahan"
+      },
+      "after": {
+        "meaning_id": "perubahan (keadaan / proses)"
+      }
+    },
+    {
+      "chapter": 19,
+      "prompt": "急に",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tiba-tiba"
+      },
+      "after": {
+        "meaning_id": "secara mendadak"
+      }
+    },
+    {
+      "chapter": 20,
+      "prompt": "両親",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "orang tua"
+      },
+      "after": {
+        "meaning_id": "kedua orang tua / ayah dan ibu"
+      }
+    },
+    {
+      "chapter": 20,
+      "prompt": "職場",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tempat kerja"
+      },
+      "after": {
+        "meaning_id": "tempat kerja / lingkungan kerja"
+      }
+    },
+    {
+      "chapter": 20,
+      "prompt": "母親",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "ibu"
+      },
+      "after": {
+        "meaning_id": "ibu / sosok ibu (netral)"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "変更",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "perubahan"
+      },
+      "after": {
+        "meaning_id": "perubahan / modifikasi yang disengaja"
+      }
+    },
+    {
+      "chapter": 21,
+      "prompt": "主に",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "terutama"
+      },
+      "after": {
+        "meaning_id": "terutama / sebagian besar"
+      }
+    },
+    {
+      "chapter": 22,
+      "prompt": "図書",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "buku"
+      },
+      "after": {
+        "meaning_id": "buku / bahan pustaka"
+      }
+    },
+    {
+      "chapter": 22,
+      "prompt": "親",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "orang tua"
+      },
+      "after": {
+        "meaning_id": "orang tua / induk"
+      }
+    },
+    {
+      "chapter": 23,
+      "prompt": "突然",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tiba-tiba"
+      },
+      "after": {
+        "meaning_id": "tiba-tiba / mendadak"
+      }
+    },
+    {
+      "chapter": 23,
+      "prompt": "次",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "berikutnya"
+      },
+      "after": {
+        "meaning_id": "berikutnya / giliran berikutnya"
+      }
+    },
+    {
+      "chapter": 24,
+      "prompt": "贈り物",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "hadiah"
+      },
+      "after": {
+        "meaning_id": "hadiah / pemberian"
+      }
+    },
+    {
+      "chapter": 24,
+      "prompt": "礼儀",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tata krama"
+      },
+      "after": {
+        "meaning_id": "sopan santun / etiket"
+      }
+    },
+    {
+      "chapter": 24,
+      "prompt": "手助け",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "bantuan"
+      },
+      "after": {
+        "meaning_id": "pertolongan / bantuan langsung"
+      }
+    },
+    {
+      "chapter": 25,
+      "prompt": "大事",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "penting / berharga"
+      },
+      "after": {
+        "meaning_id": "penting / perlu dijaga"
+      }
+    },
+    {
+      "chapter": 26,
+      "prompt": "変更する",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mengubah"
+      },
+      "after": {
+        "meaning_id": "mengubah / memodifikasi rencana atau data"
+      }
+    },
+    {
+      "chapter": 27,
+      "prompt": "時間制限",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "batas waktu"
+      },
+      "after": {
+        "meaning_id": "batas waktu yang diberikan / time limit"
+      }
+    },
+    {
+      "chapter": 27,
+      "prompt": "簡単",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "mudah"
+      },
+      "after": {
+        "meaning_id": "sederhana / mudah"
+      }
+    },
+    {
+      "chapter": 27,
+      "prompt": "重さ",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "berat"
+      },
+      "after": {
+        "meaning_id": "berat / bobot"
+      }
+    },
+    {
+      "chapter": 28,
+      "prompt": "特に",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "terutama"
+      },
+      "after": {
+        "meaning_id": "khususnya / terutama"
+      }
+    },
+    {
+      "chapter": 30,
+      "prompt": "勤務地",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "tempat kerja"
+      },
+      "after": {
+        "meaning_id": "lokasi penempatan kerja"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "勉強",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "belajar"
+      },
+      "after": {
+        "meaning_id": "belajar / kegiatan belajar"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "運動",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "olahraga"
+      },
+      "after": {
+        "meaning_id": "olahraga / latihan fisik"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "起床",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "bangun tidur"
+      },
+      "after": {
+        "meaning_id": "bangun tidur (formal)"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "夕食",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "makan malam"
+      },
+      "after": {
+        "meaning_id": "makan malam (lebih formal)"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "昼食",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "makan siang"
+      },
+      "after": {
+        "meaning_id": "makan siang (lebih formal)"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "睡眠不足",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "kurang tidur"
+      },
+      "after": {
+        "meaning_id": "kurang tidur (lebih formal)"
+      }
+    },
+    {
+      "chapter": 31,
+      "prompt": "緑茶",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "teh hijau"
+      },
+      "after": {
+        "meaning_id": "teh hijau (ryokucha)"
+      }
+    },
+    {
+      "chapter": 34,
+      "prompt": "修理する",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "memperbaiki"
+      },
+      "after": {
+        "meaning_id": "memperbaiki / mereparasi barang atau mesin"
+      }
+    },
+    {
+      "chapter": 34,
+      "prompt": "寝不足",
+      "reason": "Quiz/semantic distinction refined during Gate 2D final meaning audit.",
+      "before": {
+        "meaning_id": "kurang tidur"
+      },
+      "after": {
+        "meaning_id": "kurang tidur (sehari-hari)"
+      }
+    }
+  ],
+  "result_count": 2020,
+  "corrected_count_total": 89,
+  "removed_count_total": 15
+}

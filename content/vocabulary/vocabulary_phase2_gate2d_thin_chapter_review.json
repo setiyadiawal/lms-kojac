@@ -1,0 +1,816 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2D",
+  "review_type": "FINAL_THIN_CHAPTER_REVIEW",
+  "warning_rule": "chapter count < 60 triggers review; it does not trigger enrichment",
+  "gate2c_reviewed_acceptable_warnings_reverified": 18,
+  "gate2c_expected_reverified": 18,
+  "new_gate2d_warnings": 1,
+  "warnings_found": 19,
+  "reviewed": 19,
+  "fixed": 0,
+  "reviewed_acceptable": 19,
+  "unreviewed": 0,
+  "chapters": [
+    {
+      "chapter": 9,
+      "final_count": 58,
+      "topic": "Kesukaan, Kemampuan, dan Alasan",
+      "description": "Menyatakan suka/tidak suka, kemampuan dasar, pemahaman, dan alasan dengan から.",
+      "grammar_patterns": [
+        "～が好きです／嫌いです",
+        "～が上手です／下手です",
+        "～がわかります",
+        "～から、～"
+      ],
+      "reading_evidence": [
+        "わたしの趣味",
+        "料理が上手な友だち",
+        "日本語の勉強",
+        "雨の日",
+        "クラスのみんな"
+      ],
+      "listening_evidence": [
+        "友だちとの会話",
+        "クラスでの確認",
+        "今日の案内",
+        "店での会話",
+        "短い会話"
+      ],
+      "type_distribution": {
+        "KB": 32,
+        "KK": 7,
+        "UNG": 8,
+        "KS-na": 9,
+        "KS-i": 2
+      },
+      "top_categories": {
+        "Hobi": 29,
+        "Sifat": 14,
+        "Ungkapan": 5,
+        "Informasi": 4,
+        "Benda": 3
+      },
+      "gate2c_warning_reverified": false,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "After removing unrelated month-name fallback rows, the chapter still has dense hobby/preference nouns, ability verbs, skill adjectives, and reason/question expressions. The actual Reading centers on hobbies, cooking skill, Japanese study, rain-day preferences, and classmates, so no new lexical domain is missing."
+    },
+    {
+      "chapter": 15,
+      "final_count": 57,
+      "topic": "Izin, Larangan, dan Keadaan",
+      "description": "Meminta/memberi izin, menyatakan larangan, serta memahami beberapa fungsi ～ています.",
+      "grammar_patterns": [
+        "～てもいいです",
+        "～てはいけません",
+        "～ています（keadaan / kebiasaan）"
+      ],
+      "reading_evidence": [
+        "図書館からのお知らせ",
+        "学校のルール",
+        "シェアハウスの生活",
+        "美術館の案内",
+        "休憩室での会話"
+      ],
+      "listening_evidence": [
+        "図書館のルール",
+        "クラスでの確認",
+        "今日の案内",
+        "友だちとの会話",
+        "説明を聞く"
+      ],
+      "type_distribution": {
+        "KK": 9,
+        "KB": 38,
+        "KS-na": 4,
+        "UNG": 6
+      },
+      "top_categories": {
+        "Kondisi": 20,
+        "Aktivitas": 12,
+        "Tempat": 9,
+        "Waktu": 5,
+        "Sifat": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Permission/prohibition/state grammar is supported by rules, signage, facility-state and safety vocabulary. Reading evidence repeatedly uses library/school/share-house/museum rules; adding unrelated words would not improve the target grammar."
+    },
+    {
+      "chapter": 16,
+      "final_count": 50,
+      "topic": "Menghubungkan Kegiatan dan Sifat",
+      "description": "Menggabungkan kegiatan dan sifat dalam satu kalimat dengan bentuk sambung dasar.",
+      "grammar_patterns": [
+        "KK1 て、KK2",
+        "KS-i → ～くて",
+        "KS-na / KB + で",
+        "そして／それから"
+      ],
+      "reading_evidence": [
+        "朝のルーティン",
+        "明るい部屋",
+        "便利な町",
+        "旅行の一日",
+        "新しい学校"
+      ],
+      "listening_evidence": [
+        "今日の案内",
+        "クラスでの確認",
+        "友だちとの会話",
+        "出発前の会話",
+        "短い会話"
+      ],
+      "type_distribution": {
+        "KK": 12,
+        "KB": 21,
+        "KS-na": 5,
+        "UNG": 12
+      },
+      "top_categories": {
+        "Aktivitas": 21,
+        "Waktu": 6,
+        "Ungkapan": 5,
+        "Sifat": 4,
+        "Kontak": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "This chapter is deliberately compositional: it connects verbs and adjectives already introduced. Existing routine/connective vocabulary plus cumulative verbs/adjectives is enough for the five Reading contexts; extra chapter-specific words would mostly duplicate prior capability."
+    },
+    {
+      "chapter": 17,
+      "final_count": 53,
+      "topic": "Bentuk ない dan Kewajiban",
+      "description": "Menggunakan bentuk negatif kata kerja untuk larangan, kewajiban, ketidakharusan, dan batas waktu.",
+      "grammar_patterns": [
+        "～ないでください",
+        "～なければなりません",
+        "～なくてもいいです",
+        "～までに"
+      ],
+      "reading_evidence": [
+        "学校と生活のルール",
+        "明日の予定",
+        "宿題と締め切り",
+        "会社の決まり",
+        "施設の注意"
+      ],
+      "listening_evidence": [
+        "大切なお知らせ",
+        "クラスでの確認",
+        "友だちとの会話",
+        "今日の案内",
+        "説明を聞く"
+      ],
+      "type_distribution": {
+        "KB": 44,
+        "KK": 5,
+        "UNG": 4
+      },
+      "top_categories": {
+        "Kesehatan": 15,
+        "Dokumen": 8,
+        "Waktu": 7,
+        "Kondisi": 6,
+        "Aktivitas": 6
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The retained set covers rules, deadlines, health, documents and obligations. Reading evidence focuses on school/company/facility rules and deadlines, so the low count reflects reuse of earlier verbs in ない-form rather than a lexical gap."
+    },
+    {
+      "chapter": 19,
+      "final_count": 59,
+      "topic": "Pengalaman dan Perubahan",
+      "description": "Menyatakan pengalaman, daftar kegiatan, dan perubahan keadaan.",
+      "grammar_patterns": [
+        "～たことがあります",
+        "～たり～たりします",
+        "～くなります／～になります",
+        "まだ～ていません"
+      ],
+      "reading_evidence": [
+        "日本での経験",
+        "はじめてのアルバイト",
+        "休みの日の過ごし方",
+        "新しい町の生活",
+        "旅行の準備"
+      ],
+      "listening_evidence": [
+        "友だちとの会話",
+        "今日の案内",
+        "クラスでの確認",
+        "出発前の会話",
+        "音声メッセージ"
+      ],
+      "type_distribution": {
+        "UNG": 8,
+        "KB": 22,
+        "KK": 26,
+        "KS-na": 3
+      },
+      "top_categories": {
+        "Kondisi": 25,
+        "Aktivitas": 10,
+        "Waktu": 8,
+        "Sifat": 6,
+        "Benda": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Gate 2C already added independent change/recovery/transitivity verbs. The final set supports experience, lifestyle change, work, town life and travel-preparation readings without reintroducing ～になる constructions as vocabulary."
+    },
+    {
+      "chapter": 20,
+      "final_count": 57,
+      "topic": "Bentuk Biasa / 普通形",
+      "description": "Mengenal bentuk biasa kata kerja, kata sifat, dan kata benda sebagai dasar menuju pola N4.",
+      "grammar_patterns": [
+        "KK bentuk biasa",
+        "KS-i / KS-na bentuk biasa",
+        "KB + だ／じゃない／だった／じゃなかった",
+        "～けど／けれど"
+      ],
+      "reading_evidence": [
+        "昨日と今日",
+        "今日は休み？",
+        "昨日のこと",
+        "雨の日",
+        "週末の話"
+      ],
+      "listening_evidence": [
+        "週末、何する？",
+        "音声メッセージ",
+        "クラスでの確認",
+        "今日の案内",
+        "短い会話"
+      ],
+      "type_distribution": {
+        "KB": 43,
+        "UNG": 12,
+        "KK": 2
+      },
+      "top_categories": {
+        "Hubungan": 21,
+        "Ungkapan": 10,
+        "Pekerjaan": 7,
+        "Informasi": 6,
+        "Kontak": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Plain-form practice is morphological and intentionally reuses cumulative nouns, verbs and adjectives. The actual Reading is everyday casual narration (yesterday/today/rainy day/weekend), so a larger new lexical inventory is unnecessary."
+    },
+    {
+      "chapter": 21,
+      "final_count": 56,
+      "topic": "Pendapat, Kutipan, dan Dugaan",
+      "description": "Menggunakan bentuk biasa untuk pendapat, kutipan, perkiraan, dan kemungkinan.",
+      "grammar_patterns": [
+        "～と思います",
+        "～と言います",
+        "～でしょう",
+        "～かもしれません"
+      ],
+      "reading_evidence": [
+        "天気と予定",
+        "先生の話",
+        "友だちの予想",
+        "映画の評判",
+        "来週の予定"
+      ],
+      "listening_evidence": [
+        "来週のピクニック",
+        "電話での確認",
+        "クラスでの確認",
+        "今日の案内",
+        "大切なお知らせ"
+      ],
+      "type_distribution": {
+        "KB": 33,
+        "UNG": 5,
+        "KK": 13,
+        "KS-na": 5
+      },
+      "top_categories": {
+        "Informasi": 37,
+        "Kontak": 5,
+        "Kondisi": 4,
+        "Sifat": 3,
+        "Benda": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The chapter now contains opinion, quotation, prediction, checking, correction, reporting and discussion vocabulary. Reading evidence covers weather forecasts, teacher speech, predictions, reputation and future plans; the remaining low count is not a capability gap."
+    },
+    {
+      "chapter": 23,
+      "final_count": 55,
+      "topic": "Waktu dan Hubungan Antar Kejadian",
+      "description": "Menjelaskan waktu, urutan kejadian, dan hubungan otomatis antar kejadian.",
+      "grammar_patterns": [
+        "～とき",
+        "～と（kondisi otomatis）",
+        "～たあとで",
+        "～まで"
+      ],
+      "reading_evidence": [
+        "日本へ行くとき",
+        "春になると",
+        "仕事のあとで",
+        "雨が止むまで",
+        "朝から夜まで"
+      ],
+      "listening_evidence": [
+        "出発前の会話",
+        "大切なお知らせ",
+        "電話での確認",
+        "友だちとの会話",
+        "今日の案内"
+      ],
+      "type_distribution": {
+        "KB": 38,
+        "KS-na": 2,
+        "KK": 9,
+        "UNG": 6
+      },
+      "top_categories": {
+        "Waktu": 29,
+        "Transportasi": 9,
+        "Kondisi": 7,
+        "Teknologi": 4,
+        "Aktivitas": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Temporal sequencing, departure/arrival, automatic-event and before/after vocabulary is already broad. The five Reading items directly exercise when/after/until/day-long relations using cumulative action vocabulary."
+    },
+    {
+      "chapter": 24,
+      "final_count": 56,
+      "topic": "Memberi dan Menerima Bantuan",
+      "description": "Menggunakan ～てあげる・～てもらう・～てくれる untuk bantuan dan tindakan demi orang lain.",
+      "grammar_patterns": [
+        "～てあげます",
+        "～てもらいます",
+        "～てくれます",
+        "～てくださいます"
+      ],
+      "reading_evidence": [
+        "妹の宿題",
+        "先生に直してもらった作文",
+        "友だちの手伝い",
+        "先生からの推薦状",
+        "引っ越しの日"
+      ],
+      "listening_evidence": [
+        "友だちとの会話",
+        "クラスでの確認",
+        "出発前の会話",
+        "クラスでの確認",
+        "仕事の確認"
+      ],
+      "type_distribution": {
+        "KB": 40,
+        "UNG": 3,
+        "KK": 12,
+        "KS-i": 1
+      },
+      "top_categories": {
+        "Hubungan": 25,
+        "Aktivitas": 10,
+        "Sifat": 5,
+        "Benda": 3,
+        "Orang": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The retained set includes help, entrusting, delivery, care and relationship lexemes needed for ～てあげる／～てもらう／～てくれる. Reading evidence covers homework help, corrected writing, recommendation letters and moving-day assistance."
+    },
+    {
+      "chapter": 25,
+      "final_count": 57,
+      "topic": "Kondisi Dasar N4",
+      "description": "Membandingkan penggunaan ～たら・～ても・～なら・～ば dalam kalimat kondisi.",
+      "grammar_patterns": [
+        "～たら",
+        "～ても",
+        "～なら",
+        "～ば"
+      ],
+      "reading_evidence": [
+        "雨の日の予定",
+        "かばんを買うなら",
+        "日本旅行の条件",
+        "仕事が終わったら",
+        "駅に着いたら"
+      ],
+      "listening_evidence": [
+        "雨の日の予定変更",
+        "友だちとの会話",
+        "出発前の会話",
+        "大切なお知らせ",
+        "仕事の確認"
+      ],
+      "type_distribution": {
+        "KK": 12,
+        "KB": 37,
+        "UNG": 5,
+        "KS-na": 2,
+        "KS-i": 1
+      },
+      "top_categories": {
+        "Kondisi": 34,
+        "Aktivitas": 8,
+        "Transportasi": 4,
+        "Kontak": 3,
+        "Waktu": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Conditionals are supported by weather, emergency, travel, hazard and state vocabulary. Reading evidence spans rain plans, shopping choices, travel conditions, after-work actions and station arrival; more words would not materially expand conditional practice."
+    },
+    {
+      "chapter": 26,
+      "final_count": 58,
+      "topic": "Penjelasan dan Permintaan Sopan",
+      "description": "Memberi penjelasan dengan ～んです dan membuat pertanyaan atau permintaan yang lebih natural.",
+      "grammar_patterns": [
+        "～んです／～のです",
+        "～ていただけませんか",
+        "～たらいいですか",
+        "どうして～んですか"
+      ],
+      "reading_evidence": [
+        "疲れている理由",
+        "もう一度お願いします",
+        "駅への行き方",
+        "日本語を勉強する理由",
+        "病院での相談"
+      ],
+      "listening_evidence": [
+        "電話での確認",
+        "友だちとの会話",
+        "クラスでの確認",
+        "仕事の確認",
+        "今日の案内"
+      ],
+      "type_distribution": {
+        "KB": 46,
+        "KK": 8,
+        "KS-i": 2,
+        "UNG": 1,
+        "KS-na": 1
+      },
+      "top_categories": {
+        "Aktivitas": 13,
+        "Dokumen": 13,
+        "Informasi": 8,
+        "Benda": 4,
+        "Kondisi": 4
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Explanation/polite-request grammar is supported by service, inquiry, documents, directions and health vocabulary. Reading evidence covers reasons, repeat requests, station directions, study reasons and hospital consultation."
+    },
+    {
+      "chapter": 27,
+      "final_count": 53,
+      "topic": "Kemampuan dan Batasan",
+      "description": "Menggunakan bentuk potensial serta ungkapan batasan seperti ～しか～ない dan ～だけ.",
+      "grammar_patterns": [
+        "可能形（bentuk potensial）",
+        "見えます／聞こえます",
+        "～しか～ない",
+        "～だけ"
+      ],
+      "reading_evidence": [
+        "日本語でできること",
+        "窓から見える景色",
+        "財布の中",
+        "今日の昼ご飯",
+        "旅行でできること"
+      ],
+      "listening_evidence": [
+        "電話での確認",
+        "出発前の会話",
+        "今日の案内",
+        "友だちとの会話",
+        "今日の案内"
+      ],
+      "type_distribution": {
+        "KS-na": 8,
+        "KB": 40,
+        "KS-i": 1,
+        "KK": 4
+      },
+      "top_categories": {
+        "Kondisi": 20,
+        "Sifat": 18,
+        "Benda": 6,
+        "Bahasa": 4,
+        "Kesehatan": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Potential and limitation grammar chiefly transforms cumulative verbs. The retained set already covers ability, limits, visibility/hearing, skills and practical travel; adding potential forms themselves would violate lexical-role rules."
+    },
+    {
+      "chapter": 28,
+      "final_count": 50,
+      "topic": "Kegiatan Bersamaan dan Alasan",
+      "description": "Menyatakan dua kegiatan bersamaan, beberapa alasan, sebab, dan tujuan.",
+      "grammar_patterns": [
+        "～ながら",
+        "～し、～し",
+        "～ので",
+        "～ために（tujuan）"
+      ],
+      "reading_evidence": [
+        "音楽を聞きながら",
+        "住みやすい町",
+        "雨なので",
+        "日本で働くために",
+        "忙しい一日"
+      ],
+      "listening_evidence": [
+        "友だちとの会話",
+        "今日の案内",
+        "大切なお知らせ",
+        "仕事の確認",
+        "友だちとの会話"
+      ],
+      "type_distribution": {
+        "KB": 30,
+        "KK": 7,
+        "UNG": 13
+      },
+      "top_categories": {
+        "Pekerjaan": 18,
+        "Aktivitas": 11,
+        "Ungkapan": 4,
+        "Benda": 4,
+        "Informasi": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "Gate 2C added only independent lexemes for commuting, concentrating, moving, balancing activities, going out and calling. Reading evidence directly covers simultaneous activities, reasons and purpose; removed ながら/ので/ために constructions remain excluded."
+    },
+    {
+      "chapter": 29,
+      "final_count": 54,
+      "topic": "Keadaan Hasil, Penyelesaian, dan Persiapan",
+      "description": "Menyatakan keadaan hasil, tindakan selesai, keadaan yang disiapkan, dan persiapan sebelumnya.",
+      "grammar_patterns": [
+        "～ています（keadaan hasil）",
+        "～てしまいます",
+        "～てあります",
+        "～ておきます"
+      ],
+      "reading_evidence": [
+        "会議室の準備",
+        "宿題が終わった",
+        "旅行の前の準備",
+        "開いている窓",
+        "パーティーのあと"
+      ],
+      "listening_evidence": [
+        "仕事の確認",
+        "クラスでの確認",
+        "今日の案内",
+        "出発前の会話",
+        "仕事の確認"
+      ],
+      "type_distribution": {
+        "KK": 18,
+        "KB": 27,
+        "UNG": 8,
+        "KS-na": 1
+      },
+      "top_categories": {
+        "Aktivitas": 23,
+        "Kondisi": 23,
+        "Benda": 3,
+        "Waktu": 2,
+        "Ungkapan": 1
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "After removing the arbitrary 忘れ物確認 collocation, the chapter still has preparation/completion verbs, result-state nouns and common status compounds. Reading evidence repeatedly concerns room/travel/party preparation and completed states, so the lexical capability remains sufficient."
+    },
+    {
+      "chapter": 30,
+      "final_count": 44,
+      "topic": "Niat, Rencana, dan Perubahan Kemampuan",
+      "description": "Menyatakan niat, rencana, serta perubahan kemampuan atau keadaan dari waktu ke waktu.",
+      "grammar_patterns": [
+        "意向形（bentuk volisional）",
+        "～ようと思います",
+        "～つもりです",
+        "～予定です",
+        "～ようになります"
+      ],
+      "reading_evidence": [
+        "来年の計画",
+        "早く寝よう",
+        "卒業後の予定",
+        "夏休みの予定",
+        "できるようになったこと"
+      ],
+      "listening_evidence": [
+        "来月の勉強計画",
+        "友だちとの会話",
+        "仕事の確認",
+        "音声メッセージ",
+        "電話での確認"
+      ],
+      "type_distribution": {
+        "KK": 6,
+        "KB": 35,
+        "KS-na": 1,
+        "UNG": 2
+      },
+      "top_categories": {
+        "Pekerjaan": 17,
+        "Aktivitas": 12,
+        "Sekolah": 6,
+        "Dokumen": 3,
+        "Waktu": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The count is intentionally low because volitional, ～つもり, ～予定 and ～ようになる are productive grammar, not separate vocabulary rows. The retained lexicon covers goals, plans, education, employment and work conditions; Reading/Listening reuse cumulative actions such as study, practice, work and travel. Further padding would become career-specialist or compositional filler."
+    },
+    {
+      "chapter": 31,
+      "final_count": 55,
+      "topic": "Kebiasaan, Saran, dan Keputusan",
+      "description": "Menyatakan usaha membentuk kebiasaan, saran, harapan logis, dan keputusan.",
+      "grammar_patterns": [
+        "～ようにします",
+        "～ほうがいいです",
+        "～はずです",
+        "～ことにします",
+        "～ことになります"
+      ],
+      "reading_evidence": [
+        "毎日の習慣",
+        "先生からのアドバイス",
+        "駅に着いているはず",
+        "新しい決心",
+        "大阪への転勤"
+      ],
+      "listening_evidence": [
+        "今日の案内",
+        "友だちとの会話",
+        "出発前の会話",
+        "友だちとの会話",
+        "仕事の確認"
+      ],
+      "type_distribution": {
+        "UNG": 5,
+        "KB": 44,
+        "KK": 4,
+        "KS-na": 1,
+        "KS-i": 1
+      },
+      "top_categories": {
+        "Informasi": 18,
+        "Kesehatan": 12,
+        "Aktivitas": 7,
+        "Sekolah": 5,
+        "Makanan": 4
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "After removing the arbitrary おすすめ方法 collocation, the chapter still covers habits, advice, decisions, sleep, exercise, health and time management. Reading evidence focuses on daily habits, advice, decisions and transfer plans, all of which can reuse cumulative action verbs."
+    },
+    {
+      "chapter": 33,
+      "final_count": 54,
+      "topic": "Kondisi Lanjutan dan Pertentangan",
+      "description": "Menggunakan kondisi dalam situasi nyata dan menyatakan hasil yang bertentangan dengan harapan.",
+      "grammar_patterns": [
+        "～場合（は）",
+        "～のに",
+        "たとえ～ても"
+      ],
+      "reading_evidence": [
+        "雨の場合",
+        "勉強したのに",
+        "たとえ雨でも",
+        "イベントの予定",
+        "仕事のトラブル"
+      ],
+      "listening_evidence": [
+        "大切なお知らせ",
+        "クラスでの確認",
+        "今日の案内",
+        "仕事の確認",
+        "電話での確認"
+      ],
+      "type_distribution": {
+        "KS-na": 8,
+        "KK": 7,
+        "KB": 33,
+        "UNG": 6
+      },
+      "top_categories": {
+        "Sifat": 17,
+        "Informasi": 13,
+        "Kondisi": 12,
+        "Aktivitas": 4,
+        "Ungkapan": 4
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The retained inventory covers conditions, consequences, viewpoints, pros/cons and contrast discourse. Reading evidence uses real conditions, のに, たとえ～ても, event plans and workplace trouble; extra vocabulary is not required for the grammar contrast itself."
+    },
+    {
+      "chapter": 34,
+      "final_count": 58,
+      "topic": "Cara, Percobaan, Kemudahan, dan Kelebihan",
+      "description": "Menjelaskan cara, melakukan percobaan, kemudahan/kesulitan, dan keadaan berlebihan.",
+      "grammar_patterns": [
+        "～とおりに",
+        "～ないで",
+        "～てみます",
+        "～やすい／～にくい",
+        "～すぎます"
+      ],
+      "reading_evidence": [
+        "先生の言ったとおり",
+        "朝ご飯を食べないで",
+        "新しい料理を食べてみる",
+        "書きやすいペン",
+        "食べすぎた日"
+      ],
+      "listening_evidence": [
+        "説明を聞く",
+        "クラスでの確認",
+        "店での会話",
+        "今日の案内",
+        "友だちとの会話"
+      ],
+      "type_distribution": {
+        "KB": 50,
+        "KK": 4,
+        "KS-i": 1,
+        "UNG": 2,
+        "KS-na": 1
+      },
+      "top_categories": {
+        "Informasi": 23,
+        "Benda": 7,
+        "Aktivitas": 7,
+        "Teknologi": 7,
+        "Sifat": 3
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The chapter has method/tool nouns, trial/repetition vocabulary and lexicalized ease/usability nouns. The actual grammar derives ～やすい／～にくい／～すぎる and ～てみる from existing lexemes, so derived examples should not be added as separate rows."
+    },
+    {
+      "chapter": 35,
+      "final_count": 59,
+      "topic": "Pola N4 Lanjutan yang Sering Dipakai",
+      "description": "Menggunakan pola untuk tahap tindakan, hal yang baru terjadi, perubahan berkelanjutan, dan kalimat pasif.",
+      "grammar_patterns": [
+        "～ところです",
+        "～たばかりです",
+        "～ていきます",
+        "～てきます",
+        "受身形（bentuk pasif）"
+      ],
+      "reading_evidence": [
+        "今から昼ご飯",
+        "日本に来たばかり",
+        "変わっていく町",
+        "最近の生活",
+        "ほめられた日"
+      ],
+      "listening_evidence": [
+        "新しい商品の説明",
+        "今日の案内",
+        "友だちとの会話",
+        "クラスでの確認",
+        "仕事の確認"
+      ],
+      "type_distribution": {
+        "KB": 53,
+        "KK": 5,
+        "UNG": 1
+      },
+      "top_categories": {
+        "Budaya": 25,
+        "Aktivitas": 16,
+        "Kondisi": 6,
+        "Informasi": 4,
+        "Hubungan": 2
+      },
+      "gate2c_warning_reverified": true,
+      "status": "REVIEWED_ACCEPTABLE_LOW_COUNT",
+      "reason": "The retained community/workplace/practical-Japan inventory is sufficient for passive, ～ところ, ～たばかり and change-over-time patterns. Reading evidence covers current actions, recent arrival, changing town/life and being praised; further additions would drift beyond N4/practical scope."
+    }
+  ]
+}

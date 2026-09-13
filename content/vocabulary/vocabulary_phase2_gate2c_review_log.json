@@ -1,0 +1,377 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2C",
+  "starting_retained": 1982,
+  "targeted_chapter_reviews": [
+    {
+      "chapter": 15,
+      "topic": "Izin, Larangan, dan Keadaan",
+      "existing_count": 57,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Existing rules/signage/state vocabulary plus cumulative verbs already supports permission, prohibition, and ～ています. Project source gaps are mostly inflected forms or previously taught words; adding more would be filler.",
+      "final_count": 57,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 16,
+      "topic": "Menghubungkan Kegiatan dan Sifat",
+      "existing_count": 50,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "This chapter is deliberately compositional: it links verbs/adjectives already learned. Existing routine/connective vocabulary is sufficient; forcing new words would duplicate earlier lexical capability.",
+      "final_count": 50,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 17,
+      "topic": "Bentuk ない dan Kewajiban",
+      "existing_count": 54,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Health, deadline, document, and obligation domains are already covered. The project-grounded 制服 candidate was removed in Gate 2B and is intentionally not reintroduced.",
+      "final_count": 54,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 19,
+      "topic": "Pengalaman dan Perubahan",
+      "existing_count": 53,
+      "priority_band": "B",
+      "enrichment_needed": true,
+      "accepted_new": 6,
+      "reason": "A real gap remained in independent change/transitivity and life-change verbs. Added lexical verbs for spending time, changing quantities/states, settling down, and recovery; no ～になる constructions were restored.",
+      "final_count": 59,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 20,
+      "topic": "Bentuk Biasa / 普通形",
+      "existing_count": 57,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Plain-form practice is morphological and reuses cumulative nouns, verbs, and adjectives. New lexical inventory is not required to practice the grammar meaningfully.",
+      "final_count": 57,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 21,
+      "topic": "Pendapat, Kutipan, dan Dugaan",
+      "existing_count": 49,
+      "priority_band": "A",
+      "enrichment_needed": true,
+      "accepted_new": 7,
+      "reason": "The chapter had many abstract nouns but lacked enough independent verbs/adverbs for prediction, checking, correcting, informing, and discussion. Weather-prediction verbs are grounded in the actual Listening pilot.",
+      "final_count": 56,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 23,
+      "topic": "Waktu dan Hubungan Antar Kejadian",
+      "existing_count": 55,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Temporal vocabulary is already broad (sequence, departure/arrival, before/after, automatic events). Grammar patterns mainly combine this with cumulative action vocabulary.",
+      "final_count": 55,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 24,
+      "topic": "Memberi dan Menerima Bantuan",
+      "existing_count": 49,
+      "priority_band": "A",
+      "enrichment_needed": true,
+      "accepted_new": 7,
+      "reason": "The retained set was noun-heavy. Added independent help/entrust/delivery/care verbs so ～てあげる／～てもらう／～てくれる can be practiced with real actions.",
+      "final_count": 56,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 25,
+      "topic": "Kondisi Dasar N4",
+      "existing_count": 50,
+      "priority_band": "B",
+      "enrichment_needed": true,
+      "accepted_new": 7,
+      "reason": "Emergency nouns were strong, but dynamic hazard/state verbs were thin. Added common independent hazard verbs/adjective for realistic conditional sentences.",
+      "final_count": 57,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 26,
+      "topic": "Penjelasan dan Permintaan Sopan",
+      "existing_count": 58,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Procedural, document, counter/service, and inquiry vocabulary is already dense enough; polite-request grammar can reuse cumulative action verbs.",
+      "final_count": 58,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 27,
+      "topic": "Kemampuan dan Batasan",
+      "existing_count": 54,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Ability/limit nouns are already extensive and potential forms must be generated by grammar, not duplicated as vocabulary. Cumulative verbs provide the actions to transform.",
+      "final_count": 54,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 28,
+      "topic": "Kegiatan Bersamaan dan Alasan",
+      "existing_count": 43,
+      "priority_band": "A",
+      "enrichment_needed": true,
+      "accepted_new": 7,
+      "reason": "Gate 2B correctly removed many ながら/ので/ために phrases. Gate 2C adds only independent simultaneous-activity lexemes (commuting, concentrating, moving, balancing activities, going out, calling).",
+      "final_count": 50,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 29,
+      "topic": "Keadaan Hasil, Penyelesaian, dan Persiapan",
+      "existing_count": 42,
+      "priority_band": "A",
+      "enrichment_needed": true,
+      "accepted_new": 13,
+      "reason": "Many former candidates were ～てあります／～ておきます constructions. Added independent transitive preparation/completion verbs that naturally produce result-state examples without storing the grammar pattern.",
+      "final_count": 55,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 30,
+      "topic": "Niat, Rencana, dan Perubahan Kemampuan",
+      "existing_count": 42,
+      "priority_band": "A",
+      "enrichment_needed": true,
+      "accepted_new": 2,
+      "reason": "The low count is intentional after removing intention/～ようになる constructions. Existing career/goal nouns and cumulative verbs already cover most practice; only 目指す and 実現する fill genuine goal-directed lexical gaps. No N3-heavy career padding was added.",
+      "final_count": 44,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 31,
+      "topic": "Kebiasaan, Saran, dan Keputusan",
+      "existing_count": 56,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "Health, habit, time-management, advice, and decision vocabulary is already sufficient. The grammar deliberately reuses prior action verbs to form habits and recommendations.",
+      "final_count": 56,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 32,
+      "topic": "Informasi, Kesan, dan Laporan",
+      "existing_count": 59,
+      "priority_band": "B",
+      "enrichment_needed": true,
+      "accepted_new": 2,
+      "reason": "The chapter was nearly healthy but lacked direct message-transmission lexemes. Added 伝言 from actual Reading and 伝わる as a practical independent reporting verb.",
+      "final_count": 61,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 33,
+      "topic": "Kondisi Lanjutan dan Pertentangan",
+      "existing_count": 53,
+      "priority_band": "B",
+      "enrichment_needed": true,
+      "accepted_new": 2,
+      "reason": "Contrast/condition abstractions are already strong. Added simple opposite outcomes 勝つ／負ける; rejected 逆 because 逆に already exists in the same chapter and would increase quiz ambiguity.",
+      "final_count": 55,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 34,
+      "topic": "Cara, Percobaan, Kemudahan, dan Kelebihan",
+      "existing_count": 58,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "This chapter intentionally derives ～方, ～やすい／～にくい, and ～すぎる from cumulative lexical items. The retained method/tool vocabulary is already sufficient; derived grammar forms must not be reinserted.",
+      "final_count": 58,
+      "review_status": "gate2c_manual_reviewed"
+    },
+    {
+      "chapter": 35,
+      "topic": "Pola N4 Lanjutan yang Sering Dipakai",
+      "existing_count": 59,
+      "priority_band": "B",
+      "enrichment_needed": false,
+      "accepted_new": 0,
+      "reason": "The retained community/workplace inventory plus cumulative verbs is sufficient for passive, ～ところ, ～ばかり, and change-over-time patterns. 人口 was previously removed and is intentionally not reintroduced.",
+      "final_count": 59,
+      "review_status": "gate2c_manual_reviewed"
+    }
+  ],
+  "accepted_enrichment_count": 53,
+  "rejected_candidate_count": 27,
+  "rejected_candidates": [
+    {
+      "prompt": "制服",
+      "reason": "gate2b_removed",
+      "note": "Removed in Gate 2B; no-return rule overrides later source relevance."
+    },
+    {
+      "prompt": "試合",
+      "reason": "gate2b_removed",
+      "note": "Removed in Gate 2B; no-return rule overrides later source relevance."
+    },
+    {
+      "prompt": "人口",
+      "reason": "gate2b_removed",
+      "note": "Removed in Gate 2B; no-return rule overrides later source relevance."
+    },
+    {
+      "prompt": "単語",
+      "reason": "gate2b_removed",
+      "note": "Removed in Gate 2B; no-return rule overrides later source relevance."
+    },
+    {
+      "prompt": "品物",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; Vocabulary is cumulative."
+    },
+    {
+      "prompt": "並べる",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "予約する",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "滑る",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "終える",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "目的",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "家事",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "運転する",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "片付ける",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "準備する",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "確認する",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "勉強する",
+      "reason": "already_canonical",
+      "note": "Already retained canonically in another chapter; do not duplicate."
+    },
+    {
+      "prompt": "同時に",
+      "reason": "grammar_or_phrase",
+      "note": "Adverbial grammar/example form previously rejected; cumulative 同時 is sufficient."
+    },
+    {
+      "prompt": "作業する",
+      "reason": "quiz_redundancy",
+      "note": "Same-chapter 作業 already exists; adding the suru form creates unnecessary answer ambiguity."
+    },
+    {
+      "prompt": "会話する",
+      "reason": "lexical_redundancy",
+      "note": "会話 already exists and the verb adds little independent teaching value here."
+    },
+    {
+      "prompt": "身につく",
+      "reason": "phrase_risk",
+      "note": "Lexicalized expression considered, but not required enough to justify phrase-like complexity in this gate."
+    },
+    {
+      "prompt": "習得する",
+      "reason": "advanced",
+      "note": "Too advanced for the N4-centered enrichment when simpler cumulative vocabulary already covers the capability."
+    },
+    {
+      "prompt": "向上する",
+      "reason": "advanced_redundant",
+      "note": "Advanced and redundant with existing 上達／成長/進歩 capability."
+    },
+    {
+      "prompt": "達成する",
+      "reason": "advanced_redundant",
+      "note": "Advanced/redundant for the planning chapter; current goal vocabulary is sufficient."
+    },
+    {
+      "prompt": "通勤時間",
+      "reason": "compositional",
+      "note": "Transparent compound; 通勤 + 時間 is productively understood without a separate row."
+    },
+    {
+      "prompt": "通学時間",
+      "reason": "compositional",
+      "note": "Transparent compound; 通学 + 時間 is productively understood without a separate row."
+    },
+    {
+      "prompt": "作業効率",
+      "reason": "advanced_compositional",
+      "note": "Advanced transparent compound; not necessary as a canonical row."
+    },
+    {
+      "prompt": "逆",
+      "reason": "quiz_ambiguity",
+      "note": "Rejected because 逆に already exists in Bab 33 and Indonesian meanings would be too close for quiz safety."
+    }
+  ],
+  "accepted_by_primary_provenance": {
+    "grammar_grounded": 22,
+    "reading_grounded": 2,
+    "listening_grounded": 2,
+    "practical_curated": 27,
+    "kanji_supported": 0
+  },
+  "manual_review": {
+    "targeted_chapters_reviewed": 19,
+    "targeted_chapters_total": 19,
+    "new_items_reviewed": 53,
+    "new_items_total": 53,
+    "unreviewed_new_items": 0,
+    "grammar_as_vocabulary_unresolved": 0,
+    "curriculum_mismatch_unresolved": 0
+  },
+  "safety": {
+    "database_modified": false,
+    "sql_executed": false,
+    "migration_created": false,
+    "runtime_vocabulary_code_changed": false,
+    "uuid_assigned": 0
+  }
+}

@@ -1,0 +1,59 @@
+.quiz-sfx-host {
+  position: relative;
+  padding-right: 34px;
+}
+
+.quiz-sfx-host > .quiz-sfx-toggle {
+  position: absolute;
+  top: -3px;
+  right: 0;
+}
+
+.quiz-sfx-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--maroon);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(82, 31, 41, .06);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, opacity .15s ease;
+}
+
+.quiz-sfx-toggle:hover {
+  background: #fff7f8;
+  border-color: #cfa9af;
+}
+
+.quiz-sfx-toggle.is-off {
+  color: var(--muted);
+  background: #faf8f8;
+  opacity: .82;
+}
+
+.quiz-sfx-toggle:focus-visible {
+  outline: 2px solid rgba(123, 30, 47, .34);
+  outline-offset: 2px;
+}
+
+.quiz-sfx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 600px) {
+  .quiz-sfx-host { padding-right: 32px; }
+  .quiz-sfx-host > .quiz-sfx-toggle { top: -4px; }
+  .quiz-sfx-toggle { width: 27px; height: 27px; border-radius: 8px; }
+}

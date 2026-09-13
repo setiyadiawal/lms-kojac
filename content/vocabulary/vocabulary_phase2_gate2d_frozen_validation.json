@@ -1,0 +1,26 @@
+{
+  "phase": "VOCABULARY PHASE 2 — GATE 2D",
+  "stage": "FROZEN_UUID_VALIDATION",
+  "status": "PASS",
+  "final_bab2_35": 2020,
+  "projected_including_bab1": 2100,
+  "uuid": {
+    "assigned": 2020,
+    "missing": 0,
+    "duplicate": 0,
+    "invalid_format": 0,
+    "sequence_sha256": "df685c7be2df21192166b85162b7c38f84973187a5659474ab07d8b6da0717c1"
+  },
+  "content_changed_during_uuid_freeze": 0,
+  "manifest_sha256": "fc021b207bec74a2576b416a927cca22ac3c71d318e7b2a10bcb10fb345c58e8",
+  "database": {
+    "modified": false,
+    "sql_executed": false,
+    "migration": false,
+    "review_progress_modified": false
+  },
+  "runtime": {
+    "changed": false
+  },
+  "errors": []
+}

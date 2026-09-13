@@ -1,0 +1,109 @@
+{
+  "revision": "VOCABULARY R1",
+  "status": "PROPOSED_ONLY_NOT_EXECUTED",
+  "total": 11,
+  "soft_unpublish": 10,
+  "delete_duplicate": 1,
+  "review_progress_reference_policy": "All 11 were read-only verified at 0 references before R1-B generation.",
+  "items": [
+    {
+      "id": "8880d3a1-88e1-4497-a7e7-948adaca5bfc",
+      "prompt": "歩行",
+      "reading": "ほこう",
+      "old_chapter": 5,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Formal nominalization duplicates the practical beginner verb 歩く and is not needed for basic movement/transport communication."
+    },
+    {
+      "id": "bc1ef036-8dec-49ce-8ca6-5df3dca7086c",
+      "prompt": "走行",
+      "reading": "そうこう",
+      "old_chapter": 5,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Technical/formal movement noun is too specialized for Bab 5 and adds little beyond core transport verbs."
+    },
+    {
+      "id": "b0460c1a-8953-443a-9c8a-a88892bc02df",
+      "prompt": "駅長",
+      "reading": "えきちょう",
+      "old_chapter": 5,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Specialist station role is low-frequency for the beginner transport objective."
+    },
+    {
+      "id": "6a7d73d6-97cf-4326-8123-19a666660ba2",
+      "prompt": "公共交通",
+      "reading": "こうきょうこうつう",
+      "old_chapter": 5,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Overlaps strongly with 交通機関 while adding a more abstract compound at a very early stage."
+    },
+    {
+      "id": "0fbf99e2-bf19-4406-bd94-82f9196b0139",
+      "prompt": "電話番号",
+      "reading": "でんわばんごう",
+      "old_chapter": 7,
+      "action": "DELETE_DUPLICATE",
+      "review_progress_refs_verified": 0,
+      "reason": "Same lexical item 電話番号 is already introduced in Bab 1. The Bab 7 row exists only because Bab 1 had a shortened/incorrect reading; keep the Bab 1 UUID and deprecate this duplicate row in the next gate."
+    },
+    {
+      "id": "f24d19ad-a9f1-46d3-80b7-c15a92c79af8",
+      "prompt": "不得意",
+      "reading": "ふとくい",
+      "old_chapter": 9,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Near-redundant with 苦手 and 下手 in the same beginner skills chapter; increases synonym load without clear communicative gain."
+    },
+    {
+      "id": "a0d6fa6b-b6c1-43c4-9a51-de040d6a93e5",
+      "prompt": "適当",
+      "reading": "てきとう",
+      "old_chapter": 9,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Highly polysemous/nuanced for a beginner chapter and not needed for the core likes/ability/reason objectives."
+    },
+    {
+      "id": "f3ff9b1c-8c5e-465a-9f74-a9495d64a6b9",
+      "prompt": "公会堂",
+      "reading": "こうかいどう",
+      "old_chapter": 10,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Low-frequency specialist place noun overlaps with 会館 and is not needed for basic existence/location practice."
+    },
+    {
+      "id": "873fcca7-b921-4100-91aa-6f3565cbcff8",
+      "prompt": "違う",
+      "reading": "ちがう",
+      "old_chapter": 12,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Same lexical verb was already introduced in Bab 1 as the fixed response 違います; keeping a second item only for conjugation violates one-lexeme/one-UUID policy."
+    },
+    {
+      "id": "75863a62-3f7a-4402-b187-142a00f5a1f3",
+      "prompt": "写真を撮る",
+      "reading": "しゃしんをとる",
+      "old_chapter": 13,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "Transparent compositional phrase (写真 + を + 撮る), while 撮る was already introduced as a lexical verb in Bab 6. Keeping this as a separate Vocabulary item would duplicate lexical content and exposes dictionary form before Bab 18."
+    },
+    {
+      "id": "c52b3a48-cac8-4957-afe4-10d702f39b32",
+      "prompt": "旅人",
+      "reading": "たびびと",
+      "old_chapter": 13,
+      "action": "UNPUBLISH",
+      "review_progress_refs_verified": 0,
+      "reason": "More literary/general than needed and overlaps the clearer practical term 旅行者 in the same travel chapter."
+    }
+  ]
+}

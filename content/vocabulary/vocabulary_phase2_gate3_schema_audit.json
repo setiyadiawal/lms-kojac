@@ -1,0 +1,165 @@
+{
+  "phase": "VOCABULARY_PHASE_2_GATE_3",
+  "status": "SCHEMA_AUDITED",
+  "actual_project_source": "kojac-lms-v2(4).zip",
+  "learning_items": {
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "notes": "primary key; database default exists but Gate 3 seed supplies explicit frozen UUID"
+      },
+      {
+        "name": "item_type",
+        "type": "text"
+      },
+      {
+        "name": "jlpt_level",
+        "type": "text",
+        "notes": "no dedicated JLPT check constraint in actual schema"
+      },
+      {
+        "name": "prompt",
+        "type": "text"
+      },
+      {
+        "name": "reading",
+        "type": "text"
+      },
+      {
+        "name": "meaning_id",
+        "type": "text"
+      },
+      {
+        "name": "meaning_en",
+        "type": "text"
+      },
+      {
+        "name": "extra",
+        "type": "jsonb",
+        "notes": "not null; default {}"
+      },
+      {
+        "name": "is_published",
+        "type": "boolean",
+        "notes": "not null; default false"
+      }
+    ],
+    "unique_lexical_index": {
+      "name": "learning_items_unique_key",
+      "expression": "(item_type, prompt, coalesce(reading,''))"
+    },
+    "secondary_index": "idx_learning_items_type_published(item_type,is_published)",
+    "item_type_final_constraint": "item_type in ('hiragana','katakana','vocabulary','kanji','grammar')",
+    "rls_enabled": true
+  },
+  "bab1_existing_convention": {
+    "rows": 80,
+    "item_type": "vocabulary",
+    "meaning_en": null,
+    "is_published": true,
+    "dataset": "vocabulary_chapter_1"
+  },
+  "runtime_vocabulary_reads": {
+    "database_columns": [
+      "id",
+      "prompt",
+      "reading",
+      "meaning_id",
+      "extra"
+    ],
+    "extra_keys": [
+      "chapter_number",
+      "chapter_title",
+      "sort_order",
+      "romaji",
+      "category",
+      "jenis"
+    ]
+  },
+  "gate3_database_mapping": {
+    "included_top_level": [
+      "id",
+      "jlpt_level",
+      "prompt",
+      "reading",
+      "meaning_id"
+    ],
+    "generated_constants": {
+      "item_type": "vocabulary",
+      "meaning_en": null,
+      "is_published": true
+    },
+    "included_extra": [
+      "chapter_number",
+      "chapter_title",
+      "sort_order",
+      "romaji",
+      "category",
+      "jenis",
+      "curriculum",
+      "dataset"
+    ],
+    "excluded_authoring_fields": [
+      "review_status",
+      "authoring_provenance",
+      "assignment_basis",
+      "gate2b_review_note",
+      "gate2c_review_note",
+      "primary_provenance",
+      "quiz_safety",
+      "source_notes"
+    ],
+    "all_frozen_item_fields": [
+      "assignment_basis",
+      "authoring_provenance",
+      "category",
+      "chapter_number",
+      "chapter_title",
+      "curriculum",
+      "dataset",
+      "gate2b_review_note",
+      "gate2c_review_note",
+      "id",
+      "jenis",
+      "jlpt_level",
+      "meaning_id",
+      "primary_provenance",
+      "prompt",
+      "quiz_safety",
+      "reading",
+      "review_status",
+      "romaji",
+      "sort_order",
+      "source_notes"
+    ]
+  },
+  "frozen_jlpt_values_preserved": [
+    "N4",
+    "N5"
+  ],
+  "actual_project_reference_sha256": {
+    "supabase/migrations/001_kojac_lms_foundation.sql": "52f6de501cb2dd449e0c65bd7c031ad978ca5718139451e425406da288ab86d4",
+    "supabase/migrations/002_hiragana_learning.sql": "16ca2b6ef6fb11b641ca6925fbe823e9271ab864067ba57a04dc8ebb9433c342",
+    "supabase/migrations/006_vocabulary_chapter_1.sql": "d8d2e78d993c3f63454e4f5662f31c46ffcbf89c153f58b78ec3059cde234145",
+    "supabase/migrations/007_vocabulary_jenis.sql": "53e03e66ed5884a53a3f32056e480be8eecf03d8270e89246bd3c1bc0d96d806",
+    "supabase/migrations/008_vocabulary_srs_mastery.sql": "15b46e6e082630bf4cc95e5d1c5d279d33d42b85d42448e02117dc6fcff8e78c",
+    "supabase/migrations/009_fix_learning_review_item_id_ambiguity.sql": "cd1bd14f325de08b932af29bd3511d08b67eb1a69cbb6e85d4e4da46b6e423de",
+    "supabase/migrations/017_grammar_srs_mastery.sql": "a98a557df1b165e0adba93426437a9224ed65ec2fd796174120b4e7b2bdbb7ee",
+    "src/features/vocabulary/useVocabulary.ts": "03a6c43d5029858585927199d6cd815a9b937ba00a110e2e5e024d673d689837"
+  },
+  "existing_migrations_modified": false,
+  "new_schema_migration_created": false,
+  "gate35_jlpt_metadata_consistency": {
+    "runtime_supports_n4_bridge": false,
+    "decision": "NORMALIZE_TO_N4",
+    "affected_items": 7,
+    "uuid_changed": 0,
+    "canonical_vocabulary_levels": [
+      "N5",
+      "N4"
+    ],
+    "manifest_sha256": "2afa2a820c5397ddaf91ba6148e8671524b2ce76d19d94aa2a5f493708a1bba0",
+    "sql_sha256": "3b4b536dbe326a1602f0344b4f05ae749439c41f7265f2b2a968844966975953"
+  }
+}

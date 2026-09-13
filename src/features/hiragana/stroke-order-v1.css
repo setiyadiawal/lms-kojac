@@ -1,0 +1,230 @@
+/*
+ * KOJAC Hiragana stroke-order visual rollback.
+ * This intentionally restores the first stable stroke-order presentation (v0.2.2)
+ * and scopes every override under .stroke-order-v1 so newer experimental CSS cannot
+ * change the box geometry, colors or compound layout.
+ */
+.stroke-order-v1 {
+  margin-top:16px !important;
+  border:1px solid #eadcdf !important;
+  border-radius:14px !important;
+  background:#fffafa !important;
+  padding:11px !important;
+  text-align:left !important;
+  height:auto !important;
+  max-height:none !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+
+.stroke-order-v1 .stroke-order-heading {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  margin-bottom:8px !important;
+  flex-wrap:nowrap !important;
+}
+.stroke-order-v1 .stroke-order-heading>span,
+.stroke-order-v1 .stroke-order-heading>strong { display:block !important; }
+.stroke-order-v1 .stroke-order-heading>span {
+  font-size:10px !important;
+  text-transform:uppercase !important;
+  letter-spacing:.08em !important;
+  color:var(--muted) !important;
+  font-weight:800 !important;
+}
+.stroke-order-v1 .stroke-order-heading>strong {
+  font-size:14px !important;
+  color:var(--maroon) !important;
+  margin-top:0 !important;
+  white-space:nowrap !important;
+}
+.stroke-order-v1 .stroke-order-heading button {
+  border:1px solid #dec8cb !important;
+  background:#fff !important;
+  color:var(--maroon) !important;
+  border-radius:8px !important;
+  padding:6px 8px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:5px !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  min-height:0 !important;
+  width:auto !important;
+  white-space:nowrap !important;
+}
+.stroke-order-v1 .stroke-order-heading button:disabled { opacity:.45 !important; }
+
+.stroke-order-v1 .stroke-glyph-list {
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:8px !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+.stroke-order-v1 .stroke-glyph-list.combined {
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  max-width:none !important;
+}
+.stroke-order-v1 .stroke-glyph-wrap { min-width:0 !important; }
+
+.stroke-order-v1 .kana-stroke-svg {
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:1 !important;
+  border:1px solid #eee4e6 !important;
+  border-radius:11px !important;
+  background:#fff !important;
+  max-width:none !important;
+}
+.stroke-order-v1 .stroke-guide-grid line {
+  stroke:#eee6e8 !important;
+  stroke-width:4 !important;
+  stroke-dasharray:16 16 !important;
+}
+.stroke-order-v1 .stroke-ghost-shape {
+  fill:transparent !important;
+  opacity:0 !important;
+}
+.stroke-order-v1 .stroke-animated-line {
+  fill:none !important;
+  stroke:var(--maroon) !important;
+  stroke-width:128 !important;
+  stroke-linecap:round !important;
+  stroke-dasharray:3337;
+  stroke-dashoffset:3337;
+  animation:none !important;
+}
+
+.stroke-order-v1 .stroke-number-marker circle {
+  fill:#fff !important;
+  stroke:var(--maroon) !important;
+  stroke-width:8 !important;
+}
+.stroke-order-v1 .stroke-number-marker text {
+  font-size:45px !important;
+  font-weight:900 !important;
+  fill:var(--maroon) !important;
+  font-family:Arial,sans-serif !important;
+  stroke:none !important;
+  paint-order:normal !important;
+}
+
+.stroke-order-v1 .stroke-glyph-caption {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  padding:5px 2px 0 !important;
+}
+.stroke-order-v1 .stroke-glyph-caption strong { font-size:14px !important; }
+.stroke-order-v1 .stroke-glyph-caption span {
+  font-size:9px !important;
+  color:var(--muted) !important;
+  font-weight:700 !important;
+}
+.stroke-order-v1 .stroke-combination-note {
+  font-size:9px !important;
+  line-height:1.5 !important;
+  color:var(--muted) !important;
+  margin:8px 1px 0 !important;
+  text-align:left !important;
+}
+.stroke-order-v1 .stroke-skeleton {
+  display:grid !important;
+  place-items:center !important;
+  aspect-ratio:1 !important;
+  border:1px solid #eee4e6 !important;
+  border-radius:11px !important;
+  background:linear-gradient(90deg,#f4eeee,#fff,#f4eeee) !important;
+  background-size:200% 100% !important;
+  color:#d6c7ca !important;
+  font-size:46px !important;
+}
+.stroke-order-v1 .stroke-error {
+  aspect-ratio:1 !important;
+  border:1px solid #eccfd4 !important;
+  border-radius:11px !important;
+  background:#fff6f7 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  padding:9px !important;
+  color:#8f2635 !important;
+}
+.stroke-order-v1 .stroke-error strong { font-size:32px !important; }
+.stroke-order-v1 .stroke-error span { font-size:8px !important; line-height:1.35 !important; margin-top:4px !important; }
+
+@media (max-width:800px) {
+  .stroke-order-v1 { grid-column:1/-1 !important; }
+  .kana-detail-card .stroke-order-v1 { text-align:left !important; }
+  .stroke-order-v1 .stroke-glyph-list { max-width:310px !important; margin-inline:auto !important; }
+  .stroke-order-v1 .stroke-glyph-list.combined { max-width:400px !important; }
+}
+
+@media (max-width:420px) {
+  .stroke-order-v1 .stroke-order-heading { align-items:flex-start !important; }
+  .stroke-order-v1 .stroke-glyph-list.combined { grid-template-columns:1fr 1fr !important; gap:6px !important; }
+  .stroke-order-v1 .stroke-glyph-caption strong { font-size:12px !important; }
+  .stroke-order-v1 .stroke-glyph-caption span { font-size:8px !important; }
+}
+
+/* v0.3.7 — minimal stability overrides only.
+   The visual remains the original v0.2.2/v0.3.2 design. */
+.stroke-order-v1,
+.stroke-order-v1 .stroke-glyph-list,
+.stroke-order-v1 .stroke-glyph-wrap {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* One Yōon learning unit = one original-style square. */
+.stroke-order-v1 .stroke-glyph-list {
+  grid-template-columns: 1fr !important;
+  width: min(100%, clamp(220px, 38dvh, 360px)) !important;
+  margin-inline: auto !important;
+}
+
+.stroke-order-v1 .stroke-error-group {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+@media (max-height: 760px) and (min-width: 1281px) {
+  .stroke-order-v1 {
+    margin-top: 10px !important;
+    padding: 9px !important;
+  }
+
+  .stroke-order-v1 .stroke-glyph-list {
+    width: min(100%, clamp(200px, 32dvh, 292px)) !important;
+  }
+
+  .stroke-order-v1 .stroke-combination-note {
+    margin-top: 6px !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .stroke-order-v1 .stroke-glyph-list {
+    width: min(100%, clamp(300px, 52vw, 440px)) !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .stroke-order-v1 .stroke-glyph-list {
+    width: min(100%, clamp(280px, 78vw, 400px)) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .stroke-order-v1 .stroke-glyph-list {
+    width: min(100%, 320px) !important;
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "phase": "VOCABULARY_PHASE_2_GATE_3",
+  "status": "PASS",
+  "frozen_manifest": "content/vocabulary/vocabulary_phase2_final_frozen_manifest.json",
+  "manifest_items": 2020,
+  "manifest_sha256": "2afa2a820c5397ddaf91ba6148e8671524b2ce76d19d94aa2a5f493708a1bba0",
+  "frozen_uuids": 2020,
+  "uuid_regenerated": 0,
+  "canonical_vocabulary_levels": [
+    "N5",
+    "N4"
+  ],
+  "jlpt_level_counts": {
+    "N5": 1058,
+    "N4": 962
+  },
+  "n4_bridge_remaining": 0,
+  "gate35_metadata_correction_applied": true,
+  "generated_sql": "supabase/content/vocabulary_phase2_b02_35_frozen_seed.sql",
+  "generated_canonical_rows": 2020,
+  "sql_sha256": "3b4b536dbe326a1602f0344b4f05ae749439c41f7265f2b2a968844966975953",
+  "sql_sha_sidecar_verified": true,
+  "transaction_boundary": true,
+  "preflight_uuid_mismatch_detection": true,
+  "preflight_lexical_key_collision_detection": true,
+  "unexpected_existing_bab2_35_detection": true,
+  "exact_existing_row_idempotency_behavior": true,
+  "silent_conflict_ignore": false,
+  "auto_update": false,
+  "static_safety": {
+    "destructive_delete": false,
+    "destructive_truncate": false,
+    "destructive_drop": false,
+    "schema_alter": false,
+    "permanent_create_table": false,
+    "random_uuid_pgcrypto": false,
+    "random_uuid_ossp": false,
+    "silent_conflict_ignore": false,
+    "auto_update_conflict": false
+  },
+  "serialization_mismatches": {
+    "uuid_set": 0,
+    "prompt": 0,
+    "reading": 0,
+    "meaning": 0,
+    "jlpt": 0,
+    "chapter": 0,
+    "romaji": 0,
+    "jenis": 0,
+    "category": 0,
+    "sort_order": 0,
+    "full_runtime_row": 0
+  },
+  "uuid_set_missing": 0,
+  "uuid_set_extra": 0,
+  "duplicate_uuid_in_sql_payload": 0,
+  "duplicate_lexical_key_in_sql_payload": 0,
+  "database_modified": false,
+  "sql_executed": false,
+  "migration_created": false,
+  "review_progress_modified": false
+}
