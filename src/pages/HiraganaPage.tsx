@@ -6,6 +6,7 @@ import { HiraganaStrokeOrder } from '../features/hiragana/HiraganaStrokeOrder';
 import { ResponsiveKanaDetail, useResponsiveKanaDetailModal } from '../features/kana/ResponsiveKanaDetail';
 import { QuizSoundToggle } from '../features/quiz/QuizSoundToggle';
 import { useQuizSounds } from '../features/quiz/useQuizSounds';
+import { randomizeBalancedOptionSets } from '../features/quiz/optionRandomization';
 import '../features/hiragana/hiragana.css';
 
 type Tab = 'study' | 'flashcard' | 'quiz';
@@ -499,7 +500,14 @@ function QuizView({ items, onRate }: { items: HiraganaWithProgress[]; onRate: (i
               : [],
         };
       });
-      setQuestions(next);
+      setQuestions(randomizeBalancedOptionSets(
+        next,
+        (question) => question.options,
+        (question) => question.kind === 'kana-romaji' || question.kind === 'typing'
+          ? question.item.reading
+          : question.item.prompt,
+        (question, options) => ({ ...question, options }),
+      ));
       setMatchingRounds([]);
     }
 

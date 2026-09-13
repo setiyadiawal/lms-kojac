@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getGrammarPattern } from '../grammar/grammarData';
+import { randomizeQuestionOptions } from '../quiz/optionRandomization';
 import type { ReadingItem, ReadingParagraph } from './readingData';
 import { getReadingProgressStatus, type ReadingProgress } from './useReadingProgress';
 
@@ -79,6 +80,7 @@ export function ReadingEngine({
   const [savedSessionProgress, setSavedSessionProgress] = useState<ReadingProgress | null>(null);
   const [progressSaveState, setProgressSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [progressSaveError, setProgressSaveError] = useState<string | null>(null);
+  const [questions, setQuestions] = useState(() => randomizeQuestionOptions(reading.comprehensionQuestions));
 
   const questionCardRef = useRef<HTMLElement | null>(null);
   const feedbackRef = useRef<HTMLDivElement | null>(null);
@@ -90,7 +92,6 @@ export function ReadingEngine({
   const completionSaveStartedRef = useRef(false);
   const completionSessionIdRef = useRef(createReadingSessionId());
 
-  const questions = reading.comprehensionQuestions;
   const currentQuestion = questions[currentQuestionIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
   const answeredCount = Object.keys(answers).length;
@@ -248,6 +249,7 @@ export function ReadingEngine({
     setSavedSessionProgress(null);
     setProgressSaveState('idle');
     setProgressSaveError(null);
+    setQuestions(randomizeQuestionOptions(reading.comprehensionQuestions));
     setAnswers({});
     setCurrentQuestionIndex(0);
     setReviewIndex(0);

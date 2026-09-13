@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronRight, RotateCcw, Sparkles, Target, X } from 'lucide-react';
 import { QuizSoundToggle } from '../quiz/QuizSoundToggle';
 import { useQuizSounds } from '../quiz/useQuizSounds';
+import { randomizeQuestionOptions } from '../quiz/optionRandomization';
 import type { KanjiExample, KanjiItem, KanjiLevel, KanjiRecordReview } from './useKanji';
 import './kanji-quiz.css';
 
@@ -659,7 +660,7 @@ export function KanjiQuiz({
         .map((candidate) => buildVocabularyQuestion(candidate, pool))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     } else if (mode === 'mixed') {
       const vocabPool = vocabularyCandidates(items);
@@ -668,7 +669,7 @@ export function KanjiQuiz({
         .map((item) => buildMixedQuestion(item, items, vocabPool))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     } else if (mode === 'typing') {
       const deck = shuffle(eligible as KanjiItem[]).slice(0, targetSize);
@@ -676,7 +677,7 @@ export function KanjiQuiz({
         .map((item) => buildTypingQuestion(item))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     } else {
       const deck = shuffle(eligible as KanjiItem[]).slice(0, targetSize);
@@ -684,7 +685,7 @@ export function KanjiQuiz({
         .map((item) => buildFixedQuestion(mode, item, items))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     }
 

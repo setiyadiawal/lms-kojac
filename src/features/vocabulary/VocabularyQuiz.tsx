@@ -3,6 +3,7 @@ import { Check, ChevronRight, RotateCcw, Sparkles, Speaker, Target, X } from 'lu
 import { speakJapanese } from '../hiragana/useHiragana';
 import { QuizSoundToggle } from '../quiz/QuizSoundToggle';
 import { useQuizSounds } from '../quiz/useQuizSounds';
+import { randomizeQuestionOptions } from '../quiz/optionRandomization';
 import type { VocabularyRecordReview, VocabularyWithProgress } from './useVocabulary';
 import './vocabulary-quiz.css';
 
@@ -517,14 +518,14 @@ export function VocabularyQuiz({ items, onRecordReview }: { items: VocabularyWit
         .map((item) => buildMixedQuestion(item, items, audioSupported))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     } else {
       const nextQuestions = deck
         .map((item) => buildQuestionForMode(mode, item, items))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
-      setQuestions(nextQuestions);
+      setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     }
 

@@ -11,6 +11,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { speakJapanese } from '../hiragana/useHiragana';
+import { randomizeBalancedOptionSets } from '../quiz/optionRandomization';
 import type { GrammarChapter, GrammarPattern } from './grammarData';
 import type { GrammarExercise, GrammarExerciseType } from './grammarExercises';
 import './grammar-exercise.css';
@@ -73,7 +74,7 @@ function shuffleCopy<T>(items: T[]) {
 }
 
 function prepareExercise(exercise: GrammarExercise): RuntimeExercise {
-  const runtimeOptions = exercise.options ? shuffleCopy(exercise.options) : undefined;
+  const runtimeOptions = exercise.options ? [...exercise.options] : undefined;
   let runtimeTokens = exercise.tokens
     ? shuffleCopy(exercise.tokens.map((text, index) => ({ id: `${exercise.id}-token-${index}`, text })))
     : undefined;
@@ -87,6 +88,24 @@ function prepareExercise(exercise: GrammarExercise): RuntimeExercise {
   }
 
   return { ...exercise, runtimeOptions, runtimeTokens };
+}
+
+function runtimeCorrectOption(exercise: RuntimeExercise) {
+  const validAnswers = new Set([exercise.answer, ...(exercise.acceptableAnswers ?? [])].map(normalizeAnswer));
+  return exercise.runtimeOptions?.find((option) => validAnswers.has(normalizeAnswer(option))) ?? exercise.answer;
+}
+
+function prepareRuntimeExercises(exercises: GrammarExercise[]) {
+  const prepared = exercises.map(prepareExercise);
+  return randomizeBalancedOptionSets(
+    prepared,
+    (exercise) => exercise.runtimeOptions ?? [],
+    runtimeCorrectOption,
+    (exercise, runtimeOptions) => ({
+      ...exercise,
+      runtimeOptions: exercise.runtimeOptions ? runtimeOptions : undefined,
+    }),
+  );
 }
 
 function afterNextPaint(callback: () => void) {
@@ -346,7 +365,7 @@ export function GrammarExerciseEngine({
   onBackToPracticeMenu,
   onOpenNextPattern,
 }: GrammarExerciseEngineProps) {
-  const runtimeExercises = useMemo(() => exercises.map(prepareExercise), [exercises]);
+  const [runtimeExercises, setRuntimeExercises] = useState(() => prepareRuntimeExercises(exercises));
   const sessionPatterns = useMemo(
     () => scope === 'chapter' ? chapterPatterns : pattern ? [pattern] : [],
     [scope, chapterPatterns, pattern],
@@ -362,6 +381,7 @@ export function GrammarExerciseEngine({
   const [hintOpen, setHintOpen] = useState<ToggleMap>({});
   const [readingOpen, setReadingOpen] = useState<ToggleMap>({});
   const [retrying, setRetrying] = useState<ToggleMap>({});
+  const [retryOptionOverrides, setRetryOptionOverrides] = useState<Record<string, string[]>>({});
   const [finished, setFinished] = useState(false);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
   const [resultReviewOpen, setResultReviewOpen] = useState(false);
@@ -372,7 +392,10 @@ export function GrammarExerciseEngine({
   const summaryRef = useRef<HTMLDivElement>(null);
   const resultReviewCardRef = useRef<HTMLElement>(null);
 
-  const exercise = runtimeExercises[currentIndex];
+  const baseExercise = runtimeExercises[currentIndex];
+  const exercise = baseExercise && retryOptionOverrides[baseExercise.id]
+    ? { ...baseExercise, runtimeOptions: retryOptionOverrides[baseExercise.id] }
+    : baseExercise;
   const exercisePattern = exercise ? patternById.get(exercise.patternId) ?? pattern : pattern;
   const record = exercise ? records[exercise.id] : undefined;
   const isRetrying = exercise ? Boolean(retrying[exercise.id]) : false;
@@ -554,6 +577,17 @@ export function GrammarExerciseEngine({
   };
 
   const startRetry = () => {
+    if (exercise.runtimeOptions?.length) {
+      const [retryExercise] = randomizeBalancedOptionSets(
+        [exercise],
+        (item) => item.runtimeOptions ?? [],
+        runtimeCorrectOption,
+        (item, runtimeOptions) => ({ ...item, runtimeOptions }),
+      );
+      if (retryExercise?.runtimeOptions) {
+        setRetryOptionOverrides((current) => ({ ...current, [exercise.id]: retryExercise.runtimeOptions! }));
+      }
+    }
     setRetrying((current) => ({ ...current, [exercise.id]: true }));
     setAnswerDrafts((current) => ({ ...current, [exercise.id]: '' }));
     setOrderDrafts((current) => ({ ...current, [exercise.id]: [] }));
@@ -577,6 +611,7 @@ export function GrammarExerciseEngine({
   };
 
   const restart = () => {
+    setRuntimeExercises(prepareRuntimeExercises(exercises));
     setCurrentIndex(0);
     setRecords({});
     setAnswerDrafts({});
@@ -584,6 +619,7 @@ export function GrammarExerciseEngine({
     setHintOpen({});
     setReadingOpen({});
     setRetrying({});
+    setRetryOptionOverrides({});
     setResultReviewOpen(false);
     setResultReviewIndex(0);
     setFinished(false);

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { QuizSoundToggle } from '../quiz/QuizSoundToggle';
 import { useQuizSounds } from '../quiz/useQuizSounds';
+import { randomizeBalancedOptionSets } from '../quiz/optionRandomization';
 import type { GrammarReviewRating } from './useGrammarProgress';
 import {
   GRAMMAR_CHAPTERS,
@@ -396,8 +397,16 @@ export function GrammarQuiz({
     if (!selectedExercises.length) return;
 
     resetSessionState();
+    const preparedQuestions = selectedExercises.map(prepareQuestion);
+    const randomizedQuestions = randomizeBalancedOptionSets(
+      preparedQuestions,
+      (question) => question.quizOptions,
+      (question) => question.quizOptions.find((option) => answersMatch(question, option)) ?? question.answer,
+      (question, quizOptions) => ({ ...question, quizOptions }),
+    );
+
     setConfig(nextConfig);
-    setQuestions(selectedExercises.map(prepareQuestion));
+    setQuestions(randomizedQuestions);
     window.requestAnimationFrame(() => scrollNearest(questionCardRef.current));
   }
 

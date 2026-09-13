@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { ListeningItem, ListeningQuestion, ListeningSegment } from './listeningData';
 import { getListeningTurnText } from './listeningData';
+import { randomizeQuestionOptions } from '../quiz/optionRandomization';
 import { useListeningSpeech, type ListeningSpeed } from './useListeningSpeech';
 import { LISTENING_MASTERY_THRESHOLD, type ListeningProgress } from './useListeningProgress';
 
@@ -150,6 +151,7 @@ export function ListeningEngine({
   const [savedSessionProgress, setSavedSessionProgress] = useState<ListeningProgress | null>(null);
   const [progressSaveState, setProgressSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [progressSaveError, setProgressSaveError] = useState<string | null>(null);
+  const [questions, setQuestions] = useState(() => randomizeQuestionOptions(listening.questions));
 
   const questionRef = useRef<HTMLElement | null>(null);
   const feedbackRef = useRef<HTMLDivElement | null>(null);
@@ -161,7 +163,6 @@ export function ListeningEngine({
   const completionSaveStartedRef = useRef(false);
   const completionSessionIdRef = useRef(createListeningSessionId());
 
-  const questions = listening.questions;
   const currentQuestion = questions[currentQuestionIndex];
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
   const answeredCount = Object.keys(answers).length;
@@ -298,6 +299,7 @@ export function ListeningEngine({
     setSavedSessionProgress(null);
     setProgressSaveState('idle');
     setProgressSaveError(null);
+    setQuestions(randomizeQuestionOptions(listening.questions));
     completionSaveStartedRef.current = false;
     completionSessionIdRef.current = createListeningSessionId();
     requestAnimationFrame(() => questionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
