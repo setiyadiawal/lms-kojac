@@ -187,18 +187,18 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "ですけど、"
         },
         {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
-        },
-        {
           "text": "言葉",
           "reading": "ことば"
         },
         {
           "text": "は"
+        },
+        {
+          "text": "分",
+          "reading": "わ"
+        },
+        {
+          "text": "かりません。"
         },
         {
           "text": "先生",
@@ -281,13 +281,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -306,7 +299,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -366,7 +366,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -387,21 +387,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -430,7 +416,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -688,13 +674,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -713,7 +692,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -773,7 +759,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -794,21 +780,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -837,7 +809,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -888,21 +860,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -923,7 +895,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -1024,13 +1003,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "いたりします。"
         },
         {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
-        },
-        {
           "text": "言葉",
           "reading": "ことば"
         },
@@ -1038,11 +1010,18 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -1318,21 +1297,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -1353,7 +1332,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -1953,14 +1939,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "てんき"
         },
         {
-          "text": "がいい"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
+          "text": "はいいです。"
         },
         {
           "text": "公園",
@@ -2240,14 +2219,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "ひ"
         },
         {
-          "text": "に"
+          "text": "は"
         },
         {
-          "text": "好",
-          "reading": "す"
+          "text": "好き",
+          "reading": "すき"
         },
         {
-          "text": "きなことをする"
+          "text": "なことをします。その"
         },
         {
           "text": "時間",
@@ -2299,13 +2278,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -2324,7 +2296,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -2384,7 +2363,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -2851,14 +2830,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "ひ"
         },
         {
-          "text": "に"
+          "text": "は"
         },
         {
-          "text": "好",
-          "reading": "す"
+          "text": "好き",
+          "reading": "すき"
         },
         {
-          "text": "きなことをする"
+          "text": "なことをします。その"
         },
         {
           "text": "時間",
@@ -2910,13 +2889,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -2935,7 +2907,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -2997,7 +2976,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -3018,21 +2997,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -3061,7 +3026,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -3110,21 +3075,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -3145,7 +3110,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -3551,13 +3523,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -3576,7 +3541,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -3636,7 +3608,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -3657,21 +3629,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -3700,7 +3658,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         }
       ],
       [
@@ -3751,21 +3709,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -3786,7 +3744,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -4112,21 +4077,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -4155,7 +4106,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -4204,21 +4155,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -4239,7 +4190,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -5673,13 +5631,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -5698,7 +5649,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -5758,7 +5716,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -5779,21 +5737,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -5822,7 +5766,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -5871,21 +5815,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -6259,13 +6203,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -6284,7 +6221,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -6344,7 +6288,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -6365,21 +6309,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -6408,7 +6338,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -6457,21 +6387,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -6494,7 +6424,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -7115,13 +7052,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -7140,7 +7070,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -7202,7 +7139,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -7223,21 +7160,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -7266,7 +7189,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -7315,21 +7238,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -7350,7 +7273,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -7586,11 +7516,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "わるまで"
         },
         {
-          "text": "帰",
-          "reading": "かえ"
+          "text": "会社",
+          "reading": "かいしゃ"
         },
         {
-          "text": "れません。"
+          "text": "にいます。"
         }
       ],
       [
@@ -7610,7 +7540,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -7631,21 +7561,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -7674,7 +7590,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -7723,21 +7639,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -7758,7 +7674,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -8053,7 +7976,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ]
     ],
     "translation": [
-      "Kalau musim semi tiba, cuaca menjadi hangat. Kalau musim dingin tiba, siang menjadi pendek. Tolong istirahat sampai sehat kembali. Saya tidak bisa pulang sampai pekerjaan selesai.",
+      "Kalau musim semi tiba, cuaca menjadi hangat. Kalau musim dingin tiba, siang menjadi pendek. Tolong istirahat sampai sehat kembali. Saya berada di kantor sampai pekerjaan selesai.",
       "Ada sedikit masalah di tengah kegiatan, tetapi kegiatan dilanjutkan sampai selesai. Dibanding pengalaman sebelumnya, kali ini penulis dapat bertindak sedikit lebih tenang. Pada akhirnya, kejadian hari itu dipikirkan kembali. Penulis berpendapat bahwa persiapan lebih awal membuat keadaan lebih tenang. Penting untuk tidak hanya melihat satu informasi, tetapi juga mempertimbangkan keseluruhan. Pada pagi hari, jadwal hari itu diperiksa di kantor. Pada pagi hari, dokumen diperiksa dan pekerjaan yang diperlukan dilanjutkan.",
       "Hal yang belum dipahami ditanyakan kepada senior atau rekan kerja. Pada sore hari, jadwal hari berikutnya juga diperiksa. Hal penting dicatat. Ada rencana pekerjaan berikutnya. Karena ada kendala tersebut, dilakukan langkah yang sesuai untuk mengatasinya. Penulis menyatakan keinginan yang berkaitan dengan topik bacaan. Setelah memastikan waktu, kegiatan utama dilakukan."
     ],
@@ -8158,14 +8081,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         "type": "inference",
         "prompt": "文章からわかることはどれですか。",
         "options": [
-          "仕事が終わるまで帰れません。",
+          "仕事が終わるまで会社にいます。",
           "日本へ行くとき、カメラを持って行きます。",
           "暇なとき、本を読みます。",
           "日本へ来たあとで、日本語の勉強を始めました。"
         ],
-        "correctAnswer": "仕事が終わるまで帰れません。",
-        "explanation": "Teks menyatakan informasi ini: Saya tidak bisa pulang sampai pekerjaan selesai.",
-        "evidence": "仕事が終わるまで帰れません。"
+        "correctAnswer": "仕事が終わるまで会社にいます。",
+        "explanation": "Teks menyatakan informasi ini: Saya berada di kantor sampai pekerjaan selesai.",
+        "evidence": "仕事が終わるまで会社にいます。"
       },
       {
         "id": "reading-ch23-02-reading-q5",
@@ -8257,11 +8180,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "わるまで"
         },
         {
-          "text": "帰",
-          "reading": "かえ"
+          "text": "会社",
+          "reading": "かいしゃ"
         },
         {
-          "text": "れません。"
+          "text": "にいます。"
         }
       ],
       [
@@ -8627,7 +8550,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ]
     ],
     "translation": [
-      "Setelah pekerjaan selesai, saya bertemu teman. Setelah pelajaran, saya bertanya kepada guru. Saya tidak bisa pulang sampai pekerjaan selesai.",
+      "Setelah pekerjaan selesai, saya bertemu teman. Setelah pelajaran, saya bertanya kepada guru. Saya berada di kantor sampai pekerjaan selesai.",
       "Saya belajar sampai pukul sepuluh malam. Setelah menonton film, saya makan.",
       "Pada pagi hari, jadwal hari itu diperiksa di kantor. Pada pagi hari, dokumen diperiksa dan pekerjaan yang diperlukan dilanjutkan. Hal yang belum dipahami ditanyakan kepada senior atau rekan kerja. Pada sore hari, jadwal hari berikutnya juga diperiksa. Hal penting dicatat. Ada rencana pekerjaan berikutnya.",
       "Karena ada kendala tersebut, dilakukan langkah yang sesuai untuk mengatasinya. Penulis menyatakan keinginan yang berkaitan dengan topik bacaan. Setelah memastikan waktu, kegiatan utama dilakukan. Penulis menghubungkan situasi sekarang dengan pengalaman sebelumnya. Walaupun ada kesulitan, penulis tetap melakukan langkah untuk mengatasinya."
@@ -8720,14 +8643,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "仕事が終わるまで帰れません。",
+          "仕事が終わるまで会社にいます。",
           "日本へ行くとき、カメラを持って行きます。",
           "暇なとき、本を読みます。",
           "日本へ来たあとで、日本語の勉強を始めました。"
         ],
-        "correctAnswer": "仕事が終わるまで帰れません。",
-        "explanation": "Teks menyatakan informasi ini: Saya tidak bisa pulang sampai pekerjaan selesai.",
-        "evidence": "仕事が終わるまで帰れません。"
+        "correctAnswer": "仕事が終わるまで会社にいます。",
+        "explanation": "Teks menyatakan informasi ini: Saya berada di kantor sampai pekerjaan selesai.",
+        "evidence": "仕事が終わるまで会社にいます。"
       },
       {
         "id": "reading-ch23-03-reading-q4",
@@ -8891,11 +8814,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "わるまで"
         },
         {
-          "text": "帰",
-          "reading": "かえ"
+          "text": "会社",
+          "reading": "かいしゃ"
         },
         {
-          "text": "れません。"
+          "text": "にいます。"
         },
         {
           "text": "夜十時",
@@ -9196,13 +9119,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -9221,7 +9137,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -9281,7 +9204,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -9301,7 +9224,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
     ],
     "translation": [
       "Saya menunggu di sini sampai hujan berhenti. Saya membaca buku sampai teman datang. Saat senggang, saya membaca buku.",
-      "Saat mengalami kesulitan, saya berkonsultasi dengan guru. Saya tidak bisa pulang sampai pekerjaan selesai. Saya belajar sampai pukul sepuluh malam.",
+      "Saat mengalami kesulitan, saya berkonsultasi dengan guru. Saya berada di kantor sampai pekerjaan selesai. Saya belajar sampai pukul sepuluh malam.",
       "Ada rencana belajar berikutnya yang akan dilakukan. Karena ada kendala tersebut, dilakukan langkah yang sesuai untuk mengatasinya. Penulis menyatakan keinginan yang berkaitan dengan topik bacaan. Setelah memastikan waktu, kegiatan utama dilakukan. Penulis menghubungkan situasi sekarang dengan pengalaman sebelumnya. Walaupun ada kesulitan, penulis tetap melakukan langkah untuk mengatasinya.",
       "Penulis menyampaikan pendapat berdasarkan pengalaman tersebut. Saat pergi ke tempat tersebut, penulis memeriksa waktu dan tempat. Beberapa informasi diperiksa dari pagi hingga siang. Keputusan dibuat dengan membandingkan dua rencana, bukan hanya satu. Pertama hal yang diperlukan diperiksa, lalu kegiatan dilakukan secara berurutan. Ada sedikit masalah di tengah kegiatan, tetapi kegiatan dilanjutkan sampai selesai."
     ],
@@ -9560,11 +9483,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "わるまで"
         },
         {
-          "text": "帰",
-          "reading": "かえ"
+          "text": "会社",
+          "reading": "かいしゃ"
         },
         {
-          "text": "れません。"
+          "text": "にいます。"
         },
         {
           "text": "友達",
@@ -9746,13 +9669,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -9771,7 +9687,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -9831,7 +9754,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -9854,21 +9777,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -9897,7 +9806,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -9946,21 +9855,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -9981,7 +9890,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -10113,7 +10029,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
     ],
     "translation": [
       "Saat mengalami kesulitan, saya berkonsultasi dengan guru. Saat pergi ke Jepang, saya membawa kamera. Saya belajar sampai pukul sepuluh malam. Tolong istirahat sampai sehat kembali.",
-      "Saya menunggu di sini sampai hujan berhenti. Saya tidak bisa pulang sampai pekerjaan selesai. Saya membaca buku sampai teman datang.",
+      "Saya menunggu di sini sampai hujan berhenti. Saya berada di kantor sampai pekerjaan selesai. Saya membaca buku sampai teman datang.",
       "Walaupun ada kesulitan, penulis tetap melakukan langkah untuk mengatasinya. Penulis menyampaikan pendapat berdasarkan pengalaman tersebut. Saat pergi ke tempat tersebut, penulis memeriksa waktu dan tempat. Beberapa informasi diperiksa dari pagi hingga siang. Keputusan dibuat dengan membandingkan dua rencana, bukan hanya satu. Pertama hal yang diperlukan diperiksa, lalu kegiatan dilakukan secara berurutan. Ada sedikit masalah di tengah kegiatan, tetapi kegiatan dilanjutkan sampai selesai.",
       "Dibanding pengalaman sebelumnya, kali ini penulis dapat bertindak sedikit lebih tenang. Pada akhirnya, kejadian hari itu dipikirkan kembali. Penulis berpendapat bahwa persiapan lebih awal membuat keadaan lebih tenang. Penting untuk tidak hanya melihat satu informasi, tetapi juga mempertimbangkan keseluruhan. Pada pagi hari waktu pelajaran diperiksa. Di kelas, siswa membaca bahasa Jepang dan mendengarkan penjelasan guru. Kosakata yang belum dipahami ditulis di buku catatan."
     ],
@@ -10353,13 +10269,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -10378,7 +10287,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -10438,7 +10354,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -10459,21 +10375,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -10502,7 +10404,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -10553,21 +10455,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -10588,7 +10490,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -10962,21 +10871,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -10997,7 +10906,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -12387,13 +12303,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -12412,7 +12321,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -12472,7 +12388,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -12493,21 +12409,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -12536,7 +12438,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -12921,13 +12823,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -12946,7 +12841,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -13006,7 +12908,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -13027,21 +12929,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -13070,7 +12958,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -13119,21 +13007,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -13154,7 +13042,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -13853,7 +13748,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -13910,13 +13805,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -13935,7 +13823,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -13995,7 +13890,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -14016,21 +13911,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -14059,7 +13940,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         }
       ]
     ],
@@ -14292,7 +14173,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -14347,13 +14228,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -14372,7 +14246,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -14432,7 +14313,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -14455,21 +14336,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -14498,7 +14365,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -14547,21 +14414,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -14582,7 +14449,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -14645,7 +14519,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
+          "text": "します。"
         }
       ]
     ],
@@ -14903,21 +14777,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -14946,7 +14806,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -14995,21 +14855,21 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -15030,7 +14890,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -15093,7 +14960,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
+          "text": "します。"
         }
       ],
       [
@@ -15952,7 +15819,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -16200,11 +16067,8 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "です。"
         },
         {
-          "text": "簡単",
-          "reading": "かんたん"
-        },
-        {
-          "text": "な"
+          "text": "簡単な",
+          "reading": "かんたんな"
         },
         {
           "text": "料理",
@@ -16214,11 +16078,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "なら、"
         },
         {
-          "text": "作",
-          "reading": "つく"
+          "text": "作ります",
+          "reading": "つくります"
         },
         {
-          "text": "れます。"
+          "text": "。"
         }
       ],
       [
@@ -16618,7 +16482,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -16673,13 +16537,6 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -16698,7 +16555,14 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -16758,7 +16622,7 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -16886,11 +16750,11 @@ export const READING_CHAPTERS21_25: ReadingItem[] = [
           "雨が降っても、行きます。",
           "忙しくても、毎日日本語を勉強します。",
           "高くても、このかばんを買いたいです。",
-          "簡単な料理なら、作れます。"
+          "簡単な料理なら、作ります。"
         ],
-        "correctAnswer": "簡単な料理なら、作れます。",
-        "explanation": "Teks menyatakan informasi ini: Kalau masakan sederhana, saya bisa membuatnya.",
-        "evidence": "簡単な料理なら、作れます。"
+        "correctAnswer": "簡単な料理なら、作ります。",
+        "explanation": "Teks menyatakan bahwa jika masakannya sederhana, penulis akan membuatnya.",
+        "evidence": "簡単な料理なら、作ります。"
       },
       {
         "id": "reading-ch25-05-reading-q5",

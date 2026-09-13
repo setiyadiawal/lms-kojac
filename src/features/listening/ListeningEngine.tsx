@@ -17,6 +17,7 @@ import {
 import type { ListeningItem, ListeningQuestion, ListeningSegment } from './listeningData';
 import { getListeningTurnText } from './listeningData';
 import { useListeningSpeech, type ListeningSpeed } from './useListeningSpeech';
+import { LISTENING_MASTERY_THRESHOLD, type ListeningProgress } from './useListeningProgress';
 
 const QUESTION_TYPE_LABEL: Record<ListeningQuestion['type'], string> = {
   direct: 'Informasi Langsung',
@@ -34,6 +35,17 @@ type ReviewMode = 'all' | 'wrong';
 type ListeningEngineProps = {
   listening: ListeningItem;
   chapterItems: ListeningItem[];
+  progress?: ListeningProgress | null;
+  isProgressPersistenceAvailable?: boolean;
+  onRecordCompletion?: (
+    listeningId: string,
+    chapterNumber: number,
+    score: number,
+    correct: number,
+    wrong: number,
+    totalQuestions: number,
+    sessionId: string,
+  ) => Promise<ListeningProgress | null>;
   onBackToList: () => void;
   onOpenListening: (id: string) => void;
 };
@@ -43,6 +55,11 @@ function renderSegments(segments: ListeningSegment[], showFurigana: boolean) {
     if (!showFurigana || !segment.reading) return <span key={`${segment.text}-${index}`}>{segment.text}</span>;
     return <ruby key={`${segment.text}-${index}`}>{segment.text}<rt>{segment.reading}</rt></ruby>;
   });
+}
+
+function createListeningSessionId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return `listening-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 function needsScroll(element: HTMLElement) {
@@ -112,7 +129,15 @@ function AudioPlayer({ listening, compact = false }: { listening: ListeningItem;
   </section>;
 }
 
-export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenListening }: ListeningEngineProps) {
+export function ListeningEngine({
+  listening,
+  chapterItems,
+  progress,
+  isProgressPersistenceAvailable,
+  onRecordCompletion,
+  onBackToList,
+  onOpenListening,
+}: ListeningEngineProps) {
   const [phase, setPhase] = useState<Phase>('listening');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -122,6 +147,9 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
   const [showFurigana, setShowFurigana] = useState(false);
   const [showTranslation, setShowTranslation] = useState(false);
   const [exitDialogOpen, setExitDialogOpen] = useState(false);
+  const [savedSessionProgress, setSavedSessionProgress] = useState<ListeningProgress | null>(null);
+  const [progressSaveState, setProgressSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [progressSaveError, setProgressSaveError] = useState<string | null>(null);
 
   const questionRef = useRef<HTMLElement | null>(null);
   const feedbackRef = useRef<HTMLDivElement | null>(null);
@@ -130,6 +158,8 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
   const exitCancelRef = useRef<HTMLButtonElement | null>(null);
   const exitTriggerRef = useRef<HTMLElement | null>(null);
   const pendingNavigationRef = useRef<(() => void) | null>(null);
+  const completionSaveStartedRef = useRef(false);
+  const completionSessionIdRef = useRef(createListeningSessionId());
 
   const questions = listening.questions;
   const currentQuestion = questions[currentQuestionIndex];
@@ -137,6 +167,9 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
   const answeredCount = Object.keys(answers).length;
   const correctCount = questions.reduce((count, question) => count + (answers[question.id] === question.correctAnswer ? 1 : 0), 0);
   const score = questions.length ? Math.round((correctCount / questions.length) * 100) : 0;
+  const resultAttemptCount = savedSessionProgress?.attempt_count ?? ((progress?.attempt_count ?? 0) + 1);
+  const resultBestScore = savedSessionProgress?.best_score ?? Math.max(progress?.best_score ?? 0, score);
+  const resultMastered = resultBestScore >= LISTENING_MASTERY_THRESHOLD;
   const position = chapterItems.findIndex((item) => item.id === listening.id);
   const previous = position > 0 ? chapterItems[position - 1] : undefined;
   const next = position >= 0 && position < chapterItems.length - 1 ? chapterItems[position + 1] : undefined;
@@ -208,9 +241,42 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
     }));
   }
 
+  function persistCompletion() {
+    if (!isProgressPersistenceAvailable || !onRecordCompletion || completionSaveStartedRef.current) return;
+
+    const recordCompletion = onRecordCompletion;
+    const sessionId = completionSessionIdRef.current;
+    completionSaveStartedRef.current = true;
+    setProgressSaveState('saving');
+    setProgressSaveError(null);
+
+    void recordCompletion(
+      listening.id,
+      listening.chapter,
+      score,
+      correctCount,
+      questions.length - correctCount,
+      questions.length,
+      sessionId,
+    ).then((savedProgress) => {
+      if (completionSessionIdRef.current !== sessionId) return;
+      if (!savedProgress) {
+        setProgressSaveState('idle');
+        return;
+      }
+      setSavedSessionProgress(savedProgress);
+      setProgressSaveState('saved');
+    }).catch((saveError) => {
+      if (completionSessionIdRef.current !== sessionId) return;
+      setProgressSaveError(saveError instanceof Error ? saveError.message : 'Progress Listening belum berhasil disimpan.');
+      setProgressSaveState('error');
+    });
+  }
+
   function goNext() {
     if (!currentAnswer) return;
     if (currentQuestionIndex === questions.length - 1) {
+      persistCompletion();
       setPhase('result');
       requestAnimationFrame(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
       return;
@@ -228,6 +294,11 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
     setShowTranscript(false);
     setShowFurigana(false);
     setShowTranslation(false);
+    setSavedSessionProgress(null);
+    setProgressSaveState('idle');
+    setProgressSaveError(null);
+    completionSaveStartedRef.current = false;
+    completionSessionIdRef.current = createListeningSessionId();
     requestAnimationFrame(() => questionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
@@ -330,6 +401,11 @@ export function ListeningEngine({ listening, chapterItems, onBackToList, onOpenL
         <h2>{listening.title}</h2>
         <p>Bab {listening.chapter} · {listening.jlptLevel} · {listening.difficulty}</p>
         <div className="listening-result-score"><span>Pemahaman</span><strong>{score}%</strong></div>
+        {isProgressPersistenceAvailable && <p role="status">
+          {progressSaveState === 'saving' && 'Menyimpan progress…'}
+          {progressSaveState === 'saved' && `Progress tersimpan · Percobaan ${resultAttemptCount} · Best ${resultBestScore}%${resultMastered ? ' · Dikuasai' : ''}`}
+          {progressSaveState === 'error' && `Hasil tetap aman. Progress belum tersimpan${progressSaveError ? `: ${progressSaveError}` : '.'}`}
+        </p>}
         <div className="listening-result-stats">
           <div><strong>{questions.length}</strong><span>Pertanyaan</span></div>
           <div><strong>{correctCount}</strong><span>Benar</span></div>

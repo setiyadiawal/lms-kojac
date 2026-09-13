@@ -215,11 +215,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -230,24 +230,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
-        },
-        {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
+          "text": "きます。"
         },
         {
           "text": "言葉",
@@ -257,11 +250,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -353,7 +353,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-01-q4",
         "type": "sequence",
-        "prompt": "学校へ行ったあと、次に書いてあることは何ですか。",
+        "prompt": "学校の次は何ですか。",
         "options": [
           "日本語を勉強します。",
           "家へ帰ります。",
@@ -582,7 +582,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "ごご"
         },
         {
-          "text": "では、することが"
+          "text": "は"
         },
         {
           "text": "少し",
@@ -637,14 +637,14 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-02-q1",
         "type": "author_intent",
-        "prompt": "アユさんはこのメッセージで何をしていますか。",
+        "prompt": "アユさんのメッセージは何ですか。",
         "options": [
-          "ミラさんを誘っています。",
-          "先生に質問しています。",
-          "学校を紹介しています。",
-          "旅行を断っています。"
+          "ミラさんへの誘いです。",
+          "先生への質問です。",
+          "学校の紹介です。",
+          "旅行の断りです。"
         ],
-        "correctAnswer": "ミラさんを誘っています。",
+        "correctAnswer": "ミラさんへの誘いです。",
         "explanation": "Bentuk ～ませんか dan ～ましょう dipakai beberapa kali untuk mengajak Mira melakukan kegiatan bersama."
       },
       {
@@ -692,7 +692,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-02-q5",
         "type": "sequence",
-        "prompt": "駅で会ったあと、何をする予定ですか。",
+        "prompt": "駅で会います。次は何をしますか。",
         "options": [
           "レストランで昼ご飯を食べます。",
           "家へ帰ります。",
@@ -796,24 +796,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       ],
       [
         {
-          "text": "時間",
-          "reading": "じかん"
-        },
-        {
-          "text": "がある"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
-        },
-        {
-          "text": "簡単な",
-          "reading": "かんたんな"
-        },
-        {
           "text": "料理",
           "reading": "りょうり"
         },
@@ -821,25 +803,25 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "も"
         },
         {
-          "text": "作",
-          "reading": "つく"
+          "text": "作ります",
+          "reading": "つくります"
         },
         {
-          "text": "ります。"
+          "text": "。"
         },
         {
           "text": "食事",
           "reading": "しょくじ"
         },
         {
-          "text": "のあと、"
+          "text": "の"
         },
         {
           "text": "次",
           "reading": "つぎ"
         },
         {
-          "text": "の"
+          "text": "に、"
         },
         {
           "text": "予定",
@@ -881,35 +863,21 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "つく"
         },
         {
-          "text": "ります。"
+          "text": "ります。メモを"
+        },
+        {
+          "text": "作ります",
+          "reading": "つくります"
+        },
+        {
+          "text": "。"
         },
         {
           "text": "買い物",
           "reading": "かいもの"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "前",
-          "reading": "まえ"
-        },
-        {
-          "text": "に"
-        },
-        {
-          "text": "メモ",
-          "reading": "メモ"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "作",
-          "reading": "つく"
-        },
-        {
-          "text": "ります。"
+          "text": "をします。"
         },
         {
           "text": "店",
@@ -926,8 +894,8 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "と"
         },
         {
-          "text": "必要な物",
-          "reading": "ひつようなもの"
+          "text": "物",
+          "reading": "もの"
         },
         {
           "text": "を"
@@ -1023,7 +991,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "options": [
           "野菜と牛乳です。",
           "本と水です。",
-          "コーヒーだけです。",
+          "コーヒーです。",
           "晩ご飯です。"
         ],
         "correctAnswer": "野菜と牛乳です。",
@@ -1033,7 +1001,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-03-q3",
         "type": "sequence",
-        "prompt": "買い物のあと、何をしますか。",
+        "prompt": "買い物の次は何をしますか。",
         "options": [
           "カフェでコーヒーを飲みます。",
           "家で寝ます。",
@@ -1193,24 +1161,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "をします。"
         },
         {
-          "text": "時間",
-          "reading": "じかん"
-        },
-        {
-          "text": "がある"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
-        },
-        {
-          "text": "簡単な",
-          "reading": "かんたんな"
-        },
-        {
           "text": "料理",
           "reading": "りょうり"
         },
@@ -1218,25 +1168,25 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "も"
         },
         {
-          "text": "作",
-          "reading": "つく"
+          "text": "作ります",
+          "reading": "つくります"
         },
         {
-          "text": "ります。"
+          "text": "。"
         },
         {
           "text": "食事",
           "reading": "しょくじ"
         },
         {
-          "text": "のあと、"
+          "text": "の"
         },
         {
           "text": "次",
           "reading": "つぎ"
         },
         {
-          "text": "の"
+          "text": "に、"
         },
         {
           "text": "予定",
@@ -1278,35 +1228,21 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "つく"
         },
         {
-          "text": "ります。"
+          "text": "ります。メモを"
+        },
+        {
+          "text": "作ります",
+          "reading": "つくります"
+        },
+        {
+          "text": "。"
         },
         {
           "text": "買い物",
           "reading": "かいもの"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "前",
-          "reading": "まえ"
-        },
-        {
-          "text": "に"
-        },
-        {
-          "text": "メモ",
-          "reading": "メモ"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "作",
-          "reading": "つく"
-        },
-        {
-          "text": "ります。"
+          "text": "をします。"
         },
         {
           "text": "店",
@@ -1323,8 +1259,8 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "と"
         },
         {
-          "text": "必要な物",
-          "reading": "ひつようなもの"
+          "text": "物",
+          "reading": "もの"
         },
         {
           "text": "を"
@@ -1379,21 +1315,21 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-04-q1",
         "type": "author_intent",
-        "prompt": "ミラさんは何をしたいですか。",
+        "prompt": "ミラさんは何をしますか。",
         "options": [
-          "アユさんと昼ご飯を食べたいです。",
-          "一人で帰りたいです。",
-          "学校で勉強したいです。",
-          "スーパーで買い物したいです。"
+          "アユさんと昼ご飯を食べます。",
+          "一人で帰ります。",
+          "学校で勉強します。",
+          "スーパーで買い物します。"
         ],
-        "correctAnswer": "アユさんと昼ご飯を食べたいです。",
+        "correctAnswer": "アユさんと昼ご飯を食べます。",
         "explanation": "Mira menggunakan ～ませんか untuk mengajak Ayu makan siang bersama.",
         "evidence": "いっしょに昼ご飯を食べませんか。"
       },
       {
         "id": "reading-ch6-04-q2",
         "type": "who_when_where",
-        "prompt": "二人はどこで食べますか。",
+        "prompt": "ミラさんとアユさんはどこで食べますか。",
         "options": [
           "駅の前のレストランです。",
           "学校です。",
@@ -1423,12 +1359,12 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "context",
         "prompt": "「食べませんか」の役割は何ですか。",
         "options": [
-          "食事に誘っています。",
-          "食事を禁止しています。",
-          "食事の場所を聞いています。",
-          "食事が終わったと言っています。"
+          "食事の誘いです。",
+          "食事の禁止です。",
+          "食事の場所の質問です。",
+          "食事の終わりです。"
         ],
-        "correctAnswer": "食事に誘っています。",
+        "correctAnswer": "食事の誘いです。",
         "explanation": "～ませんか dalam konteks ini merupakan ajakan sopan."
       },
       {
@@ -1438,8 +1374,8 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "options": [
           "アユさんは誘いに賛成しました。",
           "アユさんは行きません。",
-          "二人は家で食べます。",
-          "時間はまだ決まっていません。"
+          "ミラさんとアユさんは家で食べます。",
+          "時間は未定です。"
         ],
         "correctAnswer": "アユさんは誘いに賛成しました。",
         "explanation": "Ayu menjawab 「いいですね」 lalu menyepakati tempat dan waktu."
@@ -1575,11 +1511,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -1590,24 +1526,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
-        },
-        {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
+          "text": "きます。"
         },
         {
           "text": "言葉",
@@ -1617,11 +1546,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -1752,14 +1688,14 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       {
         "id": "reading-ch6-05-q4",
         "type": "context",
-        "prompt": "先生は学生に何を提案していますか。",
+        "prompt": "先生の提案は何ですか。",
         "options": [
-          "日本語で話すことです。",
-          "英語で話すことです。",
-          "家へ帰ることです。",
-          "本を買うことです。"
+          "日本語で話します。",
+          "英語で話します。",
+          "家へ帰ります。",
+          "本を買います。"
         ],
-        "correctAnswer": "日本語で話すことです。",
+        "correctAnswer": "日本語で話します。",
         "explanation": "Pola ～ましょう menunjukkan ajakan guru untuk berbicara dalam bahasa Jepang.",
         "evidence": "日本語で話しましょう。"
       },
@@ -1768,13 +1704,13 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "inference",
         "prompt": "正しいものはどれですか。",
         "options": [
-          "休みのあとで会話を練習します。",
-          "会話の前にクラスが終わります。",
+          "10時15分から会話を練習します。",
+          "10時15分から休みます。",
           "クラスは10時に終わります。",
           "9時から休みます。"
         ],
-        "correctAnswer": "休みのあとで会話を練習します。",
-        "explanation": "Dari jadwal, setelah istirahat 10.00–10.15, siswa berlatih percakapan."
+        "correctAnswer": "10時15分から会話を練習します。",
+        "explanation": "Jadwal menunjukkan latihan percakapan dimulai pukul 10.15."
       }
     ]
   },
@@ -1818,11 +1754,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "で"
         },
         {
-          "text": "話",
-          "reading": "はな"
+          "text": "話しましょう",
+          "reading": "はなしましょう"
         },
         {
-          "text": "してください。"
+          "text": "。"
         },
         {
           "text": "子",
@@ -1880,24 +1816,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "をします。"
         },
         {
-          "text": "時間",
-          "reading": "じかん"
-        },
-        {
-          "text": "がある"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
-        },
-        {
-          "text": "簡単な",
-          "reading": "かんたんな"
-        },
-        {
           "text": "料理",
           "reading": "りょうり"
         },
@@ -1905,25 +1823,25 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "も"
         },
         {
-          "text": "作",
-          "reading": "つく"
+          "text": "作ります",
+          "reading": "つくります"
         },
         {
-          "text": "ります。"
+          "text": "。"
         },
         {
           "text": "食事",
           "reading": "しょくじ"
         },
         {
-          "text": "のあと、"
+          "text": "の"
         },
         {
           "text": "次",
           "reading": "つぎ"
         },
         {
-          "text": "の"
+          "text": "に、"
         },
         {
           "text": "予定",
@@ -1965,35 +1883,21 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "つく"
         },
         {
-          "text": "ります。"
+          "text": "ります。メモを"
+        },
+        {
+          "text": "作ります",
+          "reading": "つくります"
+        },
+        {
+          "text": "。"
         },
         {
           "text": "買い物",
           "reading": "かいもの"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "前",
-          "reading": "まえ"
-        },
-        {
-          "text": "に"
-        },
-        {
-          "text": "メモ",
-          "reading": "メモ"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "作",
-          "reading": "つく"
-        },
-        {
-          "text": "ります。"
+          "text": "をします。"
         },
         {
           "text": "店",
@@ -2010,8 +1914,8 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "と"
         },
         {
-          "text": "必要な物",
-          "reading": "ひつようなもの"
+          "text": "物",
+          "reading": "もの"
         },
         {
           "text": "を"
@@ -2083,11 +1987,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "母に花をあげます。",
           "母から手紙をもらいました。",
           "会社から資料をもらいました。",
-          "日本語で話してください。"
+          "日本語で話しましょう。"
         ],
-        "correctAnswer": "日本語で話してください。",
-        "explanation": "Teks menyatakan informasi ini: Tolong berbicara dalam bahasa Jepang.",
-        "evidence": "日本語で話してください。"
+        "correctAnswer": "日本語で話しましょう。",
+        "explanation": "Teks berisi ajakan untuk berbicara dalam bahasa Jepang.",
+        "evidence": "日本語で話しましょう。"
       },
       {
         "id": "reading-ch7-01-reading-q3",
@@ -2401,7 +2305,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
           "箸でご飯を食べます。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "母に花をあげます。"
         ],
@@ -2414,7 +2318,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "context",
         "prompt": "本文で正しいものはどれですか。",
         "options": [
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "私は友達に本をあげました。",
           "箸でご飯を食べます。"
@@ -2431,7 +2335,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "子どもにプレゼントをあげます。",
           "母から手紙をもらいました。",
           "箸でご飯を食べます。",
-          "日本語で話してください。"
+          "日本語で話しましょう。"
         ],
         "correctAnswer": "母から手紙をもらいました。",
         "explanation": "Teks menyatakan informasi ini: Saya menerima surat dari ibu.",
@@ -2444,7 +2348,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "options": [
           "会社から資料をもらいました。",
           "箸でご飯を食べます。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。"
         ],
         "correctAnswer": "会社から資料をもらいました。",
@@ -2618,14 +2522,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "必要",
-          "reading": "ひつよう"
-        },
-        {
-          "text": "な"
+          "text": "ます。"
         },
         {
           "text": "仕事",
@@ -2646,7 +2543,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "わ"
         },
         {
-          "text": "からないことは"
+          "text": "かりません。"
         },
         {
           "text": "先輩",
@@ -2744,7 +2641,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "子どもにプレゼントをあげます。",
           "私は友達に本をあげました。",
           "先生に辞書をもらいました。",
-          "日本語で話してください。"
+          "日本語で話しましょう。"
         ],
         "correctAnswer": "先生に辞書をもらいました。",
         "explanation": "Teks menyatakan informasi ini: Saya menerima kamus dari guru.",
@@ -2757,7 +2654,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "options": [
           "私は友達に本をあげました。",
           "会社から資料をもらいました。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。"
         ],
         "correctAnswer": "会社から資料をもらいました。",
@@ -2770,7 +2667,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
           "ペンで名前を書きます。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "私は友達に本をあげました。"
         ],
@@ -2783,7 +2680,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "inference",
         "prompt": "文章からわかることはどれですか。",
         "options": [
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "私は友達に本をあげました。",
           "スマートフォンで写真を撮ります。"
@@ -2981,14 +2878,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "必要",
-          "reading": "ひつよう"
-        },
-        {
-          "text": "な"
+          "text": "ます。"
         },
         {
           "text": "仕事",
@@ -3009,7 +2899,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "わ"
         },
         {
-          "text": "からないことは"
+          "text": "かりません。"
         },
         {
           "text": "先輩",
@@ -3058,21 +2948,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "かくにん"
         },
         {
-          "text": "します。"
-        },
-        {
-          "text": "大切な",
-          "reading": "たいせつな"
-        },
-        {
-          "text": "ことは"
-        },
-        {
-          "text": "メモ",
-          "reading": "メモ"
-        },
-        {
-          "text": "に"
+          "text": "します。メモに"
         },
         {
           "text": "残",
@@ -3128,7 +3004,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "子どもにプレゼントをあげます。",
           "田中さんはもう帰りました。",
           "箸でご飯を食べます。",
-          "日本語で話してください。"
+          "日本語で話しましょう。"
         ],
         "correctAnswer": "田中さんはもう帰りました。",
         "explanation": "Teks menyatakan informasi ini: Tanaka sudah pulang.",
@@ -3141,7 +3017,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "options": [
           "その映画はもう見ました。",
           "箸でご飯を食べます。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。"
         ],
         "correctAnswer": "その映画はもう見ました。",
@@ -3154,7 +3030,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
           "箸でご飯を食べます。",
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "会社から資料をもらいました。"
         ],
@@ -3167,7 +3043,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "inference",
         "prompt": "文章からわかることはどれですか。",
         "options": [
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "先生に辞書をもらいました。",
           "箸でご飯を食べます。"
@@ -3210,14 +3086,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "で"
         },
         {
-          "text": "話",
-          "reading": "はな"
+          "text": "話しましょう",
+          "reading": "はなしましょう"
         },
         {
-          "text": "してください。"
-        },
-        {
-          "text": "はさみで"
+          "text": "。はさみで"
         },
         {
           "text": "紙",
@@ -3340,10 +3213,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "かくにん"
         },
         {
-          "text": "します。"
-        },
-        {
-          "text": "これからも"
+          "text": "します。これからも"
         },
         {
           "text": "毎日",
@@ -3403,11 +3273,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -3418,24 +3288,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
-        },
-        {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
+          "text": "きます。"
         },
         {
           "text": "言葉",
@@ -3445,11 +3308,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -3541,14 +3411,14 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "日本語で話してください。",
+          "日本語で話しましょう。",
           "子どもにプレゼントをあげます。",
           "私は友達に本をあげました。",
           "母に花をあげます。"
         ],
-        "correctAnswer": "日本語で話してください。",
-        "explanation": "Teks menyatakan informasi ini: Tolong berbicara dalam bahasa Jepang.",
-        "evidence": "日本語で話してください。"
+        "correctAnswer": "日本語で話しましょう。",
+        "explanation": "Teks berisi ajakan untuk berbicara dalam bahasa Jepang.",
+        "evidence": "日本語で話しましょう。"
       },
       {
         "id": "reading-ch7-05-reading-q2",
@@ -3832,14 +3702,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "く"
+          "text": "ます。"
         },
         {
           "text": "場所",
@@ -4051,14 +3914,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "く"
+          "text": "ます。"
         },
         {
           "text": "場所",
@@ -4730,18 +4586,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
       ],
       [
         {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
-        },
-        {
           "text": "場所",
           "reading": "ばしょ"
         },
         {
           "text": "は"
+        },
+        {
+          "text": "分",
+          "reading": "わ"
+        },
+        {
+          "text": "かりません。"
         },
         {
           "text": "駅員",
@@ -4829,7 +4685,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "しゅっぱつ"
         },
         {
-          "text": "する"
+          "text": "の"
         },
         {
           "text": "時間",
@@ -5179,14 +5035,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "てんき"
         },
         {
-          "text": "がいい"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
+          "text": "はいいです。"
         },
         {
           "text": "公園",
@@ -5901,24 +5750,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "をします。"
         },
         {
-          "text": "時間",
-          "reading": "じかん"
-        },
-        {
-          "text": "がある"
-        },
-        {
-          "text": "日",
-          "reading": "ひ"
-        },
-        {
-          "text": "は"
-        },
-        {
-          "text": "簡単な",
-          "reading": "かんたんな"
-        },
-        {
           "text": "料理",
           "reading": "りょうり"
         },
@@ -5926,25 +5757,25 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "も"
         },
         {
-          "text": "作",
-          "reading": "つく"
+          "text": "作ります",
+          "reading": "つくります"
         },
         {
-          "text": "ります。"
+          "text": "。"
         },
         {
           "text": "食事",
           "reading": "しょくじ"
         },
         {
-          "text": "のあと、"
+          "text": "の"
         },
         {
           "text": "次",
           "reading": "つぎ"
         },
         {
-          "text": "の"
+          "text": "に、"
         },
         {
           "text": "予定",
@@ -6021,35 +5852,21 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "ます。"
+          "text": "ます。メモを"
+        },
+        {
+          "text": "作ります",
+          "reading": "つくります"
+        },
+        {
+          "text": "。"
         },
         {
           "text": "買い物",
           "reading": "かいもの"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "前",
-          "reading": "まえ"
-        },
-        {
-          "text": "に"
-        },
-        {
-          "text": "メモ",
-          "reading": "メモ"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "作",
-          "reading": "つく"
-        },
-        {
-          "text": "ります。"
+          "text": "をします。"
         }
       ]
     ],
@@ -6270,7 +6087,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "いえ"
         },
         {
-          "text": "にいます。"
+          "text": "です。"
         }
       ],
       [
@@ -6317,11 +6134,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -6332,24 +6149,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
-        },
-        {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
+          "text": "きます。"
         },
         {
           "text": "言葉",
@@ -6359,11 +6169,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -6512,7 +6329,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "いえ"
         },
         {
-          "text": "にいます。"
+          "text": "です。"
         },
         {
           "text": "日本語",
@@ -6639,20 +6456,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "ですから、"
         },
         {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
-        },
-        {
-          "text": "言葉",
-          "reading": "ことば"
-        },
-        {
-          "text": "は"
-        },
-        {
           "text": "先生",
           "reading": "せんせい"
         },
@@ -6709,11 +6512,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -6724,17 +6527,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
+          "text": "きます。"
         }
       ]
     ],
@@ -6783,11 +6586,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "私は音楽が好きです。",
           "妹は猫が好きです。",
           "この漢字の意味がわかります。",
-          "今日は雨ですから、家にいます。"
+          "今日は雨ですから、家です。"
         ],
-        "correctAnswer": "今日は雨ですから、家にいます。",
+        "correctAnswer": "今日は雨ですから、家です。",
         "explanation": "Teks menyatakan informasi ini: Karena hari ini hujan, saya berada di rumah.",
-        "evidence": "今日は雨ですから、家にいます。"
+        "evidence": "今日は雨ですから、家です。"
       },
       {
         "id": "reading-ch9-04-reading-q2",
@@ -7027,14 +6830,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "く"
+          "text": "ます。"
         },
         {
           "text": "場所",
@@ -7789,20 +7585,6 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "ですから、"
         },
         {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
-        },
-        {
-          "text": "言葉",
-          "reading": "ことば"
-        },
-        {
-          "text": "は"
-        },
-        {
           "text": "先生",
           "reading": "せんせい"
         },
@@ -7859,11 +7641,11 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "を"
         },
         {
-          "text": "読",
-          "reading": "よ"
+          "text": "読みます",
+          "reading": "よみます"
         },
         {
-          "text": "んだり、"
+          "text": "。"
         },
         {
           "text": "先生",
@@ -7874,24 +7656,17 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
         },
         {
           "text": "話",
-          "reading": "はな"
+          "reading": "はなし"
         },
         {
-          "text": "を"
+          "text": "も"
         },
         {
           "text": "聞",
           "reading": "き"
         },
         {
-          "text": "いたりします。"
-        },
-        {
-          "text": "分",
-          "reading": "わ"
-        },
-        {
-          "text": "からない"
+          "text": "きます。"
         },
         {
           "text": "言葉",
@@ -7901,11 +7676,18 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "ノート",
-          "reading": "ノート"
+          "text": "分",
+          "reading": "わ"
         },
         {
-          "text": "に"
+          "text": "かりません。その"
+        },
+        {
+          "text": "言葉",
+          "reading": "ことば"
+        },
+        {
+          "text": "はノートに"
         },
         {
           "text": "書",
@@ -8213,14 +7995,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "つぎ"
         },
         {
-          "text": "に"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "くときも"
+          "text": "も"
         },
         {
           "text": "案内",
@@ -8497,14 +8272,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "み"
         },
         {
-          "text": "て、"
-        },
-        {
-          "text": "必要",
-          "reading": "ひつよう"
-        },
-        {
-          "text": "な"
+          "text": "ます。"
         },
         {
           "text": "仕事",
@@ -8525,7 +8293,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "わ"
         },
         {
-          "text": "からないことは"
+          "text": "かりません。"
         },
         {
           "text": "先輩",
@@ -9127,14 +8895,7 @@ export const READING_CHAPTERS06_10: ReadingItem[] = [
           "reading": "つぎ"
         },
         {
-          "text": "に"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "くときも"
+          "text": "も"
         },
         {
           "text": "案内",

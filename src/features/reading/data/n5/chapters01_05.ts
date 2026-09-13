@@ -433,13 +433,6 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "reading": "かぞく"
         },
         {
-          "text": "は5"
-        },
-        {
-          "text": "人",
-          "reading": "にん"
-        },
-        {
           "text": "です。"
         }
       ]
@@ -544,7 +537,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "アニさんと弟は学生です。",
           "お父さんは先生です。",
           "お母さんは会社員です。",
-          "家族は3人です。"
+          "弟は先生です。"
         ],
         "correctAnswer": "アニさんと弟は学生です。",
         "explanation": "Ani adalah mahasiswa dan adiknya juga pelajar, sehingga keduanya termasuk siswa/pelajar."
@@ -732,14 +725,14 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
       {
         "id": "reading-ch1-04-q5",
         "type": "author_intent",
-        "prompt": "この会話は何についてですか。",
+        "prompt": "会話のテーマは何ですか。",
         "options": [
-          "新しい学生の自己紹介です。",
-          "旅行の予定です。",
+          "学生の自己紹介です。",
+          "旅行の話です。",
           "家族の仕事です。",
           "レストランの注文です。"
         ],
-        "correctAnswer": "新しい学生の自己紹介です。",
+        "correctAnswer": "学生の自己紹介です。",
         "explanation": "Percakapan berisi perkenalan Rina dan informasi dasar tentang dirinya."
       }
     ]
@@ -795,14 +788,21 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "reading": "じん"
         },
         {
-          "text": "です。3"
+          "text": "です。アユさんはKOJACの"
         },
         {
-          "text": "人",
-          "reading": "にん"
+          "text": "学生",
+          "reading": "がくせい"
         },
         {
-          "text": "はKOJACの"
+          "text": "です。リナさんもKOJACの"
+        },
+        {
+          "text": "学生",
+          "reading": "がくせい"
+        },
+        {
+          "text": "です。ミラさんもKOJACの"
         },
         {
           "text": "学生",
@@ -884,7 +884,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "アユさんとリナさんです。",
           "ミラさんと田中先生です。",
           "アユさんとミラさんです。",
-          "田中先生だけです。"
+          "田中先生です。"
         ],
         "correctAnswer": "アユさんとリナさんです。",
         "explanation": "Ayu dan Rina sama-sama disebut sebagai orang Indonesia.",
@@ -907,28 +907,28 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
       {
         "id": "reading-ch1-05-q4",
         "type": "context",
-        "prompt": "KOJACの学生は何人ですか。",
+        "prompt": "KOJACの学生はだれですか。",
         "options": [
-          "3人です。",
-          "1人です。",
-          "2人です。",
-          "4人です。"
+          "アユさん、リナさん、ミラさんです。",
+          "アユさんです。",
+          "アユさん、リナさんです。",
+          "アユさん、リナさん、ミラさん、田中先生です。"
         ],
-        "correctAnswer": "3人です。",
+        "correctAnswer": "アユさん、リナさん、ミラさんです。",
         "explanation": "Ayu, Rina, dan Mira adalah tiga siswa KOJAC.",
-        "evidence": "3人はKOJACの学生です。"
+        "evidence": "アユさんはKOJACの学生です。リナさんもKOJACの学生です。ミラさんもKOJACの学生です。"
       },
       {
         "id": "reading-ch1-05-q5",
         "type": "inference",
         "prompt": "正しいものはどれですか。",
         "options": [
-          "田中先生だけ日本人です。",
+          "田中先生は日本人です。",
           "学生は全員日本人です。",
           "ミラさんは先生です。",
           "リナさんはマレーシア人です。"
         ],
-        "correctAnswer": "田中先生だけ日本人です。",
+        "correctAnswer": "田中先生は日本人です。",
         "explanation": "Di antara orang yang disebut, hanya Tanaka-sensei yang dinyatakan sebagai orang Jepang."
       }
     ]
@@ -945,9 +945,6 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
     "passage": [
       [
         {
-          "text": "これは"
-        },
-        {
           "text": "何",
           "reading": "なん"
         },
@@ -955,31 +952,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "ですか。"
         },
         {
-          "text": "あの"
-        },
-        {
-          "text": "人",
-          "reading": "ひと"
-        },
-        {
-          "text": "は"
-        },
-        {
           "text": "誰",
           "reading": "だれ"
         },
         {
-          "text": "ですか。"
-        },
-        {
-          "text": "あの"
-        },
-        {
-          "text": "方",
-          "reading": "かた"
-        },
-        {
-          "text": "はどなたですか。"
+          "text": "ですか。どなたですか。"
         },
         {
           "text": "田中",
@@ -1030,27 +1007,27 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
           "ミラさんもKOJACの学生です。",
-          "これは何ですか。",
+          "何ですか。",
           "KOJACの学生です。",
           "田中先生は日本人です。"
         ],
-        "correctAnswer": "これは何ですか。",
-        "explanation": "Teks menyatakan informasi ini: Ini apa?",
-        "evidence": "これは何ですか。"
+        "correctAnswer": "何ですか。",
+        "explanation": "Teks menampilkan pertanyaan 「何ですか。」.",
+        "evidence": "何ですか。"
       },
       {
         "id": "reading-ch1-06-question-words-q2",
         "type": "context",
         "prompt": "本文で正しいものはどれですか。",
         "options": [
-          "あの人は誰ですか。",
+          "誰ですか。",
           "KOJACの学生です。",
           "田中先生は日本人です。",
           "ミラさんもKOJACの学生です。"
         ],
-        "correctAnswer": "あの人は誰ですか。",
-        "explanation": "Teks menyatakan informasi ini: Siapa orang itu?",
-        "evidence": "あの人は誰ですか。"
+        "correctAnswer": "誰ですか。",
+        "explanation": "Teks menampilkan pertanyaan 「誰ですか。」.",
+        "evidence": "誰ですか。"
       },
       {
         "id": "reading-ch1-06-question-words-q3",
@@ -1060,11 +1037,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "KOJACの学生です。",
           "田中先生は日本人です。",
           "ミラさんもKOJACの学生です。",
-          "あの方はどなたですか。"
+          "どなたですか。"
         ],
-        "correctAnswer": "あの方はどなたですか。",
-        "explanation": "Teks menyatakan informasi ini: Siapakah orang itu?",
-        "evidence": "あの方はどなたですか。"
+        "correctAnswer": "どなたですか。",
+        "explanation": "Teks menampilkan pertanyaan 「どなたですか。」.",
+        "evidence": "どなたですか。"
       },
       {
         "id": "reading-ch1-06-question-words-q4",
@@ -3076,6 +3053,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "きます。"
         },
         {
+          "text": "昼ご飯",
+          "reading": "ひるごはん"
+        },
+        {
+          "text": "は"
+        },
+        {
           "text": "十二時",
           "reading": "じゅうにじ"
         },
@@ -3083,39 +3067,32 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "に"
         },
         {
-          "text": "昼",
-          "reading": "ひる"
+          "text": "食べます",
+          "reading": "たべます"
         },
         {
-          "text": "ご"
+          "text": "。"
         },
         {
-          "text": "飯",
-          "reading": "はん"
+          "text": "日本語",
+          "reading": "にほんご"
         },
         {
-          "text": "を"
-        },
-        {
-          "text": "食",
-          "reading": "た"
-        },
-        {
-          "text": "べます。"
-        },
-        {
-          "text": "毎日日本語",
-          "reading": "まいにちにほんご"
-        },
-        {
-          "text": "を"
+          "text": "の"
         },
         {
           "text": "勉強",
           "reading": "べんきょう"
         },
         {
-          "text": "します。"
+          "text": "は"
+        },
+        {
+          "text": "毎日",
+          "reading": "まいにち"
+        },
+        {
+          "text": "です。"
         },
         {
           "text": "朝六時",
@@ -3173,9 +3150,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "今日は働きません。",
-          "日曜日は学校へ行きません。",
+          "日曜日は休みです。",
           "毎朝七時に起きます。"
         ],
         "correctAnswer": "毎朝七時に起きます。",
@@ -3188,27 +3165,27 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "今日は働きません。",
-          "日曜日は学校へ行きません。",
-          "十二時に昼ご飯を食べます。",
-          "今晩テレビを見ます。"
+          "日曜日は休みです。",
+          "昼ご飯は十二時に食べます。",
+          "テレビは今晩見ます。"
         ],
-        "correctAnswer": "十二時に昼ご飯を食べます。",
+        "correctAnswer": "昼ご飯は十二時に食べます。",
         "explanation": "Teks menyatakan informasi ini: Saya makan siang pukul dua belas.",
-        "evidence": "十二時に昼ご飯を食べます。"
+        "evidence": "昼ご飯は十二時に食べます。"
       },
       {
         "id": "reading-ch4-01-reading-q3",
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "日曜日は学校へ行きません。",
-          "毎日日本語を勉強します。",
-          "今晩テレビを見ます。",
+          "日曜日は休みです。",
+          "日本語の勉強は毎日です。",
+          "テレビは今晩見ます。",
           "今日は働きません。"
         ],
-        "correctAnswer": "毎日日本語を勉強します。",
+        "correctAnswer": "日本語の勉強は毎日です。",
         "explanation": "Teks menyatakan informasi ini: Saya belajar bahasa Jepang setiap hari.",
-        "evidence": "毎日日本語を勉強します。"
+        "evidence": "日本語の勉強は毎日です。"
       },
       {
         "id": "reading-ch4-01-reading-q4",
@@ -3216,9 +3193,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "今日は働きません。",
-          "日曜日は学校へ行きません。"
+          "日曜日は休みです。"
         ],
         "correctAnswer": "朝六時に起きます。",
         "explanation": "Teks menyatakan informasi ini: Saya bangun pukul enam pagi.",
@@ -3251,25 +3228,29 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
     "passage": [
       [
         {
-          "text": "毎日日本語",
-          "reading": "まいにちにほんご"
+          "text": "日本語",
+          "reading": "にほんご"
         },
         {
-          "text": "を"
+          "text": "の"
         },
         {
           "text": "勉強",
           "reading": "べんきょう"
         },
         {
-          "text": "します。"
+          "text": "は"
+        },
+        {
+          "text": "毎日",
+          "reading": "まいにち"
+        },
+        {
+          "text": "です。テレビは"
         },
         {
           "text": "今晩",
           "reading": "こんばん"
-        },
-        {
-          "text": "テレビを"
         },
         {
           "text": "見",
@@ -3300,18 +3281,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "学校",
-          "reading": "がっこう"
+          "text": "休み",
+          "reading": "やすみ"
         },
         {
-          "text": "へ"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "きません。"
+          "text": "です。"
         }
       ]
     ],
@@ -3355,14 +3329,14 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。",
-          "毎日日本語を勉強します。",
+          "日本語の勉強は毎日です。",
           "毎朝七時に起きます。"
         ],
-        "correctAnswer": "毎日日本語を勉強します。",
+        "correctAnswer": "日本語の勉強は毎日です。",
         "explanation": "Teks menyatakan informasi ini: Saya belajar bahasa Jepang setiap hari.",
-        "evidence": "毎日日本語を勉強します。"
+        "evidence": "日本語の勉強は毎日です。"
       },
       {
         "id": "reading-ch4-02-reading-q2",
@@ -3370,13 +3344,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。"
+          "昼ご飯は十二時に食べます。"
         ],
-        "correctAnswer": "今晩テレビを見ます。",
+        "correctAnswer": "テレビは今晩見ます。",
         "explanation": "Teks menyatakan informasi ini: Malam ini saya akan menonton televisi.",
-        "evidence": "今晩テレビを見ます。"
+        "evidence": "テレビは今晩見ます。"
       },
       {
         "id": "reading-ch4-02-reading-q3",
@@ -3385,7 +3359,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "options": [
           "今日は働きません。",
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。"
         ],
         "correctAnswer": "今日は働きません。",
@@ -3398,13 +3372,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。",
-          "日曜日は学校へ行きません。"
+          "日曜日は休みです。"
         ],
-        "correctAnswer": "日曜日は学校へ行きません。",
-        "explanation": "Teks menyatakan informasi ini: Hari Minggu saya tidak pergi ke sekolah.",
-        "evidence": "日曜日は学校へ行きません。"
+        "correctAnswer": "日曜日は休みです。",
+        "explanation": "Teks menyatakan bahwa hari Minggu adalah hari libur.",
+        "evidence": "日曜日は休みです。"
       },
       {
         "id": "reading-ch4-02-reading-q5",
@@ -3440,25 +3414,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "は"
         },
         {
-          "text": "学校",
-          "reading": "がっこう"
+          "text": "休み",
+          "reading": "やすみ"
         },
         {
-          "text": "へ"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "きません。"
-        },
-        {
-          "text": "私",
-          "reading": "わたし"
-        },
-        {
-          "text": "はたばこを"
+          "text": "です。たばこは"
         },
         {
           "text": "吸",
@@ -3468,6 +3428,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "いません。"
         },
         {
+          "text": "昼ご飯",
+          "reading": "ひるごはん"
+        },
+        {
+          "text": "は"
+        },
+        {
           "text": "十二時",
           "reading": "じゅうにじ"
         },
@@ -3475,25 +3442,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "に"
         },
         {
-          "text": "昼",
-          "reading": "ひる"
+          "text": "食べます",
+          "reading": "たべます"
         },
         {
-          "text": "ご"
-        },
-        {
-          "text": "飯",
-          "reading": "はん"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "食",
-          "reading": "た"
-        },
-        {
-          "text": "べます。"
+          "text": "。"
         }
       ],
       [
@@ -3516,21 +3469,14 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "reading": "くじはん"
         },
         {
-          "text": "に"
+          "text": "は"
         },
         {
           "text": "会社",
           "reading": "かいしゃ"
         },
         {
-          "text": "へ"
-        },
-        {
-          "text": "行",
-          "reading": "い"
-        },
-        {
-          "text": "きます。"
+          "text": "です。"
         }
       ]
     ],
@@ -3575,42 +3521,42 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "今晩テレビを見ます。",
-          "日曜日は学校へ行きません。",
-          "毎日日本語を勉強します。",
+          "テレビは今晩見ます。",
+          "日曜日は休みです。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。"
         ],
-        "correctAnswer": "日曜日は学校へ行きません。",
-        "explanation": "Teks menyatakan informasi ini: Hari Minggu saya tidak pergi ke sekolah.",
-        "evidence": "日曜日は学校へ行きません。"
+        "correctAnswer": "日曜日は休みです。",
+        "explanation": "Teks menyatakan bahwa hari Minggu adalah hari libur.",
+        "evidence": "日曜日は休みです。"
       },
       {
         "id": "reading-ch4-03-reading-q2",
         "type": "context",
         "prompt": "本文で正しいものはどれですか。",
         "options": [
-          "私はたばこを吸いません。",
-          "毎日日本語を勉強します。",
+          "たばこは吸いません。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。",
-          "今晩テレビを見ます。"
+          "テレビは今晩見ます。"
         ],
-        "correctAnswer": "私はたばこを吸いません。",
+        "correctAnswer": "たばこは吸いません。",
         "explanation": "Teks menyatakan informasi ini: Saya tidak merokok.",
-        "evidence": "私はたばこを吸いません。"
+        "evidence": "たばこは吸いません。"
       },
       {
         "id": "reading-ch4-03-reading-q3",
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "毎日日本語を勉強します。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
-          "十二時に昼ご飯を食べます。"
+          "テレビは今晩見ます。",
+          "昼ご飯は十二時に食べます。"
         ],
-        "correctAnswer": "十二時に昼ご飯を食べます。",
+        "correctAnswer": "昼ご飯は十二時に食べます。",
         "explanation": "Teks menyatakan informasi ini: Saya makan siang pukul dua belas.",
-        "evidence": "十二時に昼ご飯を食べます。"
+        "evidence": "昼ご飯は十二時に食べます。"
       },
       {
         "id": "reading-ch4-03-reading-q4",
@@ -3618,9 +3564,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "毎朝七時に起きます。",
-          "毎日日本語を勉強します。"
+          "日本語の勉強は毎日です。"
         ],
         "correctAnswer": "毎朝七時に起きます。",
         "explanation": "Teks menyatakan informasi ini: Saya bangun pukul tujuh setiap pagi.",
@@ -3653,11 +3599,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
     "passage": [
       [
         {
-          "text": "昨日日本語",
-          "reading": "きのうにほんご"
+          "text": "昨日",
+          "reading": "きのう"
         },
         {
-          "text": "を"
+          "text": "、"
         },
         {
           "text": "勉強",
@@ -3667,39 +3613,53 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "しました。"
         },
         {
-          "text": "昨日本",
-          "reading": "きのうほん"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "買",
-          "reading": "か"
-        },
-        {
-          "text": "いました。"
-        },
-        {
-          "text": "月曜日",
-          "reading": "げつようび"
-        },
-        {
-          "text": "に"
-        },
-        {
           "text": "日本語",
           "reading": "にほんご"
         },
         {
-          "text": "を"
+          "text": "の"
         },
         {
           "text": "勉強",
           "reading": "べんきょう"
         },
         {
-          "text": "します。"
+          "text": "です。"
+        },
+        {
+          "text": "本",
+          "reading": "ほん"
+        },
+        {
+          "text": "は"
+        },
+        {
+          "text": "昨日買",
+          "reading": "きのうか"
+        },
+        {
+          "text": "いました。"
+        },
+        {
+          "text": "日本語",
+          "reading": "にほんご"
+        },
+        {
+          "text": "の"
+        },
+        {
+          "text": "勉強",
+          "reading": "べんきょう"
+        },
+        {
+          "text": "は"
+        },
+        {
+          "text": "月曜日",
+          "reading": "げつようび"
+        },
+        {
+          "text": "です。"
         }
       ],
       [
@@ -3708,35 +3668,39 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "reading": "さんがつ"
         },
         {
-          "text": "に"
+          "text": "は"
         },
         {
           "text": "日本",
           "reading": "にほん"
         },
         {
-          "text": "へ"
+          "text": "旅行",
+          "reading": "りょこう"
         },
         {
-          "text": "行",
-          "reading": "い"
+          "text": "です。"
         },
         {
-          "text": "きます。"
+          "text": "日本語",
+          "reading": "にほんご"
         },
         {
-          "text": "毎日日本語",
-          "reading": "まいにちにほんご"
-        },
-        {
-          "text": "を"
+          "text": "の"
         },
         {
           "text": "勉強",
           "reading": "べんきょう"
         },
         {
-          "text": "します。"
+          "text": "は"
+        },
+        {
+          "text": "毎日",
+          "reading": "まいにち"
+        },
+        {
+          "text": "です。"
         }
       ]
     ],
@@ -3782,14 +3746,14 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "昨日日本語を勉強しました。",
+          "昨日、勉強しました。日本語の勉強です。",
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。"
         ],
-        "correctAnswer": "昨日日本語を勉強しました。",
+        "correctAnswer": "昨日、勉強しました。日本語の勉強です。",
         "explanation": "Teks menyatakan informasi ini: Kemarin saya belajar bahasa Jepang.",
-        "evidence": "昨日日本語を勉強しました。"
+        "evidence": "昨日、勉強しました。日本語の勉強です。"
       },
       {
         "id": "reading-ch4-04-reading-q2",
@@ -3797,27 +3761,27 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。",
-          "昨日本を買いました。"
+          "本は昨日買いました。"
         ],
-        "correctAnswer": "昨日本を買いました。",
+        "correctAnswer": "本は昨日買いました。",
         "explanation": "Teks menyatakan informasi ini: Kemarin saya membeli buku.",
-        "evidence": "昨日本を買いました。"
+        "evidence": "本は昨日買いました。"
       },
       {
         "id": "reading-ch4-04-reading-q3",
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "十二時に昼ご飯を食べます。",
+          "昼ご飯は十二時に食べます。",
           "朝六時に起きます。",
-          "月曜日に日本語を勉強します。",
+          "日本語の勉強は月曜日です。",
           "毎朝七時に起きます。"
         ],
-        "correctAnswer": "月曜日に日本語を勉強します。",
+        "correctAnswer": "日本語の勉強は月曜日です。",
         "explanation": "Teks menyatakan informasi ini: Saya belajar bahasa Jepang pada hari Senin.",
-        "evidence": "月曜日に日本語を勉強します。"
+        "evidence": "日本語の勉強は月曜日です。"
       },
       {
         "id": "reading-ch4-04-reading-q4",
@@ -3825,13 +3789,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "朝六時に起きます。",
-          "三月に日本へ行きます。",
+          "三月は日本旅行です。",
           "毎朝七時に起きます。",
-          "十二時に昼ご飯を食べます。"
+          "昼ご飯は十二時に食べます。"
         ],
-        "correctAnswer": "三月に日本へ行きます。",
-        "explanation": "Teks menyatakan informasi ini: Saya pergi ke Jepang pada bulan Maret.",
-        "evidence": "三月に日本へ行きます。"
+        "correctAnswer": "三月は日本旅行です。",
+        "explanation": "Teks menyatakan bahwa perjalanan ke Jepang adalah pada bulan Maret.",
+        "evidence": "三月は日本旅行です。"
       },
       {
         "id": "reading-ch4-04-reading-q5",
@@ -3888,31 +3852,35 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "しませんでした。"
         },
         {
-          "text": "先週京都",
-          "reading": "せんしゅうきょうと"
+          "text": "先週",
+          "reading": "せんしゅう"
         },
         {
-          "text": "へ"
+          "text": "、"
         },
         {
-          "text": "行",
-          "reading": "い"
+          "text": "京都",
+          "reading": "きょうと"
         },
         {
-          "text": "きました。"
+          "text": "旅行",
+          "reading": "りょこう"
+        },
+        {
+          "text": "しました。"
         }
       ],
       [
         {
-          "text": "昨日本",
-          "reading": "きのうほん"
+          "text": "本",
+          "reading": "ほん"
         },
         {
-          "text": "を"
+          "text": "は"
         },
         {
-          "text": "買",
-          "reading": "か"
+          "text": "昨日買",
+          "reading": "きのうか"
         },
         {
           "text": "いました。"
@@ -3932,6 +3900,13 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "きます。"
         },
         {
+          "text": "昼ご飯",
+          "reading": "ひるごはん"
+        },
+        {
+          "text": "は"
+        },
+        {
           "text": "十二時",
           "reading": "じゅうにじ"
         },
@@ -3939,25 +3914,11 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "text": "に"
         },
         {
-          "text": "昼",
-          "reading": "ひる"
+          "text": "食べます",
+          "reading": "たべます"
         },
         {
-          "text": "ご"
-        },
-        {
-          "text": "飯",
-          "reading": "はん"
-        },
-        {
-          "text": "を"
-        },
-        {
-          "text": "食",
-          "reading": "た"
-        },
-        {
-          "text": "べます。"
+          "text": "。"
         }
       ]
     ],
@@ -4003,9 +3964,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "毎日日本語を勉強します。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "先週は働きませんでした。"
         ],
         "correctAnswer": "先週は働きませんでした。",
@@ -4018,9 +3979,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "朝六時に起きます。",
-          "今晩テレビを見ます。",
+          "テレビは今晩見ます。",
           "日曜日は外出しませんでした。",
-          "毎日日本語を勉強します。"
+          "日本語の勉強は毎日です。"
         ],
         "correctAnswer": "日曜日は外出しませんでした。",
         "explanation": "Teks menyatakan informasi ini: Hari Minggu saya tidak keluar rumah.",
@@ -4031,28 +3992,28 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "今晩テレビを見ます。",
-          "先週京都へ行きました。",
-          "毎日日本語を勉強します。",
+          "テレビは今晩見ます。",
+          "先週、京都旅行しました。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。"
         ],
-        "correctAnswer": "先週京都へ行きました。",
+        "correctAnswer": "先週、京都旅行しました。",
         "explanation": "Teks menyatakan informasi ini: Minggu lalu saya pergi ke Kyoto.",
-        "evidence": "先週京都へ行きました。"
+        "evidence": "先週、京都旅行しました。"
       },
       {
         "id": "reading-ch4-05-reading-q4",
         "type": "inference",
         "prompt": "文章からわかることはどれですか。",
         "options": [
-          "昨日本を買いました。",
-          "毎日日本語を勉強します。",
+          "本は昨日買いました。",
+          "日本語の勉強は毎日です。",
           "朝六時に起きます。",
-          "今晩テレビを見ます。"
+          "テレビは今晩見ます。"
         ],
-        "correctAnswer": "昨日本を買いました。",
+        "correctAnswer": "本は昨日買いました。",
         "explanation": "Teks menyatakan informasi ini: Kemarin saya membeli buku.",
-        "evidence": "昨日本を買いました。"
+        "evidence": "本は昨日買いました。"
       },
       {
         "id": "reading-ch4-05-reading-q5",
@@ -4189,7 +4150,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
           "妹と買い物へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "学校へ行きます。",
           "家族と旅行します。"
         ],
@@ -4202,7 +4163,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "context",
         "prompt": "本文で正しいものはどれですか。",
         "options": [
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "週末大阪へ行きます。",
           "家族と旅行します。",
           "妹と買い物へ行きます。"
@@ -4219,7 +4180,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "バスで学校へ行きます。",
           "家族と旅行します。",
           "妹と買い物へ行きます。",
-          "友達と映画を見ます。"
+          "映画は友達と見ます。"
         ],
         "correctAnswer": "バスで学校へ行きます。",
         "explanation": "Teks menyatakan informasi ini: Saya pergi ke sekolah dengan bus.",
@@ -4232,7 +4193,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "options": [
           "家族と旅行します。",
           "妹と買い物へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "電車で会社へ行きます。"
         ],
         "correctAnswer": "電車で会社へ行きます。",
@@ -4387,9 +4348,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "バスで学校へ行きます。",
-          "学校へ行きます。",
+          "バスで会社へ行きます。",
           "週末大阪へ行きます。"
         ],
         "correctAnswer": "バスで学校へ行きます。",
@@ -4402,9 +4363,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "電車で会社へ行きます。",
-          "学校へ行きます。",
+          "電車で学校へ行きます。",
           "週末大阪へ行きます。",
-          "友達と映画を見ます。"
+          "映画は友達と見ます。"
         ],
         "correctAnswer": "電車で会社へ行きます。",
         "explanation": "Teks menyatakan informasi ini: Saya pergi ke kantor dengan kereta.",
@@ -4415,9 +4376,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "学校へ行きます。",
+          "バスで会社へ行きます。",
           "週末大阪へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "家族と旅行します。"
         ],
         "correctAnswer": "家族と旅行します。",
@@ -4430,9 +4391,9 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "週末大阪へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "妹と買い物へ行きます。",
-          "学校へ行きます。"
+          "電車で学校へ行きます。"
         ],
         "correctAnswer": "妹と買い物へ行きます。",
         "explanation": "Teks menyatakan informasi ini: Saya pergi berbelanja bersama adik perempuan.",
@@ -4465,18 +4426,18 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
     "passage": [
       [
         {
+          "text": "映画",
+          "reading": "えいが"
+        },
+        {
+          "text": "は"
+        },
+        {
           "text": "友達",
           "reading": "ともだち"
         },
         {
           "text": "と"
-        },
-        {
-          "text": "映画",
-          "reading": "えいが"
-        },
-        {
-          "text": "を"
         },
         {
           "text": "見",
@@ -4588,14 +4549,14 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "週末大阪へ行きます。",
           "バスで学校へ行きます。",
           "電車で会社へ行きます。"
         ],
-        "correctAnswer": "友達と映画を見ます。",
+        "correctAnswer": "映画は友達と見ます。",
         "explanation": "Teks menyatakan informasi ini: Saya menonton film bersama teman.",
-        "evidence": "友達と映画を見ます。"
+        "evidence": "映画は友達と見ます。"
       },
       {
         "id": "reading-ch5-03-reading-q2",
@@ -5052,7 +5013,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "先生と話しました。",
           "週末大阪へ行きます。",
           "バスで学校へ行きます。"
@@ -5069,7 +5030,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
           "先生と話しました。",
           "学校へ行きます。",
           "バスで学校へ行きます。",
-          "友達と映画を見ます。"
+          "映画は友達と見ます。"
         ],
         "correctAnswer": "学校へ行きます。",
         "explanation": "Teks menyatakan informasi ini: Saya pergi ke sekolah.",
@@ -5082,7 +5043,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "options": [
           "家族と旅行します。",
           "バスで学校へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "先生と話しました。"
         ],
         "correctAnswer": "家族と旅行します。",
@@ -5095,7 +5056,7 @@ export const READING_CHAPTERS01_05: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "バスで学校へ行きます。",
-          "友達と映画を見ます。",
+          "映画は友達と見ます。",
           "先生と話しました。",
           "妹と買い物へ行きます。"
         ],

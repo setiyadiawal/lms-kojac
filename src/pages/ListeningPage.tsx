@@ -9,6 +9,7 @@ import {
   getListeningsByChapter,
   type ListeningKind,
 } from '../features/listening/listeningData';
+import { getListeningProgressStats, useListeningProgress } from '../features/listening/useListeningProgress';
 import '../features/listening/listening.css';
 
 const TYPE_LABEL: Record<ListeningKind, string> = {
@@ -32,6 +33,13 @@ const LISTENING_CHAPTERS = GRAMMAR_CHAPTERS
 export function ListeningPage() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [selectedListeningId, setSelectedListeningId] = useState<string | null>(null);
+  const {
+    progressByListeningId,
+    loading: progressLoading,
+    error: progressError,
+    isAuthenticated,
+    recordCompletion,
+  } = useListeningProgress();
 
   const selectedListening = selectedListeningId ? getListeningItem(selectedListeningId) : undefined;
   const chapterItems = selectedListening
@@ -45,6 +53,10 @@ export function ListeningPage() {
     acc[item.difficulty] = (acc[item.difficulty] ?? 0) + 1;
     return acc;
   }, {}), []);
+
+  const progressNotice = progressError
+    ? <p role="status">Progress Listening belum dapat dimuat. Latihan tetap dapat digunakan.</p>
+    : null;
 
   function openChapter(chapter: number) {
     setSelectedListeningId(null);
@@ -68,10 +80,14 @@ export function ListeningPage() {
         <button type="button" onClick={() => setSelectedListeningId(null)}>Bab {selectedListening.chapter}</button>
       </div>
 
+      {progressNotice}
       <ListeningEngine
         key={selectedListening.id}
         listening={selectedListening}
         chapterItems={chapterItems}
+        progress={progressByListeningId[selectedListening.id] ?? null}
+        isProgressPersistenceAvailable={isAuthenticated}
+        onRecordCompletion={recordCompletion}
         onBackToList={() => setSelectedListeningId(null)}
         onOpenListening={openListening}
       />
@@ -85,6 +101,8 @@ export function ListeningPage() {
       <span>Listening</span>
       {selectedChapter && <><span>/</span><span>Bab {selectedChapter}</span></>}
     </div>
+
+    {progressNotice}
 
     {!selectedChapter ? <>
       <header className="listening-page-header page-header">
@@ -117,6 +135,7 @@ export function ListeningPage() {
       <div className="listening-chapter-grid">
         {LISTENING_CHAPTERS.map((chapter) => {
           const difficulties = [...new Set(chapter.items.map((item) => item.difficulty))];
+          const progressStats = getListeningProgressStats(chapter.items, progressByListeningId);
           return <article className="listening-chapter-card" key={chapter.chapter}>
             <div className="listening-chapter-number"><span>BAB</span><strong>{chapter.chapter}</strong></div>
             <div className="listening-chapter-copy">
@@ -126,6 +145,7 @@ export function ListeningPage() {
               <div className="listening-chapter-meta">
                 <strong>{chapter.items.length} Listening</strong>
                 <span>{difficulties.join(' · ')}</span>
+                {isAuthenticated && !progressLoading && <span>{progressStats.completed}/{progressStats.total} selesai ({progressStats.progressPercent}%) · Mastery {progressStats.masteryPercent}%</span>}
               </div>
               <div className="listening-chapter-divider" aria-hidden="true" />
             </div>
@@ -147,7 +167,9 @@ export function ListeningPage() {
       </header>
 
       <div className="listening-list-grid">
-        {chapterItems.map((item) => <article className="listening-list-card" key={item.id}>
+        {chapterItems.map((item) => {
+          const itemProgress = progressByListeningId[item.id];
+          return <article className="listening-list-card" key={item.id}>
           <div className="listening-list-card-top">
             <div>
               <p>聴解 {item.order} · {TYPE_LABEL[item.type]}</p>
@@ -158,9 +180,11 @@ export function ListeningPage() {
           <div className="listening-list-meta">
             <span><Clock size={14} /> ±{item.estimatedDuration} detik</span>
             <span><ListChecks size={15} /> {item.questions.length} pertanyaan</span>
+            {isAuthenticated && !progressLoading && <span>{itemProgress?.completed ? `Selesai · Best ${itemProgress.best_score}%` : 'Belum selesai'}</span>}
           </div>
           <button type="button" onClick={() => openListening(item.id)}><Headphones size={16} /> Mulai Mendengarkan</button>
-        </article>)}
+        </article>;
+        })}
       </div>
     </>}
   </div>;

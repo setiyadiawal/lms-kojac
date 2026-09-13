@@ -305,7 +305,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -949,7 +949,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -3765,7 +3765,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -4376,7 +4376,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -4959,7 +4959,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -8002,7 +8002,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -8559,7 +8559,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -9106,7 +9106,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -12686,7 +12686,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -13291,7 +13291,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -13989,7 +13989,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -15367,7 +15367,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         ],
         "correctAnswer": "経験を使って、次はもっとよい方法を選ぼうとしている。",
         "explanation": "Bacaan menunjukkan bahwa penulis menggunakan pengalaman sebelumnya untuk memilih tindakan yang lebih baik.",
-        "evidence": "この経験をこれからの生活にも生かしていきたいです。"
+        "evidence": "前の経験と比べると、今回は少し落ち着いて行動できました。"
       }
     ]
   },
@@ -16858,7 +16858,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -17499,7 +17499,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -18119,7 +18119,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -19396,7 +19396,7 @@ export const READING_CHAPTERS31_35: ReadingItem[] = [
         ],
         "correctAnswer": "経験を使って、次はもっとよい方法を選ぼうとしている。",
         "explanation": "Bacaan menunjukkan bahwa penulis menggunakan pengalaman sebelumnya untuk memilih tindakan yang lebih baik.",
-        "evidence": "この経験をこれからの生活にも生かしていきたいです。"
+        "evidence": "前の経験と比べると、今回は少し落ち着いて行動できました。"
       }
     ]
   },

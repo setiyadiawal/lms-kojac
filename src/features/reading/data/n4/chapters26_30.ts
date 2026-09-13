@@ -163,7 +163,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -220,13 +220,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -245,7 +238,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -305,7 +305,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -326,21 +326,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -369,7 +355,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         }
       ],
       [
@@ -420,21 +406,21 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -455,7 +441,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -518,7 +511,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
+          "text": "します。"
         }
       ]
     ],
@@ -762,7 +755,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -783,21 +776,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -826,7 +805,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         },
         {
           "text": "最後",
@@ -875,21 +854,21 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -912,7 +891,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -975,10 +961,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "します。そのときの"
         },
         {
           "text": "状況",
@@ -1507,7 +1490,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -1570,10 +1560,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "します。そのときの"
         },
         {
           "text": "状況",
@@ -2489,7 +2476,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -2544,13 +2531,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -2569,7 +2549,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -3077,7 +3064,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -3132,13 +3119,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -3157,7 +3137,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -3217,7 +3204,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -3238,21 +3225,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "まえ"
         },
         {
-          "text": "の"
-        },
-        {
-          "text": "経験",
-          "reading": "けいけん"
-        },
-        {
-          "text": "と"
-        },
-        {
-          "text": "比べる",
-          "reading": "くらべる"
-        },
-        {
-          "text": "と、"
+          "text": "より、"
         },
         {
           "text": "今",
@@ -3281,7 +3254,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "こうどう"
         },
         {
-          "text": "できました。"
+          "text": "しました。"
         }
       ],
       [
@@ -3332,21 +3305,21 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "はやめ"
         },
         {
-          "text": "に"
+          "text": "の"
         },
         {
           "text": "準備",
           "reading": "じゅんび"
         },
         {
-          "text": "すると"
+          "text": "は"
         },
         {
           "text": "安心",
           "reading": "あんしん"
         },
         {
-          "text": "できると"
+          "text": "だと"
         },
         {
           "text": "思",
@@ -3367,7 +3340,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -3430,10 +3410,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "します。そのときの"
         },
         {
           "text": "状況",
@@ -3710,13 +3687,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -3735,7 +3705,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -3795,7 +3772,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -3945,7 +3922,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -4453,7 +4437,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -4516,10 +4507,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "できます。そのときの"
         },
         {
           "text": "状況",
@@ -6060,7 +6048,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -6117,13 +6105,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -6142,7 +6123,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -6202,7 +6190,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -6737,7 +6725,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -6792,13 +6780,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -6817,7 +6798,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -6879,7 +6867,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -7027,7 +7015,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -7421,10 +7416,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "でんわ"
         },
         {
-          "text": "をしないでください。"
-        },
-        {
-          "text": "この"
+          "text": "をしないでください。この"
         },
         {
           "text": "町",
@@ -7445,14 +7437,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "べんり"
         },
         {
-          "text": "だし、"
-        },
-        {
-          "text": "住",
-          "reading": "す"
-        },
-        {
-          "text": "みやすいです。"
+          "text": "です。"
         },
         {
           "text": "田中",
@@ -7691,7 +7676,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -7783,13 +7768,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -7808,7 +7786,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -7868,7 +7853,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -8031,13 +8016,13 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
           "今日は雨だし、寒いし、家にいます。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "この町は静かなので、好きです。",
           "明日は試験なので、今晩勉強します。"
         ],
-        "correctAnswer": "この町は静かだし、便利だし、住みやすいです。",
-        "explanation": "Teks menyatakan informasi ini: Kota ini tenang, praktis, dan nyaman ditinggali.",
-        "evidence": "この町は静かだし、便利だし、住みやすいです。"
+        "correctAnswer": "この町は静かだし、便利です。",
+        "explanation": "Teks menyatakan bahwa kota ini tenang dan praktis.",
+        "evidence": "この町は静かだし、便利です。"
       },
       {
         "id": "reading-ch28-01-reading-q4",
@@ -8101,14 +8086,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "べんり"
         },
         {
-          "text": "だし、"
-        },
-        {
-          "text": "住",
-          "reading": "す"
-        },
-        {
-          "text": "みやすいです。"
+          "text": "です。"
         },
         {
           "text": "田中",
@@ -8136,10 +8114,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうず"
         },
         {
-          "text": "です。"
-        },
-        {
-          "text": "この"
+          "text": "です。この"
         },
         {
           "text": "町",
@@ -8194,7 +8169,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -8277,13 +8252,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -8302,7 +8270,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -8364,7 +8339,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -8514,7 +8489,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -8577,10 +8559,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "できます。そのときの"
         },
         {
           "text": "状況",
@@ -8685,12 +8664,12 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "options": [
           "歩きながら電話をしないでください。",
           "今日は雨だし、寒いし、家にいます。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "音楽を聞きながら勉強します。"
         ],
-        "correctAnswer": "この町は静かだし、便利だし、住みやすいです。",
-        "explanation": "Teks menyatakan informasi ini: Kota ini tenang, praktis, dan nyaman ditinggali.",
-        "evidence": "この町は静かだし、便利だし、住みやすいです。"
+        "correctAnswer": "この町は静かだし、便利です。",
+        "explanation": "Teks menyatakan bahwa kota ini tenang dan praktis.",
+        "evidence": "この町は静かだし、便利です。"
       },
       {
         "id": "reading-ch28-02-reading-q2",
@@ -8898,7 +8877,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -9046,7 +9025,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -9318,7 +9304,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "type": "direct",
         "prompt": "文章の内容と合っているものはどれですか。",
         "options": [
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "明日は試験なので、今晩勉強します。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。"
@@ -9335,7 +9321,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "この町は静かなので、好きです。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。"
+          "この町は静かだし、便利です。"
         ],
         "correctAnswer": "この町は静かなので、好きです。",
         "explanation": "Teks menyatakan informasi ini: Karena kota ini tenang, saya menyukainya.",
@@ -9348,7 +9334,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "options": [
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "今日は雨だし、寒いし、家にいます。"
         ],
         "correctAnswer": "今日は雨だし、寒いし、家にいます。",
@@ -9361,7 +9347,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "prompt": "文章からわかることはどれですか。",
         "options": [
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "この店は安いし、おいしいし、よく来ます。",
           "音楽を聞きながら勉強します。"
         ],
@@ -10155,7 +10141,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "日本で働くために、日本語を勉強しています。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。"
+          "この町は静かだし、便利です。"
         ],
         "correctAnswer": "日本で働くために、日本語を勉強しています。",
         "explanation": "Teks menyatakan informasi ini: Saya belajar bahasa Jepang untuk bekerja di Jepang.",
@@ -10168,7 +10154,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "options": [
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "試験に合格するために、毎日勉強します。"
         ],
         "correctAnswer": "試験に合格するために、毎日勉強します。",
@@ -10181,7 +10167,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "働きながら日本語を勉強しています。",
           "音楽を聞きながら勉強します。"
         ],
@@ -10194,7 +10180,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "type": "inference",
         "prompt": "文章からわかることはどれですか。",
         "options": [
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "コーヒーを飲みながら友達と話しました。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。"
@@ -10831,7 +10817,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -10914,13 +10900,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -10939,7 +10918,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -11055,7 +11041,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "options": [
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "働きながら日本語を勉強しています。"
         ],
         "correctAnswer": "働きながら日本語を勉強しています。",
@@ -11068,7 +11054,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "prompt": "本文で正しいものはどれですか。",
         "options": [
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "コーヒーを飲みながら友達と話しました。",
           "音楽を聞きながら勉強します。"
         ],
@@ -11081,7 +11067,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         "type": "who_when_where",
         "prompt": "本文に書いてあることはどれですか。",
         "options": [
-          "この町は静かだし、便利だし、住みやすいです。",
+          "この町は静かだし、便利です。",
           "今日は雨だし、寒いし、家にいます。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。"
@@ -11098,7 +11084,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "田中さんは親切だし、日本語も上手です。",
           "音楽を聞きながら勉強します。",
           "歩きながら電話をしないでください。",
-          "この町は静かだし、便利だし、住みやすいです。"
+          "この町は静かだし、便利です。"
         ],
         "correctAnswer": "田中さんは親切だし、日本語も上手です。",
         "explanation": "Teks menyatakan informasi ini: Tanaka baik hati dan juga pandai bahasa Jepang.",
@@ -11309,7 +11295,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -11398,13 +11384,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -11423,7 +11402,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -11483,7 +11469,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -11633,7 +11619,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -11884,13 +11877,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -11909,7 +11895,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -11969,7 +11962,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -12119,7 +12112,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -12182,10 +12182,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "できます。そのときの"
         },
         {
           "text": "状況",
@@ -12686,7 +12683,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -12749,10 +12753,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "できます。そのときの"
         },
         {
           "text": "状況",
@@ -13731,7 +13732,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -14383,7 +14384,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -14468,13 +14469,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
       ],
       [
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -14493,7 +14487,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -14553,7 +14554,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -15028,7 +15029,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -15148,13 +15149,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -15173,7 +15167,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -15233,7 +15234,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -15383,7 +15384,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -15687,13 +15695,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -15712,7 +15713,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -15772,7 +15780,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
@@ -15922,7 +15930,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -16437,7 +16452,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "じょうほう"
         },
         {
-          "text": "だけではなく、"
+          "text": "は"
+        },
+        {
+          "text": "全部",
+          "reading": "ぜんぶ"
+        },
+        {
+          "text": "ではありません。"
         },
         {
           "text": "全体",
@@ -16500,10 +16522,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "たいおう"
         },
         {
-          "text": "できます。"
-        },
-        {
-          "text": "そのときの"
+          "text": "できます。そのときの"
         },
         {
           "text": "状況",
@@ -17569,7 +17588,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -18257,7 +18276,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
         },
         {
           "text": "変わ",
-          "reading": "か"
+          "reading": "かわ"
         },
         {
           "text": "ったら、"
@@ -18377,13 +18396,6 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "text": "します。"
         },
         {
-          "text": "一つだけ",
-          "reading": "ひとつだけ"
-        },
-        {
-          "text": "ではなく、"
-        },
-        {
           "text": "二つ",
           "reading": "ふたつ"
         },
@@ -18402,7 +18414,14 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "くらべ"
         },
         {
-          "text": "て"
+          "text": "ます。"
+        },
+        {
+          "text": "予定",
+          "reading": "よてい"
+        },
+        {
+          "text": "を"
         },
         {
           "text": "決",
@@ -18462,7 +18481,7 @@ export const READING_CHAPTERS26_30: ReadingItem[] = [
           "reading": "もんだい"
         },
         {
-          "text": "がありましたが、"
+          "text": "がありました。"
         },
         {
           "text": "最後",
