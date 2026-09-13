@@ -894,6 +894,76 @@
   .kana-page .hiragana-cell.compound .kana-char { font-size: 21px; }
 }
 
+
+/* ---------- Responsive character detail modal (tablet + mobile only) ---------- */
+@media (max-width: 1024px) {
+  .kana-detail-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: none;
+    padding: 12px;
+    overflow: hidden;
+    background: rgba(35, 20, 24, .48);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .kana-detail-modal {
+    position: relative;
+    width: min(540px, calc(100vw - 24px));
+    max-height: min(90dvh, calc(100dvh - 24px));
+    overflow: hidden;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(36, 11, 15, .26);
+  }
+
+  .kana-detail-modal-scroll {
+    width: 100%;
+    max-height: min(90dvh, calc(100dvh - 24px));
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .kana-detail-modal .kana-detail-card {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    border-radius: 22px;
+  }
+
+  .kana-detail-modal .kana-detail-top { padding-right: 48px; }
+
+  .kana-detail-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--maroon);
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid #e4d5d7;
+    border-radius: 13px;
+    box-shadow: 0 4px 16px rgba(62, 27, 34, .10);
+    cursor: pointer;
+  }
+
+  .kana-detail-modal-close:hover { background: #fff7f8; }
+  .kana-detail-modal-close:focus-visible { outline: 3px solid rgba(122, 31, 43, .20); outline-offset: 2px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .kana-page .flashcard-inner { transition-duration: .01ms; }
   .kana-page .stroke-animated-line { animation-duration: .01ms; }

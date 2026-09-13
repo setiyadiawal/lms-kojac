@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpen, Brain, Check, ChevronRight, RotateCcw, Sparkles, S
 import { Link } from 'react-router-dom';
 import { type HiraganaVariant, type HiraganaWithProgress, speakJapanese, useHiragana } from '../features/hiragana/useHiragana';
 import { HiraganaStrokeOrder } from '../features/hiragana/HiraganaStrokeOrder';
+import { ResponsiveKanaDetail, useResponsiveKanaDetailModal } from '../features/kana/ResponsiveKanaDetail';
 import { QuizSoundToggle } from '../features/quiz/QuizSoundToggle';
 import { useQuizSounds } from '../features/quiz/useQuizSounds';
 import '../features/hiragana/hiragana.css';
@@ -82,6 +83,7 @@ function KanaLoading() {
 
 function StudyView({ items }: { items: HiraganaWithProgress[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(items[0]?.id ?? null);
+  const detailModal = useResponsiveKanaDetailModal();
 
   useEffect(() => {
     if (!items.some((item) => item.id === selectedId)) setSelectedId(items[0]?.id ?? null);
@@ -90,7 +92,18 @@ function StudyView({ items }: { items: HiraganaWithProgress[] }) {
   const selected = items.find((item) => item.id === selectedId) ?? items[0];
   if (!selected) return <EmptyKana />;
 
+  const selectCharacter = (id: string) => {
+    setSelectedId(id);
+    detailModal.open();
+  };
+
   return <div className="study-layout">
+    <ResponsiveKanaDetail
+      isCompact={detailModal.isCompact}
+      open={detailModal.isOpen}
+      onClose={detailModal.close}
+      label={`Detail Hiragana ${selected.prompt}`}
+    >
     <aside className="kana-detail-card">
       <div className="kana-detail-top"><span>{variantLabels[(selected.extra?.variant ?? 'basic') as HiraganaVariant]}</span><MasteryBadge value={selected.progress?.mastery_score ?? 0}/></div>
       <div className={`kana-hero-character kana-handwritten ${Array.from(selected.prompt).length > 1 ? 'compound' : ''}`}>{selected.prompt}</div>
@@ -106,10 +119,11 @@ function StudyView({ items }: { items: HiraganaWithProgress[] }) {
       <div className="mastery-bar"><span style={{ width: `${selected.progress?.mastery_score ?? 0}%` }}/></div>
       <small>Mastery naik dari hasil Flashcard dan Quiz, bukan hanya membuka kartu.</small>
     </aside>
+    </ResponsiveKanaDetail>
 
     <section>
       <div className="section-heading"><div><p className="eyebrow">DAFTAR HURUF</p><h2>{items.length} karakter</h2></div><span>Susunan mengikuti pola gojūon agar lebih mudah dipelajari.</span></div>
-      <KanaStudyChart items={items} selectedId={selected.id} onSelect={setSelectedId} />
+      <KanaStudyChart items={items} selectedId={selected.id} onSelect={selectCharacter} />
     </section>
   </div>;
 }

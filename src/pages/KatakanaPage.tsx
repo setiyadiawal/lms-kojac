@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpen, Brain, Check, ChevronRight, RotateCcw, Sparkles, S
 import { Link } from 'react-router-dom';
 import { type KatakanaVariant, type KatakanaWithProgress, speakJapanese, useKatakana } from '../features/katakana/useKatakana';
 import { KatakanaStrokeOrder } from '../features/katakana/KatakanaStrokeOrder';
+import { ResponsiveKanaDetail, useResponsiveKanaDetailModal } from '../features/kana/ResponsiveKanaDetail';
 import { QuizSoundToggle } from '../features/quiz/QuizSoundToggle';
 import { useQuizSounds } from '../features/quiz/useQuizSounds';
 import '../features/hiragana/hiragana.css';
@@ -83,6 +84,7 @@ function KanaLoading() {
 function StudyView({ items, showSupplementary }: { items: KatakanaWithProgress[]; showSupplementary: boolean }) {
   const availableItems = useMemo(() => showSupplementary ? [...items, ...supplementaryItems] : items, [items, showSupplementary]);
   const [selectedId, setSelectedId] = useState<string | null>(availableItems[0]?.id ?? null);
+  const detailModal = useResponsiveKanaDetailModal();
 
   useEffect(() => {
     if (!availableItems.some((item) => item.id === selectedId)) setSelectedId(availableItems[0]?.id ?? null);
@@ -92,8 +94,18 @@ function StudyView({ items, showSupplementary }: { items: KatakanaWithProgress[]
   if (!selected) return <EmptyKana />;
 
   const supplementary = isSupplementaryItem(selected);
+  const selectCharacter = (id: string) => {
+    setSelectedId(id);
+    detailModal.open();
+  };
 
   return <div className="study-layout">
+    <ResponsiveKanaDetail
+      isCompact={detailModal.isCompact}
+      open={detailModal.isOpen}
+      onClose={detailModal.close}
+      label={`Detail Katakana ${selected.prompt}`}
+    >
     <aside className="kana-detail-card">
       <div className="kana-detail-top">
         <span>{supplementary ? 'Tambahan' : variantLabels[(selected.extra?.variant ?? 'basic') as KatakanaVariant]}</span>
@@ -117,10 +129,11 @@ function StudyView({ items, showSupplementary }: { items: KatakanaWithProgress[]
       </>}
       <small>{supplementary ? 'Materi tambahan tidak dihitung ke progress, Flashcard, atau Quiz inti.' : 'Mastery naik dari hasil Flashcard dan Quiz, bukan hanya membuka kartu.'}</small>
     </aside>
+    </ResponsiveKanaDetail>
 
     <section>
       <div className="section-heading"><div><p className="eyebrow">DAFTAR HURUF</p><h2>{items.length} karakter</h2></div><span>Susunan mengikuti pola gojūon agar lebih mudah dipelajari.</span></div>
-      <KanaStudyChart items={items} selectedId={selected.id} onSelect={setSelectedId} showSupplementary={showSupplementary} />
+      <KanaStudyChart items={items} selectedId={selected.id} onSelect={selectCharacter} showSupplementary={showSupplementary} />
     </section>
   </div>;
 }
