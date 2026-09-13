@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, ChevronRight, Clock, Headphones, ListChecks, Volume2 } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Clock, Headphones, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GRAMMAR_CHAPTERS } from '../features/grammar/grammarData';
 import { ListeningEngine } from '../features/listening/ListeningEngine';
@@ -25,7 +25,7 @@ const TYPE_LABEL: Record<ListeningKind, string> = {
   travel: 'Perjalanan',
 };
 
-const PILOT_CHAPTERS = GRAMMAR_CHAPTERS
+const LISTENING_CHAPTERS = GRAMMAR_CHAPTERS
   .map((chapter) => ({ ...chapter, items: getListeningsByChapter(chapter.chapter) }))
   .filter((chapter) => chapter.items.length > 0);
 
@@ -39,7 +39,7 @@ export function ListeningPage() {
     : selectedChapter
       ? getListeningsByChapter(selectedChapter)
       : [];
-  const chapterInfo = selectedChapter ? PILOT_CHAPTERS.find((chapter) => chapter.chapter === selectedChapter) : undefined;
+  const chapterInfo = selectedChapter ? LISTENING_CHAPTERS.find((chapter) => chapter.chapter === selectedChapter) : undefined;
 
   const difficultyCounts = useMemo(() => LISTENING_ITEMS.reduce<Record<string, number>>((acc, item) => {
     acc[item.difficulty] = (acc[item.difficulty] ?? 0) + 1;
@@ -89,18 +89,18 @@ export function ListeningPage() {
     {!selectedChapter ? <>
       <header className="listening-page-header page-header">
         <div>
-          <p className="eyebrow">KOJAC LISTENING · PHASE 1</p>
+          <p className="eyebrow">KOJAC LISTENING · N5 → N4</p>
           <h1><span>聴解</span><small>Listening</small></h1>
           <p>Latih kemampuan memahami bahasa Jepang melalui suara, percakapan, pengumuman, dan situasi nyata berdasarkan materi KOJAC yang sudah dipelajari.</p>
         </div>
-        <div className="listening-pilot-badge" aria-label={`${LISTENING_ITEMS.length} Listening pilot`}>
+        <div className="listening-pilot-badge" aria-label={`${LISTENING_ITEMS.length} latihan Listening aktif`}>
           <strong>{LISTENING_ITEMS.length}</strong>
-          <span>Listening Pilot</span>
+          <span>Listening Aktif</span>
         </div>
       </header>
 
-      <section className="listening-overview-strip" aria-label="Ringkasan Listening pilot">
-        <div><strong>{PILOT_CHAPTERS.length}</strong><span>Bab Pilot</span></div>
+      <section className="listening-overview-strip" aria-label="Ringkasan Listening">
+        <div><strong>{LISTENING_CHAPTERS.length}</strong><span>Bab</span></div>
         <div><strong>{difficultyCounts.Mudah ?? 0}</strong><span>Mudah</span></div>
         <div><strong>{difficultyCounts.Sedang ?? 0}</strong><span>Sedang</span></div>
         <div><strong>{difficultyCounts.Menantang ?? 0}</strong><span>Menantang</span></div>
@@ -110,12 +110,12 @@ export function ListeningPage() {
         <div>
           <p className="listening-kicker">CHOUKAI PER BAB</p>
           <h2>Pilih Bab untuk mendengarkan</h2>
-          <p>Pilot mencakup tahap awal N5 sampai akhir N4. Script Listening dibuat khusus untuk pendengaran dan tidak menyalin passage Reading.</p>
+          <p>Listening bersifat kumulatif: materi di Bab yang lebih tinggi dapat menggunakan Vocabulary dan Grammar dari Bab sebelumnya.</p>
         </div>
       </div>
 
       <div className="listening-chapter-grid">
-        {PILOT_CHAPTERS.map((chapter) => {
+        {LISTENING_CHAPTERS.map((chapter) => {
           const difficulties = [...new Set(chapter.items.map((item) => item.difficulty))];
           return <article className="listening-chapter-card" key={chapter.chapter}>
             <div className="listening-chapter-number"><span>BAB</span><strong>{chapter.chapter}</strong></div>
@@ -127,6 +127,7 @@ export function ListeningPage() {
                 <strong>{chapter.items.length} Listening</strong>
                 <span>{difficulties.join(' · ')}</span>
               </div>
+              <div className="listening-chapter-divider" aria-hidden="true" />
             </div>
             <button type="button" onClick={() => openChapter(chapter.chapter)}>Lihat Listening <ChevronRight size={16} /></button>
           </article>;
@@ -156,11 +157,9 @@ export function ListeningPage() {
           </div>
           <div className="listening-list-meta">
             <span><Clock size={14} /> ±{item.estimatedDuration} detik</span>
-            <span><ListChecks size={14} /> {item.questions.length} Pertanyaan</span>
-            <span><Volume2 size={14} /> {new Set(item.speakerTurns.map((turn) => turn.speaker)).size} speaker</span>
+            <span><ListChecks size={15} /> {item.questions.length} pertanyaan</span>
           </div>
-          <p className="listening-list-note">Transcript disembunyikan selama sesi. Dengarkan audio untuk menemukan informasi yang dibutuhkan.</p>
-          <button type="button" onClick={() => openListening(item.id)}><Headphones size={16} /> Mulai Listening</button>
+          <button type="button" onClick={() => openListening(item.id)}><Headphones size={16} /> Mulai Mendengarkan</button>
         </article>)}
       </div>
     </>}
