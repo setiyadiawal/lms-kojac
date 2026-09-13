@@ -268,7 +268,8 @@ export function ListeningEngine({
       setProgressSaveState('saved');
     }).catch((saveError) => {
       if (completionSessionIdRef.current !== sessionId) return;
-      setProgressSaveError(saveError instanceof Error ? saveError.message : 'Progress Listening belum berhasil disimpan.');
+      completionSaveStartedRef.current = false;
+      setProgressSaveError(saveError instanceof Error ? saveError.message : 'Progress belum berhasil disimpan. Silakan coba lagi.');
       setProgressSaveState('error');
     });
   }
@@ -404,7 +405,7 @@ export function ListeningEngine({
         {isProgressPersistenceAvailable && <p role="status">
           {progressSaveState === 'saving' && 'Menyimpan progress…'}
           {progressSaveState === 'saved' && `Progress tersimpan · Percobaan ${resultAttemptCount} · Best ${resultBestScore}%${resultMastered ? ' · Dikuasai' : ''}`}
-          {progressSaveState === 'error' && `Hasil tetap aman. Progress belum tersimpan${progressSaveError ? `: ${progressSaveError}` : '.'}`}
+          {progressSaveState === 'error' && `Hasil tetap aman. ${progressSaveError ?? 'Progress belum berhasil disimpan. Silakan coba lagi.'}`}
         </p>}
         <div className="listening-result-stats">
           <div><strong>{questions.length}</strong><span>Pertanyaan</span></div>
@@ -413,6 +414,7 @@ export function ListeningEngine({
         </div>
         <div className="listening-result-actions">
           <button className="listening-primary-action" type="button" onClick={() => openReview('all')}><ListChecks size={17} /> Lihat Hasil Jawaban</button>
+          {progressSaveState === 'error' && <button type="button" onClick={persistCompletion}>Coba Lagi</button>}
           {questions.length - correctCount > 0 && <button type="button" onClick={() => openReview('wrong')}>Lihat Soal yang Salah</button>}
           <button type="button" onClick={restart}><RotateCcw size={16} /> Ulangi Listening</button>
           <button type="button" onClick={onBackToList}><ArrowLeft size={16} /> Kembali ke Daftar Listening</button>

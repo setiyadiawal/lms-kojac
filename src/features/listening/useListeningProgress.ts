@@ -85,8 +85,9 @@ export function useListeningProgress() {
       setProgressByListeningId(next);
     } catch (loadError) {
       if (loadSequenceRef.current !== sequence) return;
+      console.error('Listening progress load failed', loadError);
       setProgressByListeningId({});
-      setError(loadError instanceof Error ? loadError.message : 'Gagal memuat progress Listening.');
+      setError('Progress Listening belum dapat dimuat. Latihan tetap dapat digunakan.');
     } finally {
       if (loadSequenceRef.current === sequence) setLoading(false);
     }
@@ -121,12 +122,15 @@ export function useListeningProgress() {
     });
 
     if (rpcError) {
-      const detail = [rpcError.message, rpcError.details, rpcError.hint].filter(Boolean).join(' — ');
-      throw new Error(detail || 'Progress Listening belum berhasil disimpan.');
+      console.error('Listening progress save failed', rpcError);
+      throw new Error('Progress belum berhasil disimpan. Silakan coba lagi.');
     }
 
     const row = (Array.isArray(data) ? data[0] : data) as ListeningProgress | null;
-    if (!row?.listening_id) throw new Error('Supabase tidak mengembalikan progress Listening yang tersimpan.');
+    if (!row?.listening_id) {
+      console.error('Listening progress save returned no persisted row');
+      throw new Error('Progress belum berhasil disimpan. Silakan coba lagi.');
+    }
 
     setProgressByListeningId((current) => ({ ...current, [row.listening_id]: row }));
     return row;
