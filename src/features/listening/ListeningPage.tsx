@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react';
 import { ArrowLeft, ChevronRight, Clock, Headphones, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { GRAMMAR_CHAPTERS } from '../features/grammar/grammarData';
-import { ListeningEngine } from '../features/listening/ListeningEngine';
+import { GRAMMAR_CHAPTERS } from '../grammar/grammarData';
+import { ListeningEngine } from './ListeningEngine';
 import {
   LISTENING_ITEMS,
   getListeningItem,
   getListeningsByChapter,
   type ListeningKind,
-} from '../features/listening/listeningData';
-import '../features/listening/listening.css';
+} from './listeningData';
+import './listening.css';
 
 const TYPE_LABEL: Record<ListeningKind, string> = {
   dialogue: 'Dialog',
