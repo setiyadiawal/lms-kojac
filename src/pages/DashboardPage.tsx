@@ -1,23 +1,324 @@
-import { BookOpenCheck, Flame, Goal, Trophy } from 'lucide-react';
+import {
+  ArrowRight,
+  BookMarked,
+  BookOpenCheck,
+  BookOpenText,
+  BrainCircuit,
+  CalendarDays,
+  CheckCircle2,
+  Gauge,
+  Headphones,
+  Languages,
+  PlaneTakeoff,
+  SpellCheck,
+  Target,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useHiragana } from '../features/hiragana/useHiragana';
+import {
+  useStudentDashboardProgress,
+  type DashboardModuleKey,
+  type DashboardModuleSummary,
+} from '../features/dashboard/useStudentDashboardProgress';
 import { useAuth } from '../state/AuthContext';
+
+const ROADMAP_STAGES = [
+  {
+    number: 1,
+    title: 'Kelas Semi Privat',
+    duration: '8 bulan',
+    description: 'Dari 0 – JFT A2 / JLPT N4',
+    target: 'Lulus JFT Basic A2 / JLPT N4',
+    status: 'Program Utama',
+  },
+  {
+    number: 2,
+    title: 'Kelas SSW',
+    duration: '1–2 bulan',
+    description: 'Persiapan ujian keterampilan bidang SSW',
+    target: 'Lulus Ujian SSW',
+    status: 'Tahap Lanjutan',
+  },
+  {
+    number: 3,
+    title: 'Kelas Kaiwa / Percakapan',
+    duration: '1 bulan',
+    description: 'Latihan komunikasi untuk situasi nyata di Jepang',
+    target: 'Percakapan lancar',
+    status: 'Tahap Lanjutan',
+  },
+  {
+    number: 4,
+    title: 'Kelas Mensetsu / Wawancara',
+    duration: '3 minggu',
+    description: 'Persiapan wawancara kerja bersama perusahaan Jepang',
+    target: 'Persiapan wawancara kerja',
+    status: 'Tahap Lanjutan',
+  },
+] as const;
+
+const ROADMAP_MILESTONES = [
+  'Lulus JFT Basic A2 / JLPT N4',
+  'Lulus Ujian SSW',
+  'Wawancara perusahaan',
+  'Lulus wawancara',
+  'Pengurusan dokumen, MCU, dsb.',
+  'Berangkat ke Jepang',
+] as const;
+
+function firstName(fullName?: string | null) {
+  const trimmed = fullName?.trim();
+  if (!trimmed) return 'Siswa';
+  return trimmed.split(/\s+/)[0] || 'Siswa';
+}
+
+function formatActivityTime(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return null;
+  return new Intl.DateTimeFormat('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function ModuleIcon({ module }: { module: DashboardModuleKey }) {
+  if (module === 'hiragana') return <Languages size={21}/>;
+  if (module === 'katakana') return <SpellCheck size={21}/>;
+  if (module === 'vocabulary') return <BookMarked size={21}/>;
+  if (module === 'kanji') return <BookOpenCheck size={21}/>;
+  if (module === 'grammar') return <BrainCircuit size={21}/>;
+  if (module === 'reading') return <BookOpenText size={21}/>;
+  return <Headphones size={21}/>;
+}
+
+function SummaryCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="stat">
+      <div className="stat-icon">{icon}</div>
+      <div>
+        <strong>{value}</strong>
+        <span>{label}</span>
+      </div>
+    </div>
+  );
+}
+
+function ModuleCard({ module, loading }: { module: DashboardModuleSummary; loading: boolean }) {
+  return (
+    <article className="student-module-card">
+      <div className="student-module-card-top">
+        <div className="dashboard-module-icon"><ModuleIcon module={module.key}/></div>
+        <div>
+          <span className="dashboard-module-kicker">MODUL BELAJAR</span>
+          <h3>{module.title}</h3>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="dashboard-module-loading" aria-label={`Memuat progress ${module.title}`}>
+          <span />
+          <span />
+          <span />
+        </div>
+      ) : (
+        <>
+          <div className="dashboard-module-metric">
+            <span>{module.metricLabel}</span>
+            <strong>{module.metricValue}</strong>
+          </div>
+          <p className="dashboard-module-detail">{module.detail}</p>
+          <div className="dashboard-progress-row">
+            <span>{module.percentLabel}</span>
+            <strong>{module.available ? `${module.percent}%` : '—'}</strong>
+          </div>
+          <div className="dashboard-progress-track" aria-hidden="true">
+            <span style={{ width: module.available ? `${module.percent}%` : '0%' }} />
+          </div>
+        </>
+      )}
+
+      <Link className="dashboard-module-link" to={module.route}>
+        Buka modul <ArrowRight size={16}/>
+      </Link>
+    </article>
+  );
+}
 
 export function DashboardPage() {
   const { profile } = useAuth();
-  const { stats, loading } = useHiragana();
-  return <div className="page">
-    <div className="page-header"><div><p className="eyebrow">おかえりなさい</p><h1>Halo, {profile?.full_name?.split(' ')[0] || 'Siswa'} 👋</h1><p>Teruskan perjalanan bahasa Jepangmu hari ini.</p></div><span className="level-badge">Target · JLPT N4</span></div>
-    <div className="stats-grid">
-      <Stat icon={<Flame/>} value="0 hari" label="Streak belajar" />
-      <Stat icon={<BookOpenCheck/>} value={loading ? '…' : `${stats.mastered}/${stats.total}`} label="Hiragana dikuasai" />
-      <Stat icon={<Goal/>} value={loading ? '…' : `${stats.averageMastery}%`} label="Mastery Hiragana" />
-      <Stat icon={<Trophy/>} value="0" label="Achievement" />
+  const {
+    modules,
+    latestActivity,
+    loading,
+    hasPartialError,
+  } = useStudentDashboardProgress();
+
+  const continueTarget = latestActivity ?? {
+    module: 'hiragana' as const,
+    title: 'Hiragana',
+    route: '/belajar/hiragana',
+    timestamp: '',
+  };
+  const lastActivityText = latestActivity ? formatActivityTime(latestActivity.timestamp) : null;
+  const hiragana = modules.find((module) => module.key === 'hiragana');
+  const reading = modules.find((module) => module.key === 'reading');
+  const listening = modules.find((module) => module.key === 'listening');
+  const summaryFallback = loading ? 'Memuat…' : '—';
+
+  return (
+    <div className="page student-dashboard-page">
+      <div className="page-header student-dashboard-header">
+        <div>
+          <p className="eyebrow">おかえりなさい</p>
+          <h1>Selamat datang, {firstName(profile?.full_name)} 👋</h1>
+          <p>Lanjutkan perjalanan belajarmu bersama KOJAC hari ini.</p>
+        </div>
+        <span className="level-badge">Kuuhaku System · ± 1 Tahun</span>
+      </div>
+
+      <section className="stats-grid dashboard-summary-grid" aria-label="Ringkasan progress siswa">
+        <SummaryCard
+          icon={<Languages size={20}/>} 
+          value={hiragana?.metricValue ?? summaryFallback}
+          label="Hiragana dikuasai"
+        />
+        <SummaryCard
+          icon={<Gauge size={20}/>} 
+          value={hiragana?.available ? `${hiragana.percent}%` : summaryFallback}
+          label="Mastery Hiragana"
+        />
+        <SummaryCard
+          icon={<BookOpenText size={20}/>} 
+          value={reading?.metricValue ?? summaryFallback}
+          label="Reading selesai"
+        />
+        <SummaryCard
+          icon={<Headphones size={20}/>} 
+          value={listening?.metricValue ?? summaryFallback}
+          label="Listening selesai"
+        />
+      </section>
+
+      <section className="dashboard-continue panel">
+        <div className="dashboard-continue-copy">
+          <p className="eyebrow">LANJUT BELAJAR</p>
+          <h2>{latestActivity ? `Lanjutkan ${continueTarget.title}` : 'Mulai dari Hiragana'}</h2>
+          <p>
+            {latestActivity
+              ? `Aktivitas belajar terbaru${lastActivityText ? ` · ${lastActivityText}` : ''}.`
+              : 'Belum ada aktivitas tersimpan. Mulai perjalananmu dari dasar huruf Jepang.'}
+          </p>
+        </div>
+        <Link className="dashboard-continue-link" to={continueTarget.route}>
+          {latestActivity ? 'Lanjutkan belajar' : 'Mulai belajar'} <ArrowRight size={17}/>
+        </Link>
+      </section>
+
+      {hasPartialError && !loading && (
+        <div className="dashboard-safe-notice" role="status">
+          Sebagian progress belum dapat dimuat. Semua modul tetap bisa dibuka dan digunakan.
+        </div>
+      )}
+
+      <section className="dashboard-module-section">
+        <div className="dashboard-section-heading">
+          <div>
+            <p className="eyebrow">PROGRESS PER MODUL</p>
+            <h2>Belajar sesuai progresmu</h2>
+          </div>
+          <p>Setiap modul memakai metric yang sesuai dengan sistem belajarnya.</p>
+        </div>
+
+        <div className="student-module-grid">
+          {loading && modules.length === 0
+            ? (['hiragana', 'katakana', 'vocabulary', 'kanji', 'grammar', 'reading', 'listening'] as DashboardModuleKey[]).map((key) => (
+                <ModuleCard
+                  key={key}
+                  loading
+                  module={{
+                    key,
+                    title: {
+                      hiragana: 'Hiragana',
+                      katakana: 'Katakana',
+                      vocabulary: 'Kosakata',
+                      kanji: 'Kanji',
+                      grammar: 'Tata Bahasa',
+                      reading: 'Reading / 読解',
+                      listening: 'Listening / 聴解',
+                    }[key],
+                    route: {
+                      hiragana: '/belajar/hiragana',
+                      katakana: '/belajar/katakana',
+                      vocabulary: '/belajar/kosakata',
+                      kanji: '/belajar/kanji',
+                      grammar: '/belajar/tata-bahasa',
+                      reading: '/belajar/reading',
+                      listening: '/belajar/listening',
+                    }[key],
+                    metricLabel: 'Progress',
+                    metricValue: 'Memuat…',
+                    detail: 'Memuat progress tersimpan…',
+                    percentLabel: 'Memuat',
+                    percent: 0,
+                    available: false,
+                  }}
+                />
+              ))
+            : modules.map((module) => <ModuleCard key={module.key} module={module} loading={false}/>) }
+        </div>
+      </section>
+
+      <section className="dashboard-roadmap-section" aria-labelledby="dashboard-roadmap-title">
+        <div className="dashboard-section-heading dashboard-roadmap-heading">
+          <div>
+            <p className="eyebrow">JALUR BELAJAR KOJAC</p>
+            <h2 id="dashboard-roadmap-title">Kuuhaku System: From Zero to Japan</h2>
+          </div>
+          <p>Estimasi perjalanan belajar utama sekitar ± 1 tahun, dari dasar bahasa hingga persiapan bekerja di Jepang.</p>
+        </div>
+
+        <div className="kojac-roadmap-grid">
+          {ROADMAP_STAGES.map((stage) => (
+            <article key={stage.number} className={`kojac-roadmap-card ${stage.number === 1 ? 'current' : ''}`}>
+              <div className="kojac-roadmap-card-top">
+                <span className="kojac-roadmap-number">{stage.number}</span>
+                <span className="kojac-roadmap-status">{stage.status}</span>
+              </div>
+              <h3>{stage.title}</h3>
+              <p>{stage.description}</p>
+              <div className="kojac-roadmap-meta">
+                <span><CalendarDays size={15}/> {stage.duration}</span>
+                <span><Target size={15}/> {stage.target}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="kojac-milestone-panel">
+          <div className="kojac-milestone-heading">
+            <div className="dashboard-module-icon"><PlaneTakeoff size={21}/></div>
+            <div>
+              <span className="dashboard-module-kicker">MILESTONE</span>
+              <h3>Target perjalanan menuju Jepang</h3>
+            </div>
+          </div>
+          <div className="kojac-milestone-grid">
+            {ROADMAP_MILESTONES.map((milestone) => (
+              <div key={milestone} className="kojac-milestone-item">
+                <CheckCircle2 size={16}/>
+                <span>{milestone}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
-    <div className="dashboard-grid">
-      <section className="panel"><p className="eyebrow">ROADMAP</p><h2>Jalur belajar KOJAC</h2><div className="roadmap">{['Huruf Jepang','JLPT N5','JLPT N4','JLPT N3','JLPT N2','JLPT N1'].map((x,i)=><div className={`road-step ${i===0?'current':''}`} key={x}><span>{i+1}</span><div><strong>{x}</strong><small>{i===0?'Hiragana sedang aktif':'Terkunci sampai prasyarat selesai'}</small></div></div>)}</div></section>
-      <section className="panel accent"><p className="eyebrow">MILESTONE 2A</p><h2>Hiragana sudah aktif</h2><p>Progress pada panel ini berasal langsung dari review dan quiz siswa di Supabase.</p><ul><li>46 Hiragana dasar</li><li>Dakuten & Handakuten</li><li>33 kombinasi Yōon</li><li>Flashcard + SRS atomik</li><li>Quiz + mastery nyata</li></ul><Link className="accent-link" to="/belajar/hiragana">Mulai Hiragana →</Link></section>
-    </div>
-  </div>;
+  );
 }
-function Stat({icon,value,label}:{icon:React.ReactNode;value:string;label:string}){return <div className="stat"><div className="stat-icon">{icon}</div><div><strong>{value}</strong><span>{label}</span></div></div>}

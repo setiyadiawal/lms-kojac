@@ -4,7 +4,7 @@ import { ProtectedRoute, RoleRoute } from './components/RouteGuards';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { PendingPage } from './pages/PendingPage';
-import { ExamPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
+import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
 import { HiraganaPage } from './pages/HiraganaPage';
 import { KatakanaPage } from './pages/KatakanaPage';
@@ -33,6 +33,7 @@ export default function App() {
       <Route path="latihan" element={<PracticePage />} />
       <Route path="jlpt" element={<ExamPage />} />
       <Route path="progress" element={<ProgressPage />} />
+      <Route path="kritik-saran" element={<FeedbackPage />} />
       <Route path="admin" element={<RoleRoute minimum="administrator"><AdminPage /></RoleRoute>} />
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />

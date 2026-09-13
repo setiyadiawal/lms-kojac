@@ -1,14 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
-import { BookOpen, ChartNoAxesCombined, GraduationCap, Home, Languages, LogOut, Menu, ShieldCheck, Trophy, X } from 'lucide-react';
+import {
+  BarChart3,
+  BookOpen,
+  Dumbbell,
+  Home,
+  Languages,
+  LogOut,
+  Menu,
+  ShieldCheck,
+  Trophy,
+  MessageSquareText,
+  X,
+} from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../state/AuthContext';
 
 const menu = [
   { to: '/', label: 'Beranda', icon: Home, end: true },
   { to: '/belajar', label: 'Belajar', icon: BookOpen },
-  { to: '/latihan', label: 'Latihan', icon: GraduationCap },
+  { to: '/latihan', label: 'Latihan', icon: Dumbbell },
   { to: '/jlpt', label: 'Simulasi JLPT', icon: Trophy },
-  { to: '/progress', label: 'Progres', icon: ChartNoAxesCombined },
+  { to: '/progress', label: 'Progres', icon: BarChart3 },
+  { to: '/kritik-saran', label: 'Kritik & Saran', icon: MessageSquareText },
 ];
 
 type AppNavigationContentProps = {
@@ -28,12 +41,13 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
     <nav>
       {menu.map(({ to, label, icon: Icon, end }) => (
         <NavLink end={end} key={to} to={to} onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Icon size={18} /> {label}
+          <Icon size={18} />
+          <span className="nav-item-label">{label}</span>
         </NavLink>
       ))}
       {canAdmin && (
         <NavLink to="/admin" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <ShieldCheck size={18} /> Admin
+          <ShieldCheck size={18} /> <span className="nav-item-label">Admin</span>
         </NavLink>
       )}
     </nav>
