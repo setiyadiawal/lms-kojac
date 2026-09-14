@@ -167,27 +167,37 @@ Deno.serve(async (request) => {
 
   const html = `<!doctype html>
 <html lang="id">
-  <body style="margin:0;padding:0;background:#f7f3f4;font-family:Arial,sans-serif;color:#241a1c;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:32px 16px;background:#f7f3f4;">
-      <tr><td align="center">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border:1px solid #eadde0;border-radius:16px;overflow:hidden;">
-          <tr><td style="padding:28px 30px;background:#7b1f2f;color:#ffffff;">
-            <div style="font-size:13px;letter-spacing:.12em;font-weight:700;">KOJAC LMS</div>
-            <div style="font-size:28px;font-weight:800;margin-top:8px;">ようこそ、KOJACへ！</div>
-          </td></tr>
-          <tr><td style="padding:30px;line-height:1.65;">
-            <p style="margin-top:0;">Halo <strong>${safeName}</strong>,</p>
-            <p>Akun KOJAC LMS Anda telah disetujui oleh administrator.</p>
-            <p>Anda sekarang dapat masuk ke KOJAC LMS dan mengakses dashboard serta materi belajar.</p>
+  <body style="margin:0;padding:0;background:#fffff;font-family:Arial,sans-serif;color:#241a1c;">
+ <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #222;">
+  <h2 style="color: #7b1f2f; margin-bottom: 16px;">
+    お知らせです！
+  </h2>
+
+
+<p style="margin-top:0;">Halo <strong>${safeName}</strong>,</p>
+  
+            <p><strong>Selamat !</strong>  Akun LMS KOJAC Anda telah disetujui oleh administrator.</p>
+            <p>Anda sekarang dapat masuk ke LMS KOJAC dan mengakses dashboard serta materi belajar.</p>
             <p style="margin:28px 0;">
               <a href="${loginUrl}" style="display:inline-block;background:#7b1f2f;color:#ffffff;text-decoration:none;font-weight:700;padding:13px 22px;border-radius:10px;">Masuk ke KOJAC LMS</a>
             </p>
-            <p style="margin-bottom:0;"><strong>一緒に一生懸命勉強しましょう！</strong></p>
-            <p style="margin-top:8px;color:#76666a;">KOJAC — Kuuhaku Online Japanese Class</p>
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
+  <p style="font-size: 14px; line-height: 1.6; color: #555;">
+    Semoga diberi kemudahan dan kelancaran dalam segala prosesnya. <br>
+    <strong>Mari Kita Berjuang Bersama - sama ! </strong>
+  </p>
+
+<p>Terima kasih, <br>
+Team Kojac</p>
+
+<br
+  <p style="margin-top: 28px; font-size: 15px;">
+    一緒に一生懸命勉強しましょう！
+  </p>
+
+  <p style="font-size: 14px; color: #555;">
+    KOJAC — Kuuhaku Online Japanese Class
+  </p>
+</div>
   </body>
 </html>`;
 
