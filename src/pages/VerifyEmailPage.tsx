@@ -33,6 +33,10 @@ function expiredOtp(error: unknown) {
   return code === 'otp_expired' || message.includes('expired') || message.includes('kedaluwarsa');
 }
 
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 function formatCountdown(seconds: number) {
   const safeSeconds = Math.max(0, seconds);
   const minutes = Math.floor(safeSeconds / 60);
@@ -42,11 +46,12 @@ function formatCountdown(seconds: number) {
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
-  const email = getPendingVerificationEmail();
+  const [pendingEmail] = useState(() => getPendingVerificationEmail());
+  const [manualEmail, setManualEmail] = useState('');
   const [digits, setDigits] = useState<string[]>(() => Array.from({ length: OTP_LENGTH }, () => ''));
   const [verifying, setVerifying] = useState(false);
   const [resending, setResending] = useState(false);
-  const [cooldown, setCooldown] = useState(email ? RESEND_COOLDOWN_SECONDS : 0);
+  const [cooldown, setCooldown] = useState(pendingEmail ? RESEND_COOLDOWN_SECONDS : 0);
   const [notice, setNotice] = useState<Notice>(null);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const verifyInFlightRef = useRef(false);
@@ -60,6 +65,9 @@ export function VerifyEmailPage() {
     return () => window.clearTimeout(timer);
   }, [cooldown]);
 
+  const needsManualEmail = !pendingEmail;
+  const verificationEmail = pendingEmail || manualEmail.trim();
+  const emailReady = isValidEmail(verificationEmail);
   const token = digits.join('');
 
   function focusIndex(index: number) {
@@ -124,9 +132,16 @@ export function VerifyEmailPage() {
     }
   }
 
+  function validateEmailForAction() {
+    if (emailReady) return true;
+    setNotice({ kind: 'error', text: 'Masukkan email yang valid.' });
+    return false;
+  }
+
   async function verify(event: FormEvent) {
     event.preventDefault();
-    if (!email || token.length !== OTP_LENGTH || verifyInFlightRef.current) return;
+    if (verifyInFlightRef.current) return;
+    if (!validateEmailForAction() || token.length !== OTP_LENGTH) return;
 
     verifyInFlightRef.current = true;
     setVerifying(true);
@@ -134,7 +149,7 @@ export function VerifyEmailPage() {
 
     try {
       const { data, error } = await supabase.auth.verifyOtp({
-        email,
+        email: verificationEmail,
         token,
         type: 'email',
       });
@@ -150,7 +165,9 @@ export function VerifyEmailPage() {
         kind: 'error',
         text: expiredOtp(error)
           ? 'Kode verifikasi sudah kedaluwarsa. Silakan kirim ulang kode baru.'
-          : 'Kode verifikasi tidak valid. Periksa kembali kode yang Anda masukkan.',
+          : needsManualEmail
+            ? 'Email atau kode verifikasi tidak sesuai.'
+            : 'Kode verifikasi tidak valid. Periksa kembali kode yang Anda masukkan.',
       });
     } finally {
       verifyInFlightRef.current = false;
@@ -159,7 +176,8 @@ export function VerifyEmailPage() {
   }
 
   async function resend() {
-    if (!email || cooldown > 0 || resendInFlightRef.current) return;
+    if (cooldown > 0 || resendInFlightRef.current) return;
+    if (!validateEmailForAction()) return;
 
     resendInFlightRef.current = true;
     setResending(true);
@@ -168,7 +186,7 @@ export function VerifyEmailPage() {
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email,
+        email: verificationEmail,
       });
       if (error) throw error;
 
@@ -180,30 +198,12 @@ export function VerifyEmailPage() {
       console.error('KOJAC email OTP resend failed', error);
       setNotice({
         kind: 'error',
-        text: 'Kode belum dapat dikirim ulang. Tunggu sebentar lalu coba lagi.',
+        text: 'Kode belum dapat dikirim ulang. Periksa email Anda atau coba lagi beberapa saat.',
       });
     } finally {
       resendInFlightRef.current = false;
       setResending(false);
     }
-  }
-
-  if (!email) {
-    return <div className="auth-screen">
-      <section className="auth-copy">
-        <div className="brand hero-brand"><div className="brand-mark">空</div><div><strong>KOJAC</strong><span>Kuuhaku Online Japanese Class</span></div></div>
-        <h1>From Zero<br/>to <em>Japan.</em></h1>
-        <p>Verifikasi email adalah langkah pertama sebelum akun masuk ke proses persetujuan KOJAC.</p>
-      </section>
-      <section className="auth-card verify-email-card">
-        <p className="eyebrow">KOJAC LMS</p>
-        <h2>Verifikasi Email</h2>
-        <div className="notice" role="alert">Sesi verifikasi tidak ditemukan.</div>
-        <button className="primary-btn verify-full-button" type="button" onClick={() => navigate('/login', { replace: true })}>
-          Kembali ke Pendaftaran
-        </button>
-      </section>
-    </div>;
   }
 
   return <div className="auth-screen">
@@ -217,10 +217,34 @@ export function VerifyEmailPage() {
     <section className="auth-card verify-email-card">
       <p className="eyebrow">KOJAC LMS</p>
       <h2>Verifikasi Email</h2>
-      <p className="muted verify-email-copy">Kami telah mengirim kode verifikasi ke <strong>{maskEmail(email)}</strong>.</p>
-      <p className="muted verify-email-subtext">Masukkan kode 6 digit yang dikirim ke email Anda.</p>
+
+      {pendingEmail
+        ? <>
+            <p className="muted verify-email-copy">Kami telah mengirim kode verifikasi ke <strong>{maskEmail(pendingEmail)}</strong>.</p>
+            <p className="muted verify-email-subtext">Masukkan kode 6 digit yang dikirim ke email Anda.</p>
+          </>
+        : <>
+            <p className="muted verify-email-copy">Masukkan email yang Anda gunakan saat mendaftar, lalu masukkan kode 6 digit yang kami kirim.</p>
+          </>}
 
       <form onSubmit={verify} className="verify-email-form">
+        {needsManualEmail && <div className="auth-field">
+          <label htmlFor="verify-email-address">Email</label>
+          <input
+            id="verify-email-address"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={manualEmail}
+            onChange={(event) => {
+              setManualEmail(event.target.value);
+              if (notice?.kind === 'error') setNotice(null);
+            }}
+            disabled={verifying || resending}
+            placeholder="email@contoh.com"
+          />
+        </div>}
+
         <fieldset className="otp-fieldset" disabled={verifying}>
           <legend>Kode verifikasi 6 digit</legend>
           <div className="otp-inputs" role="group" aria-label="Kode verifikasi 6 digit">
@@ -242,7 +266,7 @@ export function VerifyEmailPage() {
           </div>
         </fieldset>
 
-        <button className="primary-btn" disabled={verifying || token.length !== OTP_LENGTH}>
+        <button className="primary-btn" disabled={verifying || !emailReady || token.length !== OTP_LENGTH}>
           {verifying ? 'Memverifikasi…' : 'Verifikasi Email'}
         </button>
       </form>
@@ -252,7 +276,7 @@ export function VerifyEmailPage() {
       <div className="verify-resend-row">
         {cooldown > 0
           ? <span className="muted verify-resend-countdown">Kirim ulang dalam {formatCountdown(cooldown)}</span>
-          : <button className="link-btn verify-resend-button" type="button" disabled={resending} onClick={() => void resend()}>
+          : <button className="link-btn verify-resend-button" type="button" disabled={resending || !emailReady} onClick={() => void resend()}>
               {resending ? 'Mengirim…' : 'Kirim Ulang Kode'}
             </button>}
       </div>
