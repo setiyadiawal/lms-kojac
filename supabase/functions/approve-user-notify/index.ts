@@ -1,19 +1,50 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
+const PRODUCTION_ORIGIN = 'https://lms.kojac.id';
 const adminRoles = new Set(['administrator', 'co_founder', 'founder']);
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function json(body: Record<string, unknown>, status = 200) {
+function safeOrigin(value: string | undefined | null) {
+  if (!value) return '';
+  try {
+    const parsed = new URL(value.trim());
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return '';
+    return parsed.origin;
+  } catch {
+    return '';
+  }
+}
+
+function corsOrigin(request: Request) {
+  const requestOrigin = safeOrigin(request.headers.get('Origin'));
+  const configuredOrigin = safeOrigin(Deno.env.get('KOJAC_APP_URL'));
+  const allowedOrigins = new Set([
+    PRODUCTION_ORIGIN,
+    configuredOrigin,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ].filter(Boolean));
+
+  if (!requestOrigin) return PRODUCTION_ORIGIN;
+  return allowedOrigins.has(requestOrigin) ? requestOrigin : '';
+}
+
+function corsHeaders(request: Request) {
+  const origin = corsOrigin(request);
+  return {
+    ...(origin ? { 'Access-Control-Allow-Origin': origin } : {}),
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
+  };
+}
+
+function json(request: Request, body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' },
+    headers: { ...corsHeaders(request), 'Content-Type': 'application/json; charset=utf-8' },
   });
 }
 
@@ -26,30 +57,26 @@ function escapeHtml(value: string) {
     .replaceAll("'", '&#039;');
 }
 
-function normalizeAppOrigin(request: Request) {
-  const configured = Deno.env.get('KOJAC_APP_URL')?.trim();
-  const candidate = configured || request.headers.get('Origin') || '';
-  try {
-    const url = new URL(candidate);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
-    return url.origin;
-  } catch {
-    return '';
-  }
+function applicationOrigin(request: Request) {
+  return safeOrigin(Deno.env.get('KOJAC_APP_URL')) || corsOrigin(request) || PRODUCTION_ORIGIN;
 }
 
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, { status: 204, headers: corsHeaders(request) });
   }
 
   if (request.method !== 'POST') {
-    return json({ error: 'method_not_allowed' }, 405);
+    return json(request, { error: 'method_not_allowed' }, 405);
+  }
+
+  if (!corsOrigin(request)) {
+    return json(request, { error: 'origin_not_allowed' }, 403);
   }
 
   const authorization = request.headers.get('Authorization');
   if (!authorization?.startsWith('Bearer ')) {
-    return json({ error: 'unauthorized' }, 401);
+    return json(request, { error: 'unauthorized' }, 401);
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -57,8 +84,8 @@ Deno.serve(async (request) => {
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
   if (!supabaseUrl || !anonKey || !serviceRoleKey) {
-    console.error('KOJAC approval function missing Supabase runtime configuration');
-    return json({ error: 'server_configuration_error' }, 500);
+    console.error('KOJAC approval notification missing Supabase runtime configuration');
+    return json(request, { error: 'server_configuration_error' }, 500);
   }
 
   const callerClient = createClient(supabaseUrl, anonKey, {
@@ -69,7 +96,7 @@ Deno.serve(async (request) => {
   const { data: callerAuth, error: callerAuthError } = await callerClient.auth.getUser();
   const caller = callerAuth.user;
   if (callerAuthError || !caller) {
-    return json({ error: 'unauthorized' }, 401);
+    return json(request, { error: 'unauthorized' }, 401);
   }
 
   const { data: callerRole, error: callerRoleError } = await callerClient
@@ -79,91 +106,64 @@ Deno.serve(async (request) => {
     .maybeSingle();
 
   if (callerRoleError || !callerRole || !adminRoles.has(callerRole.role)) {
-    return json({ error: 'forbidden' }, 403);
+    return json(request, { error: 'forbidden' }, 403);
   }
 
   let payload: { target_user_id?: string };
   try {
     payload = await request.json();
   } catch {
-    return json({ error: 'invalid_request' }, 400);
+    return json(request, { error: 'invalid_request' }, 400);
   }
 
   const targetUserId = payload.target_user_id?.trim() ?? '';
   if (!uuidPattern.test(targetUserId) || targetUserId === caller.id) {
-    return json({ error: 'invalid_target' }, 400);
-  }
-
-  const { data: targetProfile, error: targetProfileError } = await callerClient
-    .from('profiles')
-    .select('user_id,full_name,nickname,is_approved,is_blocked,approved_at')
-    .eq('user_id', targetUserId)
-    .maybeSingle();
-
-  if (targetProfileError || !targetProfile) {
-    return json({ error: 'target_not_found' }, 404);
-  }
-
-  if (targetProfile.is_approved && !targetProfile.is_blocked) {
-    return json({ approved: true, email_sent: false, already_approved: true });
-  }
-
-  if (targetProfile.is_blocked) {
-    return json({ error: 'target_blocked' }, 409);
+    return json(request, { error: 'invalid_target' }, 400);
   }
 
   const serviceClient = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  const { data: targetProfile, error: targetProfileError } = await serviceClient
+    .from('profiles')
+    .select('full_name,nickname,is_approved,is_blocked')
+    .eq('user_id', targetUserId)
+    .maybeSingle();
+
+  if (targetProfileError || !targetProfile) {
+    return json(request, { error: 'target_not_found' }, 404);
+  }
+
+  // Notification is secondary. This function never approves or changes the account.
+  if (!targetProfile.is_approved || targetProfile.is_blocked) {
+    return json(request, { error: 'target_not_approved' }, 409);
+  }
+
   const { data: targetAuthResult, error: targetAuthError } = await serviceClient.auth.admin.getUserById(targetUserId);
   const targetAuthUser = targetAuthResult.user;
 
   if (targetAuthError || !targetAuthUser?.email) {
     console.error('KOJAC approval notification could not resolve target auth user', targetAuthError);
-    return json({ error: 'target_auth_unavailable' }, 500);
+    return json(request, { error: 'target_auth_unavailable' }, 500);
   }
 
   if (!targetAuthUser.email_confirmed_at) {
-    return json({ error: 'email_not_verified' }, 409);
-  }
-
-  const { error: approvalError } = await callerClient.rpc('set_user_approval', {
-    p_target_user: targetUserId,
-    p_approved: true,
-    p_blocked: false,
-  });
-
-  if (approvalError) {
-    console.error('KOJAC approval RPC failed', approvalError);
-    return json({ error: 'approval_failed' }, 403);
-  }
-
-  const { data: approvedProfile, error: approvedProfileError } = await serviceClient
-    .from('profiles')
-    .select('full_name,nickname,is_approved,is_blocked,approved_at')
-    .eq('user_id', targetUserId)
-    .single();
-
-  if (approvedProfileError || !approvedProfile?.is_approved || !approvedProfile.approved_at) {
-    console.error('KOJAC approval succeeded but updated profile could not be resolved', approvedProfileError);
-    return json({ approved: true, email_sent: false, warning: 'notification_state_unavailable' });
+    return json(request, { error: 'email_not_verified' }, 409);
   }
 
   const resendApiKey = Deno.env.get('RESEND_API_KEY')?.trim();
   const resendFromEmail = Deno.env.get('RESEND_FROM_EMAIL')?.trim();
-  const appOrigin = normalizeAppOrigin(request);
+  const appOrigin = applicationOrigin(request);
 
   if (!resendApiKey || !resendFromEmail || !appOrigin) {
     console.error('KOJAC approval email is not fully configured');
-    return json({ approved: true, email_sent: false, warning: 'notification_not_configured' });
+    return json(request, { email_sent: false, warning: 'notification_not_configured' }, 503);
   }
 
-  const displayName = (approvedProfile.nickname || approvedProfile.full_name || 'Siswa KOJAC').trim();
+  const displayName = (targetProfile.nickname || targetProfile.full_name || 'Siswa KOJAC').trim();
   const safeName = escapeHtml(displayName);
   const loginUrl = `${appOrigin}/login`;
-  const approvedAt = new Date(approvedProfile.approved_at).toISOString();
-  const idempotencyKey = `kojac-approval/${targetUserId}/${approvedAt}`;
 
   const html = `<!doctype html>
 <html lang="id">
@@ -196,7 +196,8 @@ Deno.serve(async (request) => {
     headers: {
       Authorization: `Bearer ${resendApiKey}`,
       'Content-Type': 'application/json',
-      'Idempotency-Key': idempotencyKey,
+      // Stable per account: retries/rerenders cannot send duplicate approval mail.
+      'Idempotency-Key': `kojac-approval-${targetUserId}`,
     },
     body: JSON.stringify({
       from: resendFromEmail,
@@ -209,8 +210,8 @@ Deno.serve(async (request) => {
   if (!resendResponse.ok) {
     const providerError = await resendResponse.text();
     console.error('KOJAC approval email provider error', resendResponse.status, providerError);
-    return json({ approved: true, email_sent: false, warning: 'notification_provider_failed' });
+    return json(request, { email_sent: false, warning: 'notification_provider_failed' }, 502);
   }
 
-  return json({ approved: true, email_sent: true });
+  return json(request, { email_sent: true });
 });

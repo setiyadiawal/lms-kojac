@@ -106,7 +106,7 @@ export function LoginPage() {
         const normalizedFullName = fullName.trim();
         const normalizedNickname = nickname.trim();
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: normalizedEmail,
           password,
           options: {
@@ -120,6 +120,7 @@ export function LoginPage() {
           },
         });
         if (error) throw error;
+        if (!data.user) throw new Error('Supabase signup did not return a user');
 
         storePendingVerificationEmail(normalizedEmail);
         navigate('/verify-email', { replace: true });
