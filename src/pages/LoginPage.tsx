@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { storePendingVerificationEmail } from '../lib/authVerification';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 
 export function LoginPage() {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -16,19 +18,36 @@ export function LoginPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setBusy(true); setMessage('');
+    if (busy) return;
+
+    setBusy(true);
+    setMessage('');
     try {
       if (mode === 'register') {
-        const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
+        const normalizedEmail = email.trim();
+        const { error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: { data: { full_name: name } },
+        });
         if (error) throw error;
-        setMessage('Pendaftaran berhasil. Akun akan masuk ke tahap persetujuan KOJAC.');
+
+        storePendingVerificationEmail(normalizedEmail);
+        navigate('/verify-email', { replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Terjadi kesalahan.');
-    } finally { setBusy(false); }
+      console.error(`KOJAC ${mode} auth failed`, error);
+      setMessage(
+        mode === 'login'
+          ? 'Email atau password tidak valid. Periksa kembali data Anda.'
+          : 'Pendaftaran belum berhasil. Periksa data Anda atau coba lagi beberapa saat.',
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   return <div className="auth-screen">
@@ -48,7 +67,7 @@ export function LoginPage() {
         <label>Password<input type="password" minLength={8} value={password} onChange={e=>setPassword(e.target.value)} required /></label>
         <button className="primary-btn" disabled={busy}>{busy ? 'Memproses…' : mode === 'login' ? 'Masuk' : 'Daftar'}</button>
       </form>
-      {message && <div className="notice">{message}</div>}
+      {message && <div className="notice" role="alert">{message}</div>}
       <button className="link-btn" onClick={()=>setMode(mode==='login'?'register':'login')}>{mode==='login'?'Belum punya akun? Daftar':'Sudah punya akun? Masuk'}</button>
     </section>
   </div>;

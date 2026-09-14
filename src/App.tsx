@@ -4,6 +4,7 @@ import { ProtectedRoute, RoleRoute } from './components/RouteGuards';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { PendingPage } from './pages/PendingPage';
+import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
 import { HiraganaPage } from './pages/HiraganaPage';
@@ -17,6 +18,7 @@ import { ListeningPage } from './pages/ListeningPage';
 export default function App() {
   return <Routes>
     <Route path="/login" element={<LoginPage />} />
+    <Route path="/verify-email" element={<VerifyEmailPage />} />
     <Route path="/pending" element={<PendingPage />} />
     <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
