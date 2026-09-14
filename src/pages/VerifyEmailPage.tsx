@@ -15,7 +15,6 @@ import {
 } from '../lib/authVerification';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
-import { PendingPage } from './PendingPage';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -67,6 +66,21 @@ export function VerifyEmailPage() {
   useEffect(() => {
     if (emailVerified) clearPendingVerificationEmail();
   }, [emailVerified]);
+
+  useEffect(() => {
+    if (!verificationSubmitted || loading || !user?.email_confirmed_at) return;
+    navigate(
+      profile?.is_approved && !profile.is_blocked ? '/' : '/pending',
+      { replace: true },
+    );
+  }, [
+    verificationSubmitted,
+    loading,
+    user?.email_confirmed_at,
+    profile?.is_approved,
+    profile?.is_blocked,
+    navigate,
+  ]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -221,13 +235,13 @@ export function VerifyEmailPage() {
     }
   }
 
-  if (loading || (verificationSubmitted && !user)) {
+  if (loading || verificationSubmitted) {
     return <div className="full-center">Memuat status akun KOJAC…</div>;
   }
 
   if (user && emailVerified) {
     if (profile?.is_approved && !profile.is_blocked) return <Navigate to="/" replace />;
-    return <PendingPage />;
+    return <Navigate to="/pending" replace />;
   }
 
   return <div className="auth-screen">

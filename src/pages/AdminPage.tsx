@@ -10,6 +10,7 @@ type AdminUser = {
   is_approved: boolean;
   is_blocked: boolean;
   role: AppRole;
+  email_verified: boolean;
 };
 
 type ApprovalNotificationResult = {
@@ -50,20 +51,19 @@ export function AdminPage() {
     if (!silent) setLoading(true);
     if (clearMessage) setMessage('');
 
-    const [profiles, roles] = await Promise.all([
-      supabase.from('profiles').select('user_id,full_name,is_approved,is_blocked').order('created_at', { ascending: false }),
-      supabase.from('user_roles').select('user_id,role'),
-    ]);
+    const { data, error } = await supabase.rpc('list_admin_users');
 
-    if (profiles.error || roles.error) {
-      console.error('Gagal memuat daftar user KOJAC', profiles.error ?? roles.error);
+    if (error) {
+      console.error('Gagal memuat daftar user KOJAC', error);
       setMessage('Daftar pengguna belum dapat dimuat. Silakan coba lagi.');
       if (!silent) setLoading(false);
       return null;
     }
 
-    const roleMap = new Map((roles.data ?? []).map(row => [row.user_id, row.role as AppRole]));
-    const nextUsers = (profiles.data ?? []).map(row => ({ ...row, role: roleMap.get(row.user_id) ?? 'umum' as AppRole }));
+    const nextUsers = ((data ?? []) as AdminUser[]).map((row) => ({
+      ...row,
+      email_verified: Boolean(row.email_verified),
+    }));
     setUsers(nextUsers);
     if (!silent) setLoading(false);
     return nextUsers;
@@ -80,7 +80,7 @@ export function AdminPage() {
     return () => window.removeEventListener('focus', refreshOnFocus);
   }, []);
 
-  const pendingCount = useMemo(() => users.filter(u => !u.is_approved && !u.is_blocked).length, [users]);
+  const pendingCount = useMemo(() => users.filter(u => u.email_verified && !u.is_approved && !u.is_blocked).length, [users]);
   const choices = role ? assignableBy[role] : [];
 
   async function approval(user: AdminUser, approved: boolean, blocked: boolean) {
@@ -98,12 +98,13 @@ export function AdminPage() {
       });
 
       if (approvalError) {
-        console.error('KOJAC account approval failed', approvalError);
-        setMessage(
-          isEmailNotVerifiedError(approvalError)
-            ? 'Email pengguna belum diverifikasi. Akun belum dapat disetujui.'
-            : 'Akun belum dapat disetujui. Silakan coba lagi.',
-        );
+        if (isEmailNotVerifiedError(approvalError)) {
+          setMessage('Email pengguna belum diverifikasi.');
+          await loadUsers({ silent: true, clearMessage: false });
+        } else {
+          console.error('KOJAC account approval failed', approvalError);
+          setMessage('Akun belum dapat disetujui. Silakan coba lagi.');
+        }
         setBusyId(null);
         return;
       }
@@ -143,12 +144,13 @@ export function AdminPage() {
     });
 
     if (error) {
-      console.error('KOJAC approval status update failed', error);
-      setMessage(
-        isEmailNotVerifiedError(error)
-          ? 'Email pengguna belum diverifikasi. Akun belum dapat disetujui.'
-          : 'Status akun belum dapat diperbarui. Silakan coba lagi.',
-      );
+      if (isEmailNotVerifiedError(error)) {
+        setMessage('Email pengguna belum diverifikasi.');
+        await loadUsers({ silent: true, clearMessage: false });
+      } else {
+        console.error('KOJAC approval status update failed', error);
+        setMessage('Status akun belum dapat diperbarui. Silakan coba lagi.');
+      }
     } else {
       await loadUsers({ silent: true, clearMessage: false });
     }
@@ -248,9 +250,9 @@ export function AdminPage() {
       {loading ? <div className="table-empty">Memuat pengguna…</div> : users.length===0 ? <div className="table-empty">Belum ada akun.</div> :
       <div className="table-scroll"><table><thead><tr><th>Nama</th><th>Status</th><th>Role</th><th>Aksi</th></tr></thead><tbody>{users.map(user=><tr key={user.user_id}>
         <td><strong>{user.full_name || 'Tanpa nama'}</strong><small>{user.user_id.slice(0,8)}…</small></td>
-        <td><span className={`status ${user.is_blocked?'blocked':user.is_approved?'approved':'pending'}`}>{user.is_blocked?'Diblokir':user.is_approved?'Aktif':'Pending'}</span></td>
+        <td><span className={`status ${user.is_blocked?'blocked':user.is_approved?'approved':'pending'}`}>{user.is_blocked?'Diblokir':user.is_approved?'Aktif':!user.email_verified?'Belum Verifikasi':'Menunggu Approval'}</span></td>
         <td><select value={user.role} disabled={busyId===user.user_id || choices.length===0} onChange={e=>void changeRole(user,e.target.value as AppRole)}>{Array.from(new Set([user.role,...choices])).map(r=><option key={r} value={r}>{r}</option>)}</select></td>
-        <td><div className="action-row">{!user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini" type="button" style={{ borderColor:'#e4b6bc', color:'#8f2634', background:'#fff6f7' }} disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
+        <td><div className="action-row">{user.email_verified && !user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini" type="button" style={{ borderColor:'#e4b6bc', color:'#8f2634', background:'#fff6f7' }} disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
       </tr>)}</tbody></table></div>}
     </div>
 
