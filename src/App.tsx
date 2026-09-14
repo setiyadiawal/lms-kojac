@@ -1,3 +1,4 @@
+import { lazy, Suspense, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { ProtectedRoute, RoleRoute } from './components/RouteGuards';
@@ -7,13 +8,22 @@ import { PendingPage } from './pages/PendingPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
-import { HiraganaPage } from './pages/HiraganaPage';
-import { KatakanaPage } from './pages/KatakanaPage';
-import { VocabularyPage } from './pages/VocabularyPage';
-import { KanjiPage } from './pages/KanjiPage';
-import { GrammarPage } from './pages/GrammarPage';
-import { ReadingPage } from './pages/ReadingPage';
-import { ListeningPage } from './pages/ListeningPage';
+
+const HiraganaPage = lazy(() => import('./pages/HiraganaPage').then((module) => ({ default: module.HiraganaPage })));
+const KatakanaPage = lazy(() => import('./pages/KatakanaPage').then((module) => ({ default: module.KatakanaPage })));
+const VocabularyPage = lazy(() => import('./pages/VocabularyPage').then((module) => ({ default: module.VocabularyPage })));
+const KanjiPage = lazy(() => import('./pages/KanjiPage').then((module) => ({ default: module.KanjiPage })));
+const GrammarPage = lazy(() => import('./pages/GrammarPage').then((module) => ({ default: module.GrammarPage })));
+const ReadingPage = lazy(() => import('./pages/ReadingPage').then((module) => ({ default: module.ReadingPage })));
+const ListeningPage = lazy(() => import('./pages/ListeningPage').then((module) => ({ default: module.ListeningPage })));
+
+function LazyModule({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<div className="full-center">Memuat modul KOJAC…</div>}>
+      {children}
+    </Suspense>
+  );
+}
 
 export default function App() {
   return <Routes>
@@ -23,15 +33,15 @@ export default function App() {
     <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
       <Route path="belajar" element={<LearningPage />} />
-      <Route path="belajar/hiragana" element={<HiraganaPage />} />
-      <Route path="belajar/katakana" element={<KatakanaPage />} />
-      <Route path="belajar/kosakata" element={<VocabularyPage />} />
-      <Route path="belajar/kosakata/:chapterNumber" element={<VocabularyPage />} />
-      <Route path="belajar/kanji" element={<KanjiPage />} />
-      <Route path="belajar/kanji/:level" element={<KanjiPage />} />
-      <Route path="belajar/tata-bahasa" element={<GrammarPage />} />
-      <Route path="belajar/reading" element={<ReadingPage />} />
-      <Route path="belajar/listening" element={<ListeningPage />} />
+      <Route path="belajar/hiragana" element={<LazyModule><HiraganaPage /></LazyModule>} />
+      <Route path="belajar/katakana" element={<LazyModule><KatakanaPage /></LazyModule>} />
+      <Route path="belajar/kosakata" element={<LazyModule><VocabularyPage /></LazyModule>} />
+      <Route path="belajar/kosakata/:chapterNumber" element={<LazyModule><VocabularyPage /></LazyModule>} />
+      <Route path="belajar/kanji" element={<LazyModule><KanjiPage /></LazyModule>} />
+      <Route path="belajar/kanji/:level" element={<LazyModule><KanjiPage /></LazyModule>} />
+      <Route path="belajar/tata-bahasa" element={<LazyModule><GrammarPage /></LazyModule>} />
+      <Route path="belajar/reading" element={<LazyModule><ReadingPage /></LazyModule>} />
+      <Route path="belajar/listening" element={<LazyModule><ListeningPage /></LazyModule>} />
       <Route path="latihan" element={<PracticePage />} />
       <Route path="jlpt" element={<ExamPage />} />
       <Route path="progress" element={<ProgressPage />} />

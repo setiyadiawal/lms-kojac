@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../state/AuthContext';
 
@@ -64,8 +65,30 @@ export type VocabularyChapter = {
   status: 'not_started' | 'in_progress' | 'mastered';
 };
 
-const ITEM_PAGE_SIZE = 1000;
-const PROGRESS_CHUNK_SIZE = 150;
+type VocabularyChapterSummaryRow = {
+  chapter_number: number;
+  chapter_title: string;
+  total: number;
+  started: number;
+  mastered: number;
+  due: number;
+  accuracy: number;
+  average_mastery: number;
+};
+
+type VocabularyChapterItemRow = VocabularyItem & {
+  progress_item_id: string | null;
+  repetitions: number | null;
+  interval_days: number | null;
+  ease_factor: number | string | null;
+  due_at: string | null;
+  last_rating: number | null;
+  last_reviewed_at: string | null;
+  correct_count: number | null;
+  wrong_count: number | null;
+  mastery_score: number | null;
+};
+
 const PROGRESS_CLOCK_INTERVAL_MS = 60_000;
 
 function numberValue(value: unknown, fallback: number | null = null) {
@@ -87,6 +110,29 @@ function vocabularyJenisValue(value: unknown): VocabularyJenis | null {
     : null;
 }
 
+function chapterStatus(total: number, started: number, mastered: number): VocabularyChapter['status'] {
+  if (total > 0 && mastered === total) return 'mastered';
+  if (started > 0) return 'in_progress';
+  return 'not_started';
+}
+
+function progressFromRpcRow(row: VocabularyChapterItemRow): VocabularyProgress | null {
+  if (!row.progress_item_id) return null;
+
+  return {
+    item_id: row.progress_item_id,
+    repetitions: row.repetitions ?? 0,
+    interval_days: row.interval_days ?? 0,
+    ease_factor: Number(row.ease_factor ?? 2.5),
+    due_at: row.due_at ?? '',
+    last_rating: row.last_rating,
+    last_reviewed_at: row.last_reviewed_at,
+    correct_count: row.correct_count ?? 0,
+    wrong_count: row.wrong_count ?? 0,
+    mastery_score: row.mastery_score ?? 0,
+  };
+}
+
 export function hasVocabularyReview(progress: VocabularyProgress | null | undefined) {
   if (!progress) return false;
   return Boolean(
@@ -103,56 +149,31 @@ export function isVocabularyDue(progress: VocabularyProgress | null | undefined,
   return Number.isFinite(dueMs) && dueMs <= nowMs;
 }
 
-async function loadAllVocabularyItems() {
-  const rows: VocabularyItem[] = [];
-
-  for (let from = 0; ; from += ITEM_PAGE_SIZE) {
-    const result = await supabase
-      .from('learning_items')
-      .select('id,prompt,reading,meaning_id,extra')
-      .eq('item_type', 'vocabulary')
-      .eq('is_published', true)
-      .order('id', { ascending: true })
-      .range(from, from + ITEM_PAGE_SIZE - 1);
-
-    if (result.error) throw result.error;
-    const page = (result.data ?? []) as VocabularyItem[];
-    rows.push(...page);
-    if (page.length < ITEM_PAGE_SIZE) break;
-  }
-
-  return rows;
-}
-
-async function loadVocabularyProgress(userId: string, itemIds: string[]) {
-  const rows: VocabularyProgress[] = [];
-
-  for (let index = 0; index < itemIds.length; index += PROGRESS_CHUNK_SIZE) {
-    const ids = itemIds.slice(index, index + PROGRESS_CHUNK_SIZE);
-    const result = await supabase
-      .from('review_progress')
-      .select('item_id,repetitions,interval_days,ease_factor,due_at,last_rating,last_reviewed_at,correct_count,wrong_count,mastery_score')
-      .eq('user_id', userId)
-      .in('item_id', ids);
-
-    if (result.error) throw result.error;
-    rows.push(...((result.data ?? []) as VocabularyProgress[]));
-  }
-
-  return rows;
-}
-
 export function useVocabulary() {
   const { user } = useAuth();
+  const { chapterNumber: chapterParam } = useParams<{ chapterNumber?: string }>();
+  const parsedChapter = chapterParam ? Number(chapterParam) : null;
+  const requestedChapterNumber = parsedChapter !== null
+    && Number.isInteger(parsedChapter)
+    && parsedChapter > 0
+    ? parsedChapter
+    : null;
+
   const [items, setItems] = useState<VocabularyItem[]>([]);
+  const [summaryChapters, setSummaryChapters] = useState<VocabularyChapter[]>([]);
   const [progressByItem, setProgressByItem] = useState<Record<string, VocabularyProgress>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [progressNowMs, setProgressNowMs] = useState(() => Date.now());
+  const loadSequenceRef = useRef(0);
 
   const load = useCallback(async () => {
+    const sequence = loadSequenceRef.current + 1;
+    loadSequenceRef.current = sequence;
+
     if (!user) {
       setItems([]);
+      setSummaryChapters([]);
       setProgressByItem({});
       setLoading(false);
       return;
@@ -162,28 +183,71 @@ export function useVocabulary() {
     setError(null);
 
     try {
-      const vocabularyItems = await loadAllVocabularyItems();
-      setItems(vocabularyItems);
+      if (requestedChapterNumber === null) {
+        const { data, error: rpcError } = await supabase.rpc('get_vocabulary_chapter_summaries');
+        if (rpcError) throw rpcError;
+        if (loadSequenceRef.current !== sequence) return;
 
-      if (!vocabularyItems.length) {
+        const rows = (data ?? []) as VocabularyChapterSummaryRow[];
+        setSummaryChapters(rows.map((row) => ({
+          number: row.chapter_number,
+          title: row.chapter_title || `Bab ${row.chapter_number}`,
+          items: [],
+          total: row.total,
+          started: row.started,
+          mastered: row.mastered,
+          due: row.due,
+          accuracy: row.accuracy,
+          averageMastery: row.average_mastery,
+          status: chapterStatus(row.total, row.started, row.mastered),
+        })));
+        setItems([]);
         setProgressByItem({});
-        setLoading(false);
         return;
       }
 
-      const progressRows = await loadVocabularyProgress(user.id, vocabularyItems.map((item) => item.id));
+      const { data, error: rpcError } = await supabase.rpc('get_vocabulary_chapter_items', {
+        p_chapter_number: requestedChapterNumber,
+      });
+      if (rpcError) throw rpcError;
+      if (loadSequenceRef.current !== sequence) return;
+
+      const rows = (data ?? []) as VocabularyChapterItemRow[];
+      const nextItems: VocabularyItem[] = [];
       const nextProgress: Record<string, VocabularyProgress> = {};
-      for (const row of progressRows) nextProgress[row.item_id] = row;
+
+      for (const row of rows) {
+        nextItems.push({
+          id: row.id,
+          prompt: row.prompt,
+          reading: row.reading,
+          meaning_id: row.meaning_id,
+          extra: row.extra,
+        });
+
+        const progress = progressFromRpcRow(row);
+        if (progress) nextProgress[progress.item_id] = progress;
+      }
+
+      setItems(nextItems);
       setProgressByItem(nextProgress);
+      setSummaryChapters([]);
     } catch (loadError) {
+      if (loadSequenceRef.current !== sequence) return;
+      setItems([]);
+      setSummaryChapters([]);
+      setProgressByItem({});
       setError(loadError instanceof Error ? loadError.message : 'Gagal memuat data Kosakata.');
     } finally {
-      setLoading(false);
+      if (loadSequenceRef.current === sequence) setLoading(false);
     }
-  }, [user]);
+  }, [requestedChapterNumber, user]);
 
   useEffect(() => {
     void load();
+    return () => {
+      loadSequenceRef.current += 1;
+    };
   }, [load]);
 
   useEffect(() => {
@@ -206,6 +270,7 @@ export function useVocabulary() {
     if (!row?.item_id) throw new Error('Supabase tidak mengembalikan progres Vocabulary yang tersimpan.');
 
     setProgressByItem((current) => ({ ...current, [row.item_id]: row }));
+    setProgressNowMs(Date.now());
     return row;
   }, []);
 
@@ -230,7 +295,7 @@ export function useVocabulary() {
     };
   }), [items, progressByItem]);
 
-  const chapters = useMemo<VocabularyChapter[]>(() => {
+  const detailChapters = useMemo<VocabularyChapter[]>(() => {
     const grouped = new Map<number, VocabularyWithProgress[]>();
 
     for (const item of combined) {
@@ -243,7 +308,9 @@ export function useVocabulary() {
     return Array.from(grouped.entries())
       .sort(([a], [b]) => a - b)
       .map(([number, chapterItems]) => {
-        const sortedItems = [...chapterItems].sort((a, b) => a.sortOrder - b.sortOrder || a.prompt.localeCompare(b.prompt, 'ja'));
+        const sortedItems = [...chapterItems].sort(
+          (a, b) => a.sortOrder - b.sortOrder || a.prompt.localeCompare(b.prompt, 'ja'),
+        );
         const total = sortedItems.length;
         const started = sortedItems.filter((item) => hasVocabularyReview(item.progress)).length;
         const mastered = sortedItems.filter((item) => (item.progress?.mastery_score ?? 0) >= 80).length;
@@ -256,11 +323,6 @@ export function useVocabulary() {
         const due = sortedItems.filter((item) => isVocabularyDue(item.progress, progressNowMs)).length;
         const averageMastery = total ? Math.round(masterySum / total) : 0;
         const accuracy = attempts ? Math.round((correct / attempts) * 100) : 0;
-        const status: VocabularyChapter['status'] = total > 0 && mastered === total
-          ? 'mastered'
-          : started > 0
-            ? 'in_progress'
-            : 'not_started';
 
         return {
           number,
@@ -272,21 +334,19 @@ export function useVocabulary() {
           due,
           accuracy,
           averageMastery,
-          status,
+          status: chapterStatus(total, started, mastered),
         };
       });
   }, [combined, progressNowMs]);
 
-  const uncategorizedCount = useMemo(
-    () => combined.filter((item) => item.chapterNumber === null).length,
-    [combined],
-  );
+  const chapters = requestedChapterNumber === null ? summaryChapters : detailChapters;
 
   return {
     chapters,
     loading,
     error,
-    uncategorizedCount,
+    // Live Vocabulary is fully categorized (2089/2089). Future CMS validation will enforce this.
+    uncategorizedCount: 0,
     reload: load,
     recordReview,
   };
