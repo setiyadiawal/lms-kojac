@@ -16,6 +16,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, profile, loading } = useAuth();
   if (loading) return <div className="full-center">Memuat KOJAC LMS…</div>;
   if (!user) return <Navigate to="/login" replace />;
+  if (!user.email_confirmed_at) return <Navigate to="/verify-email" replace />;
   if (!profile?.is_approved || profile?.is_blocked) return <Navigate to="/pending" replace />;
   return <>{children}</>;
 }

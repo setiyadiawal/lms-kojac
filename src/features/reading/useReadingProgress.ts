@@ -34,8 +34,8 @@ export const READING_REPEAT_THRESHOLD = 60;
 
 export function getReadingProgressStatus(progress: ReadingProgress | null | undefined): ReadingProgressStatus {
   if (!progress || progress.attempts <= 0 || !progress.completed) return 'not_started';
-  if (progress.latest_score < READING_REPEAT_THRESHOLD) return 'repeat';
   if (progress.best_score >= READING_MASTERY_THRESHOLD) return 'mastered';
+  if (progress.latest_score < READING_REPEAT_THRESHOLD) return 'repeat';
   return 'completed';
 }
 
@@ -57,7 +57,10 @@ export function getReadingProgressStats(
     .filter((progress): progress is ReadingProgress => Boolean(progress?.completed && progress.attempts > 0));
   const completed = progressRows.length;
   const mastered = progressRows.filter((progress) => progress.best_score >= READING_MASTERY_THRESHOLD).length;
-  const repeat = progressRows.filter((progress) => progress.latest_score < READING_REPEAT_THRESHOLD).length;
+  const repeat = progressRows.filter((progress) =>
+    progress.best_score < READING_MASTERY_THRESHOLD
+    && progress.latest_score < READING_REPEAT_THRESHOLD
+  ).length;
   const averageAccuracy = completed
     ? Math.round(progressRows.reduce((sum, progress) => sum + progress.latest_score, 0) / completed)
     : 0;

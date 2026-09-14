@@ -22,6 +22,13 @@ type LoadUsersOptions = {
   clearMessage?: boolean;
 };
 
+function isEmailNotVerifiedError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+  const candidate = error as { message?: string; details?: string; hint?: string; code?: string };
+  return [candidate.message, candidate.details, candidate.hint, candidate.code]
+    .some((value) => value?.toLowerCase().includes('email_not_verified'));
+}
+
 const assignableBy: Record<AppRole, AppRole[]> = {
   umum: [], siswa: [], pengajar: [],
   administrator: ['umum','siswa','pengajar'],
@@ -92,7 +99,11 @@ export function AdminPage() {
 
       if (approvalError) {
         console.error('KOJAC account approval failed', approvalError);
-        setMessage('Akun belum dapat disetujui. Silakan coba lagi.');
+        setMessage(
+          isEmailNotVerifiedError(approvalError)
+            ? 'Email pengguna belum diverifikasi. Akun belum dapat disetujui.'
+            : 'Akun belum dapat disetujui. Silakan coba lagi.',
+        );
         setBusyId(null);
         return;
       }
@@ -104,7 +115,6 @@ export function AdminPage() {
             ...item,
             is_approved: true,
             is_blocked: false,
-            role: item.role === 'umum' ? 'siswa' : item.role,
           }
         : item));
 
@@ -134,7 +144,11 @@ export function AdminPage() {
 
     if (error) {
       console.error('KOJAC approval status update failed', error);
-      setMessage('Status akun belum dapat diperbarui. Silakan coba lagi.');
+      setMessage(
+        isEmailNotVerifiedError(error)
+          ? 'Email pengguna belum diverifikasi. Akun belum dapat disetujui.'
+          : 'Status akun belum dapat diperbarui. Silakan coba lagi.',
+      );
     } else {
       await loadUsers({ silent: true, clearMessage: false });
     }

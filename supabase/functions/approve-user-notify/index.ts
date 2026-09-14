@@ -3,6 +3,14 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const PRODUCTION_ORIGIN = 'https://lms.kojac.id';
 const adminRoles = new Set(['administrator', 'co_founder', 'founder']);
+const roleRank: Record<string, number> = {
+  umum: 0,
+  siswa: 1,
+  pengajar: 2,
+  administrator: 3,
+  co_founder: 4,
+  founder: 5,
+};
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function safeOrigin(value: string | undefined | null) {
@@ -125,14 +133,30 @@ Deno.serve(async (request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data: targetProfile, error: targetProfileError } = await serviceClient
-    .from('profiles')
-    .select('full_name,nickname,is_approved,is_blocked')
-    .eq('user_id', targetUserId)
-    .maybeSingle();
+  const [
+    { data: targetProfile, error: targetProfileError },
+    { data: targetRole, error: targetRoleError },
+  ] = await Promise.all([
+    serviceClient
+      .from('profiles')
+      .select('full_name,nickname,is_approved,is_blocked')
+      .eq('user_id', targetUserId)
+      .maybeSingle(),
+    serviceClient
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', targetUserId)
+      .maybeSingle(),
+  ]);
 
-  if (targetProfileError || !targetProfile) {
+  if (targetProfileError || targetRoleError || !targetProfile || !targetRole) {
     return json(request, { error: 'target_not_found' }, 404);
+  }
+
+  const callerRank = roleRank[callerRole.role] ?? -1;
+  const targetRank = roleRank[targetRole.role] ?? Number.MAX_SAFE_INTEGER;
+  if (callerRole.role !== 'founder' && targetRank >= callerRank) {
+    return json(request, { error: 'target_role_not_allowed' }, 403);
   }
 
   // Notification is secondary. This function never approves or changes the account.
@@ -167,7 +191,7 @@ Deno.serve(async (request) => {
 
   const html = `<!doctype html>
 <html lang="id">
-  <body style="margin:0;padding:0;background:#fffff;font-family:Arial,sans-serif;color:#241a1c;">
+  <body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;color:#241a1c;">
  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px; color: #222;">
   <h2 style="color: #7b1f2f; margin-bottom: 16px;">
     お知らせです！
@@ -189,7 +213,7 @@ Deno.serve(async (request) => {
 <p>Terima kasih, <br>
 Team Kojac</p>
 
-<br
+<br>
   <p style="margin-top: 28px; font-size: 15px;">
     一緒に一生懸命勉強しましょう！
   </p>
