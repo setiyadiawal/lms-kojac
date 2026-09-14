@@ -6,13 +6,16 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   clearPendingVerificationEmail,
   getPendingVerificationEmail,
+  getVerifyEmailRedirectUrl,
   maskEmail,
 } from '../lib/authVerification';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../state/AuthContext';
+import { PendingPage } from './PendingPage';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 60;
@@ -46,16 +49,24 @@ function formatCountdown(seconds: number) {
 
 export function VerifyEmailPage() {
   const navigate = useNavigate();
+  const { user, profile, loading } = useAuth();
   const [pendingEmail] = useState(() => getPendingVerificationEmail());
   const [manualEmail, setManualEmail] = useState('');
   const [digits, setDigits] = useState<string[]>(() => Array.from({ length: OTP_LENGTH }, () => ''));
   const [verifying, setVerifying] = useState(false);
+  const [verificationSubmitted, setVerificationSubmitted] = useState(false);
   const [resending, setResending] = useState(false);
   const [cooldown, setCooldown] = useState(pendingEmail ? RESEND_COOLDOWN_SECONDS : 0);
   const [notice, setNotice] = useState<Notice>(null);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const verifyInFlightRef = useRef(false);
   const resendInFlightRef = useRef(false);
+
+  const emailVerified = Boolean(user?.email_confirmed_at);
+
+  useEffect(() => {
+    if (emailVerified) clearPendingVerificationEmail();
+  }, [emailVerified]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -158,7 +169,8 @@ export function VerifyEmailPage() {
       if (!data.session || !data.user) throw new Error('OTP verification did not create a session');
 
       clearPendingVerificationEmail();
-      navigate('/pending', { replace: true });
+      setVerificationSubmitted(true);
+      setNotice({ kind: 'success', text: 'Email berhasil diverifikasi. Menyiapkan status akun…' });
     } catch (error) {
       console.error('KOJAC email OTP verification failed', error);
       setNotice({
@@ -187,6 +199,9 @@ export function VerifyEmailPage() {
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: verificationEmail,
+        options: {
+          emailRedirectTo: getVerifyEmailRedirectUrl(),
+        },
       });
       if (error) throw error;
 
@@ -206,6 +221,15 @@ export function VerifyEmailPage() {
     }
   }
 
+  if (loading || (verificationSubmitted && !user)) {
+    return <div className="full-center">Memuat status akun KOJAC…</div>;
+  }
+
+  if (user && emailVerified) {
+    if (profile?.is_approved && !profile.is_blocked) return <Navigate to="/" replace />;
+    return <PendingPage />;
+  }
+
   return <div className="auth-screen">
     <section className="auth-copy">
       <div className="brand hero-brand"><div className="brand-mark">空</div><div><strong>KOJAC</strong><span>Kuuhaku Online Japanese Class</span></div></div>
@@ -223,9 +247,7 @@ export function VerifyEmailPage() {
             <p className="muted verify-email-copy">Kami telah mengirim kode verifikasi ke <strong>{maskEmail(pendingEmail)}</strong>.</p>
             <p className="muted verify-email-subtext">Masukkan kode 6 digit yang dikirim ke email Anda.</p>
           </>
-        : <>
-            <p className="muted verify-email-copy">Masukkan email yang Anda gunakan saat mendaftar, lalu masukkan kode 6 digit yang kami kirim.</p>
-          </>}
+        : <p className="muted verify-email-copy">Masukkan email yang Anda gunakan saat mendaftar, lalu masukkan kode 6 digit yang kami kirim.</p>}
 
       <form onSubmit={verify} className="verify-email-form">
         {needsManualEmail && <div className="auth-field">
@@ -266,10 +288,13 @@ export function VerifyEmailPage() {
           </div>
         </fieldset>
 
-        <button className="primary-btn" disabled={verifying || !emailReady || token.length !== OTP_LENGTH}>
+        <button className="primary-btn" disabled={verifying || verificationSubmitted || !emailReady || token.length !== OTP_LENGTH}>
           {verifying ? 'Memverifikasi…' : 'Verifikasi Email'}
         </button>
       </form>
+
+      <p className="muted verify-email-subtext"><strong>ATAU</strong></p>
+      <p className="muted verify-email-subtext">Anda juga dapat melakukan verifikasi melalui tombol <strong>Verifikasi Email</strong> yang kami kirim ke email Anda.</p>
 
       {notice && <div className={`notice auth-otp-notice ${notice.kind}`} role={notice.kind === 'error' ? 'alert' : 'status'}>{notice.text}</div>}
 

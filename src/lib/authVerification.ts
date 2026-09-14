@@ -15,6 +15,11 @@ export function clearPendingVerificationEmail() {
   window.sessionStorage.removeItem(PENDING_VERIFICATION_EMAIL_KEY);
 }
 
+export function getVerifyEmailRedirectUrl() {
+  if (typeof window === 'undefined') return '/verify-email';
+  return new URL('/verify-email', window.location.origin).toString();
+}
+
 export function maskEmail(email: string) {
   const atIndex = email.lastIndexOf('@');
   if (atIndex <= 0) return email;

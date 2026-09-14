@@ -1,7 +1,10 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { useMemo, useState, type FormEvent } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { storePendingVerificationEmail } from '../lib/authVerification';
+import {
+  getVerifyEmailRedirectUrl,
+  storePendingVerificationEmail,
+} from '../lib/authVerification';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 
@@ -107,6 +110,7 @@ export function LoginPage() {
           email: normalizedEmail,
           password,
           options: {
+            emailRedirectTo: getVerifyEmailRedirectUrl(),
             data: {
               full_name: normalizedFullName,
               nickname: normalizedNickname,
@@ -162,46 +166,19 @@ export function LoginPage() {
         {mode === 'register' && <>
           <div className="auth-field">
             <label htmlFor="register-full-name">Nama Lengkap</label>
-            <input
-              id="register-full-name"
-              autoComplete="name"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              disabled={busy}
-            />
+            <input id="register-full-name" autoComplete="name" value={fullName} onChange={(event) => setFullName(event.target.value)} disabled={busy}/>
           </div>
-
           <div className="auth-field">
             <label htmlFor="register-nickname">Nama Panggilan</label>
-            <input
-              id="register-nickname"
-              autoComplete="nickname"
-              value={nickname}
-              onChange={(event) => setNickname(event.target.value)}
-              disabled={busy}
-            />
+            <input id="register-nickname" autoComplete="nickname" value={nickname} onChange={(event) => setNickname(event.target.value)} disabled={busy}/>
           </div>
-
           <div className="auth-field">
             <label htmlFor="register-birth-date">Tanggal Lahir</label>
-            <input
-              id="register-birth-date"
-              type="date"
-              max={today}
-              value={birthDate}
-              onChange={(event) => setBirthDate(event.target.value)}
-              disabled={busy}
-            />
+            <input id="register-birth-date" type="date" max={today} value={birthDate} onChange={(event) => setBirthDate(event.target.value)} disabled={busy}/>
           </div>
-
           <div className="auth-field">
             <label htmlFor="register-user-type">Tipe Pengguna</label>
-            <select
-              id="register-user-type"
-              value={requestedUserType}
-              onChange={(event) => setRequestedUserType(event.target.value as RequestedUserType)}
-              disabled={busy}
-            >
+            <select id="register-user-type" value={requestedUserType} onChange={(event) => setRequestedUserType(event.target.value as RequestedUserType)} disabled={busy}>
               <option value="">Pilih tipe pengguna</option>
               <option value="umum">Umum</option>
               <option value="siswa">Siswa</option>
@@ -211,36 +188,14 @@ export function LoginPage() {
 
         <div className="auth-field">
           <label htmlFor="auth-email">Email</label>
-          <input
-            id="auth-email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            disabled={busy}
-          />
+          <input id="auth-email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} disabled={busy}/>
         </div>
 
         <div className="auth-field">
           <label htmlFor="auth-password">Kata Sandi</label>
           <div className="auth-password-field">
-            <input
-              id="auth-password"
-              type={showPassword ? 'text' : 'password'}
-              minLength={8}
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={busy}
-            />
-            <button
-              type="button"
-              className="auth-password-toggle"
-              aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-              aria-pressed={showPassword}
-              onClick={() => setShowPassword((current) => !current)}
-              disabled={busy}
-            >
+            <input id="auth-password" type={showPassword ? 'text' : 'password'} minLength={8} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(event) => setPassword(event.target.value)} disabled={busy}/>
+            <button type="button" className="auth-password-toggle" aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'} aria-pressed={showPassword} onClick={() => setShowPassword((current) => !current)} disabled={busy}>
               {showPassword ? <EyeOff aria-hidden="true"/> : <Eye aria-hidden="true"/>}
             </button>
           </div>
@@ -249,23 +204,8 @@ export function LoginPage() {
         {mode === 'register' && <div className="auth-field">
           <label htmlFor="register-confirm-password">Konfirmasi Kata Sandi</label>
           <div className="auth-password-field">
-            <input
-              id="register-confirm-password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              minLength={8}
-              autoComplete="new-password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              disabled={busy}
-            />
-            <button
-              type="button"
-              className="auth-password-toggle"
-              aria-label={showConfirmPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-              aria-pressed={showConfirmPassword}
-              onClick={() => setShowConfirmPassword((current) => !current)}
-              disabled={busy}
-            >
+            <input id="register-confirm-password" type={showConfirmPassword ? 'text' : 'password'} minLength={8} autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} disabled={busy}/>
+            <button type="button" className="auth-password-toggle" aria-label={showConfirmPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'} aria-pressed={showConfirmPassword} onClick={() => setShowConfirmPassword((current) => !current)} disabled={busy}>
               {showConfirmPassword ? <EyeOff aria-hidden="true"/> : <Eye aria-hidden="true"/>}
             </button>
           </div>

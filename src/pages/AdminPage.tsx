@@ -12,6 +12,13 @@ type AdminUser = {
   role: AppRole;
 };
 
+type ApprovalNotificationResult = {
+  approved?: boolean;
+  email_sent?: boolean;
+  already_approved?: boolean;
+  warning?: string;
+};
+
 const assignableBy: Record<AppRole, AppRole[]> = {
   umum: [], siswa: [], pengajar: [],
   administrator: ['umum','siswa','pengajar'],
@@ -48,6 +55,28 @@ export function AdminPage() {
 
   async function approval(user: AdminUser, approved: boolean, blocked: boolean) {
     setBusyId(user.user_id); setMessage('');
+
+    const isInitialApproval = approved && !blocked && !user.is_approved && !user.is_blocked;
+
+    if (isInitialApproval) {
+      const { data, error } = await supabase.functions.invoke('approve-user-notify', {
+        body: { target_user_id: user.user_id },
+      });
+
+      if (error) {
+        setMessage('Akun belum dapat disetujui. Silakan coba lagi.');
+      } else {
+        const result = (data ?? {}) as ApprovalNotificationResult;
+        await load();
+        if (result.approved && result.email_sent === false) {
+          setMessage('Akun berhasil disetujui, tetapi email pemberitahuan belum berhasil dikirim.');
+        }
+      }
+
+      setBusyId(null);
+      return;
+    }
+
     const { error } = await supabase.rpc('set_user_approval', {
       p_target_user: user.user_id,
       p_approved: approved,
