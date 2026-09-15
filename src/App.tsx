@@ -8,6 +8,7 @@ import { PendingPage } from './pages/PendingPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
+import { MyClassesPage } from './pages/MyClassesPage';
 
 const HiraganaPage = lazy(() => import('./pages/HiraganaPage').then((module) => ({ default: module.HiraganaPage })));
 const KatakanaPage = lazy(() => import('./pages/KatakanaPage').then((module) => ({ default: module.KatakanaPage })));
@@ -32,6 +33,7 @@ export default function App() {
     <Route path="/pending" element={<PendingPage />} />
     <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
+      <Route path="kelas-saya" element={<MyClassesPage />} />
       <Route path="belajar" element={<LearningPage />} />
       <Route path="belajar/hiragana" element={<LazyModule><HiraganaPage /></LazyModule>} />
       <Route path="belajar/katakana" element={<LazyModule><KatakanaPage /></LazyModule>} />

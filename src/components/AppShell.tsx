@@ -7,6 +7,7 @@ import {
   Languages,
   LogOut,
   Menu,
+  School,
   ShieldCheck,
   Trophy,
   MessageSquareText,
@@ -40,11 +41,19 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
       <div><strong>KOJAC</strong><span>Japanese LMS</span></div>
     </div>
     <nav>
-      {menu.map(({ to, label, icon: Icon, end }) => (
-        <NavLink end={end} key={to} to={to} onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Icon size={18} />
-          <span className="nav-item-label">{label}</span>
-        </NavLink>
+      {menu.map(({ to, label, icon: Icon, end }, index) => (
+        <span key={to} style={{ display: 'contents' }}>
+          <NavLink end={end} to={to} onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Icon size={18} />
+            <span className="nav-item-label">{label}</span>
+          </NavLink>
+          {index === 0 && role === 'siswa' && (
+            <NavLink to="/kelas-saya" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <School size={18} />
+              <span className="nav-item-label">Kelas Saya</span>
+            </NavLink>
+          )}
+        </span>
       ))}
       {canAdmin && (
         <NavLink to="/admin" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
