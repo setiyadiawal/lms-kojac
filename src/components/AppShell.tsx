@@ -17,6 +17,8 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../state/AuthContext';
 import { APP_ROLE_LABEL, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
 
+const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
+
 const menu = [
   { to: '/', label: 'Beranda', icon: Home, end: true },
   { to: '/belajar', label: 'Belajar', icon: BookOpen },
@@ -51,6 +53,12 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
             <NavLink to="/kelas-saya" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <School size={18} />
               <span className="nav-item-label">Kelas Saya</span>
+            </NavLink>
+          )}
+          {index === 0 && role && TEACHING_ROLES.has(role) && (
+            <NavLink to="/kelas-mengajar" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <School size={18} />
+              <span className="nav-item-label">Kelas Mengajar</span>
             </NavLink>
           )}
         </span>
