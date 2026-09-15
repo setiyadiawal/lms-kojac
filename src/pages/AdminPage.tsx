@@ -398,8 +398,14 @@ export function AdminPage() {
       p_new_role: nextRole,
     });
     if (error) {
-      console.error('KOJAC role update failed', error);
-      setMessage('Role pengguna belum dapat diperbarui. Silakan coba lagi.');
+      if (errorContains(error, 'active_student_enrollments_exist')) {
+        setMessage('Role belum dapat diubah karena siswa masih memiliki kelas aktif.');
+      } else if (errorContains(error, 'active_teaching_assignments_exist')) {
+        setMessage('Role belum dapat diubah karena pengguna masih menjadi pengajar pada kelas aktif.');
+      } else {
+        console.error('KOJAC role update failed', error);
+        setMessage('Role pengguna belum dapat diperbarui. Silakan coba lagi.');
+      }
     } else {
       await loadUsers({ silent: true, clearMessage: false });
     }
@@ -407,6 +413,13 @@ export function AdminPage() {
   }
 
   function canChangeRole(target: AdminUser) {
+    if (!role || !currentUser || !USER_MANAGEMENT_ROLES.includes(role)) return false;
+    if (target.user_id === currentUser.id) return false;
+    if (role === 'founder') return true;
+    return APP_ROLE_RANK[target.role] < APP_ROLE_RANK[role];
+  }
+
+  function canViewUserDetail(target: AdminUser) {
     if (!role || !currentUser || !USER_MANAGEMENT_ROLES.includes(role)) return false;
     if (target.user_id === currentUser.id) return false;
     if (role === 'founder') return true;
@@ -471,6 +484,7 @@ export function AdminPage() {
   }
 
   async function loadUserDetail(target: AdminUser) {
+    if (!canViewUserDetail(target)) return;
     setDetailTarget(target);
     setDetail(null);
     setDetailMessage('');
@@ -485,8 +499,12 @@ export function AdminPage() {
     const [{ data, error }] = await Promise.all([detailPromise, catalogPromise]);
 
     if (error) {
-      console.error('KOJAC admin user detail load failed', error);
-      setDetailMessage('Detail pengguna belum dapat dimuat. Silakan coba lagi.');
+      if (errorContains(error, 'target_detail_not_allowed')) {
+        setDetailMessage('Anda tidak memiliki izin untuk melihat detail pengguna ini.');
+      } else {
+        console.error('KOJAC admin user detail load failed', error);
+        setDetailMessage('Detail pengguna belum dapat dimuat. Silakan coba lagi.');
+      }
       setDetailLoading(false);
       return;
     }
@@ -526,8 +544,20 @@ export function AdminPage() {
     });
 
     if (error) {
-      console.error('KOJAC enrollment update failed', error);
-      setDetailMessage('Enrollment belum dapat diperbarui. Silakan coba lagi.');
+      if (errorContains(error, 'class_not_open_for_enrollment')) {
+        setDetailMessage('Enrollment belum dapat diaktifkan karena kelas sudah selesai atau dibatalkan.');
+      } else if (errorContains(error, 'student_blocked')) {
+        setDetailMessage('Enrollment belum dapat diaktifkan karena akun siswa sedang diblokir.');
+      } else if (errorContains(error, 'student_not_active')) {
+        setDetailMessage('Enrollment belum dapat diaktifkan karena akun siswa belum aktif/disetujui.');
+      } else if (errorContains(error, 'target_must_be_siswa')) {
+        setDetailMessage('Enrollment hanya dapat diberikan kepada akun dengan role Siswa.');
+      } else if (errorContains(error, 'enrollment_not_found')) {
+        setDetailMessage('Enrollment historis tidak ditemukan.');
+      } else {
+        console.error('KOJAC enrollment update failed', error);
+        setDetailMessage('Enrollment belum dapat diperbarui. Silakan coba lagi.');
+      }
     } else {
       setDetailMessage('Enrollment berhasil diperbarui.');
       setNewEnrollmentClassId('');
@@ -666,9 +696,10 @@ export function AdminPage() {
   }
 
   const availableEnrollmentClasses = useMemo(() => {
-    if (!detail) return classes.filter((classRow) => classRow.status !== 'cancelled');
+    const isOpenForEnrollment = (classRow: ClassRow) => classRow.status === 'planned' || classRow.status === 'active';
+    if (!detail) return classes.filter(isOpenForEnrollment);
     const enrolled = new Set(detail.enrollments.map((enrollment) => enrollment.class_id));
-    return classes.filter((classRow) => classRow.status !== 'cancelled' && !enrolled.has(classRow.id));
+    return classes.filter((classRow) => isOpenForEnrollment(classRow) && !enrolled.has(classRow.id));
   }, [classes, detail]);
 
   return <div className="page">
@@ -698,7 +729,7 @@ export function AdminPage() {
           <td><strong>{user.full_name || 'Tanpa nama'}</strong><small>{user.user_id.slice(0,8)}…</small></td>
           <td><span className={`status ${user.is_blocked?'blocked':user.is_approved?'approved':'pending'}`}>{user.is_blocked?'Diblokir':user.is_approved?'Aktif':!user.email_verified?'Belum Verifikasi':'Menunggu Approval'}</span></td>
           <td><select value={user.role} disabled={busyId===user.user_id || choices.length===0 || !canChangeRole(user)} onChange={e=>void changeRole(user,e.target.value as AppRole)}>{Array.from(new Set([user.role,...choices])).map(r=><option key={r} value={r}>{APP_ROLE_LABEL[r]}</option>)}</select></td>
-          <td><button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void loadUserDetail(user)}><Eye size={15}/> Lihat Detail</button></td>
+          <td><button className="mini" type="button" disabled={busyId===user.user_id || !canViewUserDetail(user)} title={canViewUserDetail(user) ? 'Lihat detail pengguna' : 'Anda tidak memiliki izin untuk melihat detail pengguna ini'} onClick={()=>void loadUserDetail(user)}><Eye size={15}/> Lihat Detail</button></td>
           <td><div className="action-row">{user.email_verified && !user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini" type="button" style={{ borderColor:'#e4b6bc', color:'#8f2634', background:'#fff6f7' }} disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
         </tr>)}</tbody></table></div>}
       </div>
