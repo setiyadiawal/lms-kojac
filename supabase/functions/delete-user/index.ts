@@ -8,12 +8,14 @@ const roleRank: Record<string, number> = {
   umum: 0,
   siswa: 1,
   pengajar: 2,
-  administrator: 3,
-  co_founder: 4,
-  founder: 5,
+  staff: 3,
+  administrator: 4,
+  manager: 5,
+  co_founder: 6,
+  founder: 7,
 };
 
-const deleteRoles = new Set(['administrator', 'co_founder', 'founder']);
+const deleteRoles = new Set(['administrator', 'manager', 'co_founder', 'founder']);
 
 function safeOrigin(value: string | undefined | null) {
   if (!value) return '';

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, Check, RefreshCw, ShieldCheck, Trash2, UserRoundCog, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
-import type { AppRole } from '../types';
+import { APP_ROLE_LABEL, APP_ROLE_RANK, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
 
 type AdminUser = {
   user_id: string;
@@ -31,10 +31,14 @@ function isEmailNotVerifiedError(error: unknown) {
 }
 
 const assignableBy: Record<AppRole, AppRole[]> = {
-  umum: [], siswa: [], pengajar: [],
-  administrator: ['umum','siswa','pengajar'],
-  co_founder: ['umum','siswa','pengajar','administrator'],
-  founder: ['umum','siswa','pengajar','administrator','co_founder','founder'],
+  umum: [],
+  siswa: [],
+  pengajar: [],
+  staff: [],
+  administrator: ['umum','siswa','pengajar','staff'],
+  manager: ['umum','siswa','pengajar','staff','administrator'],
+  co_founder: ['umum','siswa','pengajar','staff','administrator','manager'],
+  founder: ['umum','siswa','pengajar','staff','administrator','manager','co_founder','founder'],
 };
 
 export function AdminPage() {
@@ -173,20 +177,18 @@ export function AdminPage() {
     setBusyId(null);
   }
 
-  const roleRank: Record<AppRole, number> = {
-    umum: 0,
-    siswa: 1,
-    pengajar: 2,
-    administrator: 3,
-    co_founder: 4,
-    founder: 5,
-  };
+  function canChangeRole(target: AdminUser) {
+    if (!role || !currentUser || !USER_MANAGEMENT_ROLES.includes(role)) return false;
+    if (target.user_id === currentUser.id) return false;
+    if (role === 'founder') return true;
+    return APP_ROLE_RANK[target.role] < APP_ROLE_RANK[role];
+  }
 
   function canDeleteAccount(target: AdminUser) {
     if (!role || !currentUser) return false;
-    if (!['administrator', 'co_founder', 'founder'].includes(role)) return false;
+    if (!USER_MANAGEMENT_ROLES.includes(role)) return false;
     if (target.user_id === currentUser.id) return false;
-    return roleRank[target.role] < roleRank[role];
+    return APP_ROLE_RANK[target.role] < APP_ROLE_RANK[role];
   }
 
   function openDeleteModal(target: AdminUser) {
@@ -251,7 +253,7 @@ export function AdminPage() {
       <div className="table-scroll"><table><thead><tr><th>Nama</th><th>Status</th><th>Role</th><th>Aksi</th></tr></thead><tbody>{users.map(user=><tr key={user.user_id}>
         <td><strong>{user.full_name || 'Tanpa nama'}</strong><small>{user.user_id.slice(0,8)}…</small></td>
         <td><span className={`status ${user.is_blocked?'blocked':user.is_approved?'approved':'pending'}`}>{user.is_blocked?'Diblokir':user.is_approved?'Aktif':!user.email_verified?'Belum Verifikasi':'Menunggu Approval'}</span></td>
-        <td><select value={user.role} disabled={busyId===user.user_id || choices.length===0} onChange={e=>void changeRole(user,e.target.value as AppRole)}>{Array.from(new Set([user.role,...choices])).map(r=><option key={r} value={r}>{r}</option>)}</select></td>
+        <td><select value={user.role} disabled={busyId===user.user_id || choices.length===0 || !canChangeRole(user)} onChange={e=>void changeRole(user,e.target.value as AppRole)}>{Array.from(new Set([user.role,...choices])).map(r=><option key={r} value={r}>{APP_ROLE_LABEL[r]}</option>)}</select></td>
         <td><div className="action-row">{user.email_verified && !user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini" type="button" style={{ borderColor:'#e4b6bc', color:'#8f2634', background:'#fff6f7' }} disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
       </tr>)}</tbody></table></div>}
     </div>
@@ -266,7 +268,7 @@ export function AdminPage() {
         <p className="eyebrow">TINDAKAN PERMANEN</p>
         <h2 id="delete-account-title" style={{ margin:'5px 0 10px', fontSize:25 }}>Hapus akun?</h2>
         <p style={{ margin:'0 0 14px', color:'var(--muted)', lineHeight:1.6 }}>
-          Akun <strong style={{ color:'var(--ink)' }}>{deleteTarget.full_name || 'Tanpa nama'}</strong> ({deleteTarget.role}) akan dihapus secara permanen.
+          Akun <strong style={{ color:'var(--ink)' }}>{deleteTarget.full_name || 'Tanpa nama'}</strong> ({APP_ROLE_LABEL[deleteTarget.role]}) akan dihapus secara permanen.
         </p>
         <div style={{ padding:'12px 14px', border:'1px solid #efc9cf', background:'#fff7f8', borderRadius:11, color:'#792532', lineHeight:1.55, fontSize:13 }}>
           Semua data belajar, progress, feedback, dan enrollment milik akun ini akan dihapus. History administratif yang relevan tetap dipertahankan tanpa referensi aktif ke akun yang sudah dihapus. Tindakan ini tidak dapat dibatalkan.

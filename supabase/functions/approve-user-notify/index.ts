@@ -2,14 +2,16 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const PRODUCTION_ORIGIN = 'https://lms.kojac.id';
-const adminRoles = new Set(['administrator', 'co_founder', 'founder']);
+const adminRoles = new Set(['administrator', 'manager', 'co_founder', 'founder']);
 const roleRank: Record<string, number> = {
   umum: 0,
   siswa: 1,
   pengajar: 2,
-  administrator: 3,
-  co_founder: 4,
-  founder: 5,
+  staff: 3,
+  administrator: 4,
+  manager: 5,
+  co_founder: 6,
+  founder: 7,
 };
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 

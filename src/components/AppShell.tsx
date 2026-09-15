@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../state/AuthContext';
+import { APP_ROLE_LABEL, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
 
 const menu = [
   { to: '/', label: 'Beranda', icon: Home, end: true },
@@ -27,7 +28,7 @@ const menu = [
 type AppNavigationContentProps = {
   canAdmin: boolean;
   fullName?: string | null;
-  role?: string | null;
+  role?: AppRole | null;
   onNavigate?: () => void;
   onSignOut: () => void;
 };
@@ -52,7 +53,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
       )}
     </nav>
     <div className="sidebar-bottom">
-      <div className="user-mini"><Languages size={17}/><div><strong>{fullName || 'Siswa KOJAC'}</strong><span>{role || 'umum'}</span></div></div>
+      <div className="user-mini"><Languages size={17}/><div><strong>{fullName || 'Siswa KOJAC'}</strong><span>{role ? APP_ROLE_LABEL[role] : 'Umum'}</span></div></div>
       <button className="ghost-btn" onClick={() => { onNavigate?.(); onSignOut(); }}><LogOut size={17}/> Keluar</button>
     </div>
   </>;
@@ -64,7 +65,7 @@ export function AppShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const canAdmin = ['administrator', 'co_founder', 'founder'].includes(role ?? '');
+  const canAdmin = role ? USER_MANAGEMENT_ROLES.includes(role) : false;
 
   useEffect(() => {
     setDrawerOpen(false);

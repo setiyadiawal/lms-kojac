@@ -1,16 +1,7 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../state/AuthContext';
-import type { AppRole } from '../types';
-
-const rank: Record<AppRole, number> = {
-  umum: 0,
-  siswa: 1,
-  pengajar: 2,
-  administrator: 3,
-  co_founder: 4,
-  founder: 5,
-};
+import { APP_ROLE_RANK, type AppRole } from '../types';
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, profile, loading } = useAuth();
@@ -23,6 +14,6 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
 export function RoleRoute({ minimum, children }: { minimum: AppRole; children: ReactNode }) {
   const { role } = useAuth();
-  if (!role || rank[role] < rank[minimum]) return <Navigate to="/" replace />;
+  if (!role || APP_ROLE_RANK[role] < APP_ROLE_RANK[minimum]) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
