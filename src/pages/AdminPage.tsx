@@ -209,10 +209,10 @@ const assignableBy: Record<AppRole, AppRole[]> = {
   siswa: [],
   pengajar: [],
   staff: [],
-  administrator: ['umum','siswa','pengajar','staff'],
-  manager: ['umum','siswa','pengajar','staff','administrator'],
-  co_founder: ['umum','siswa','pengajar','staff','administrator','manager'],
-  founder: ['umum','siswa','pengajar','staff','administrator','manager','co_founder','founder'],
+  administrator: ['umum','siswa','pengajar'],
+  manager: ['umum','siswa','pengajar','administrator'],
+  co_founder: ['umum','siswa','pengajar','administrator','manager'],
+  founder: ['umum','siswa','pengajar','administrator','manager','co_founder','founder'],
 };
 
 export function AdminPage() {
@@ -402,6 +402,8 @@ export function AdminPage() {
         setMessage('Role belum dapat diubah karena siswa masih memiliki kelas aktif.');
       } else if (errorContains(error, 'active_teaching_assignments_exist')) {
         setMessage('Role belum dapat diubah karena pengguna masih menjadi pengajar pada kelas aktif.');
+      } else if (errorContains(error, 'staff_role_inactive')) {
+        setMessage('Role Staff sedang tidak digunakan di KOJAC.');
       } else {
         console.error('KOJAC role update failed', error);
         setMessage('Role pengguna belum dapat diperbarui. Silakan coba lagi.');
