@@ -31,6 +31,8 @@ type TeachingClassRow = {
   ends_on: string | null;
   program_code: string | null;
   program_name: string | null;
+  primary_teacher_id: string | null;
+  primary_teacher_name: string | null;
   student_count_active: number;
   student_count_paused: number;
   student_count_total_current: number;
@@ -44,6 +46,8 @@ type ClassContext = {
   status: ClassStatus;
   starts_on: string | null;
   ends_on: string | null;
+  teacher_id: string | null;
+  primary_teacher_name: string | null;
   program_code: string | null;
   program_name: string | null;
 };
@@ -158,6 +162,7 @@ function errorContains(error: unknown, marker: string) {
 
 function reportErrorMessage(error: unknown) {
   if (errorContains(error, 'teacher_class_access_denied')) return 'Kelas ini tidak ditugaskan kepada akun Anda.';
+  if (errorContains(error, 'substitute_report_date_outside_assignment')) return 'Tanggal laporan berada di luar periode tugas Anda sebagai pengajar pengganti.';
   if (errorContains(error, 'class_not_active_for_report')) return 'Laporan baru hanya dapat dibuat untuk kelas yang sedang aktif.';
   if (errorContains(error, 'report_date_future')) return 'Tanggal laporan tidak boleh melebihi hari ini.';
   if (errorContains(error, 'invalid_report_time')) return 'Waktu selesai harus setelah waktu mulai.';
@@ -171,9 +176,19 @@ function reportErrorMessage(error: unknown) {
   return 'Laporan belum dapat diproses. Silakan coba lagi.';
 }
 
-function ReportContentBlock({ label, value, expanded }: { label: string; value: string | null; expanded: boolean }) {
+function ReportContentBlock({
+  label,
+  value,
+  expanded,
+  className = '',
+}: {
+  label: string;
+  value: string | null;
+  expanded: boolean;
+  className?: string;
+}) {
   return (
-    <div className="teaching-report-history-block">
+    <div className={`teaching-report-history-block ${className}`.trim()}>
       <span>{label}</span>
       <p className={expanded ? '' : 'is-clamped'}>{value || '—'}</p>
     </div>
@@ -194,39 +209,44 @@ function ReportCard({
   onToggle: () => void;
 }) {
   const hasLongContent = [row.material_summary, row.assignment_summary, row.next_plan, row.evaluation_notes ?? '']
-    .some((value) => value.length > 180 || value.split('\n').length > 3);
+    .some((value) => value.length > 120 || value.split('\n').length > 2);
 
   return (
-    <article className="teaching-report-history-card">
-      <div className="teaching-report-history-header">
-        <div className="teaching-report-history-heading">
-          <p className="eyebrow">{formatDate(row.report_date)}</p>
-          <h3>{row.teacher_name || 'Pengajar KOJAC'}</h3>
+    <article className={`teaching-report-history-card ${expanded ? 'is-expanded' : ''}`.trim()}>
+      <div className="teaching-report-compact-grid">
+        <div className="teaching-report-encounter">
+          <strong className="teaching-report-encounter-date">{formatDate(row.report_date)}</strong>
+          <span className="teaching-report-encounter-teacher">{row.teacher_name || 'Pengajar KOJAC'}</span>
           <div className="teaching-report-time-line">
-            <Clock3 size={15}/>
-            <span>{shortTime(row.starts_at)} – {shortTime(row.ends_at)}</span>
+            <Clock3 size={14}/>
+            <span>{shortTime(row.starts_at)}–{shortTime(row.ends_at)}</span>
             <strong>{durationText(row.starts_at, row.ends_at)}</strong>
           </div>
         </div>
-        {canEdit && (
-          <button className="class-action-secondary teaching-report-edit-button" type="button" onClick={onEdit}>
-            <Edit3 size={15}/> Edit
-          </button>
-        )}
-      </div>
 
-      <div className="teaching-report-history-content">
-        <ReportContentBlock label="Materi" value={row.material_summary} expanded={expanded}/>
-        <ReportContentBlock label="Tugas" value={row.assignment_summary} expanded={expanded}/>
-        <ReportContentBlock label="Rencana Berikutnya" value={row.next_plan} expanded={expanded}/>
-        <ReportContentBlock label="Evaluasi" value={row.evaluation_notes} expanded={expanded}/>
-      </div>
+        <div className="teaching-report-compact-column">
+          <ReportContentBlock label="Materi" value={row.material_summary} expanded={expanded}/>
+          <ReportContentBlock label="Tugas" value={row.assignment_summary} expanded={expanded}/>
+        </div>
 
-      {hasLongContent && (
-        <button className="teaching-report-detail-toggle" type="button" onClick={onToggle} aria-expanded={expanded}>
-          {expanded ? <ChevronUp size={15}/> : <ChevronDown size={15}/>} {expanded ? 'Ringkas' : 'Lihat Detail'}
-        </button>
-      )}
+        <div className="teaching-report-compact-column">
+          <ReportContentBlock label="Rencana" value={row.next_plan} expanded={expanded}/>
+          <ReportContentBlock label="Evaluasi" value={row.evaluation_notes} expanded={expanded} className="is-evaluation"/>
+        </div>
+
+        <div className="teaching-report-row-actions">
+          {canEdit && (
+            <button className="class-action-secondary teaching-report-edit-button" type="button" onClick={onEdit}>
+              <Edit3 size={15}/> Edit
+            </button>
+          )}
+          {hasLongContent && (
+            <button className="teaching-report-detail-toggle" type="button" onClick={onToggle} aria-expanded={expanded}>
+              {expanded ? <ChevronUp size={15}/> : <ChevronDown size={15}/>} {expanded ? 'Ringkas' : 'Lihat Detail'}
+            </button>
+          )}
+        </div>
+      </div>
     </article>
   );
 }
@@ -273,7 +293,7 @@ export function TeachingReportsPage() {
 
     const classPromise = supabase
       .from('classes')
-      .select('id,program_id,code,name,status,starts_on,ends_on')
+      .select('id,program_id,code,name,status,starts_on,ends_on,teacher_id')
       .eq('id', classId)
       .maybeSingle();
     const ownClassesPromise = supabase.rpc('get_my_teaching_classes');
@@ -316,12 +336,28 @@ export function TeachingReportsPage() {
       status: ClassStatus;
       starts_on: string | null;
       ends_on: string | null;
+      teacher_id: string | null;
     };
 
     const ownRows = (ownClassesResult.data ?? []) as TeachingClassRow[];
     const ownContext = ownRows.find((row) => row.class_id === classId) ?? null;
     let programCode: string | null = ownContext?.program_code ?? null;
     let programName: string | null = ownContext?.program_name ?? null;
+    let primaryTeacherName: string | null = ownContext?.primary_teacher_name ?? null;
+
+    if (!primaryTeacherName && MANAGEMENT_ROLES.has(role)) {
+      const { data: overviewData, error: overviewError } = await supabase.rpc('get_management_classes_overview');
+      if (!overviewError) {
+        const managementClass = ((overviewData ?? []) as Array<{
+          class_id: string;
+          primary_teacher_id: string | null;
+          primary_teacher_name: string | null;
+        }>).find((row) => row.class_id === classId);
+        if (managementClass?.primary_teacher_id === classRow.teacher_id) {
+          primaryTeacherName = managementClass.primary_teacher_name;
+        }
+      }
+    }
     if (!programName && classRow.program_id) {
       const { data: programData, error: programError } = await supabase
         .from('programs')
@@ -336,6 +372,7 @@ export function TeachingReportsPage() {
 
     setClassContext({
       ...classRow,
+      primary_teacher_name: primaryTeacherName || 'Belum ditentukan',
       program_code: programCode,
       program_name: programName,
     });
@@ -357,9 +394,7 @@ export function TeachingReportsPage() {
     [ownClasses],
   );
   const canCreateForCurrentClass = Boolean(ownCurrentClass && ownCurrentClass.class_status === 'active');
-  const classTeacherName = ownCurrentClass
-    ? teacherDisplayName
-    : reports[0]?.teacher_name || 'Pengajar kelas';
+  const classTeacherName = classContext?.primary_teacher_name || 'Belum ditentukan';
   const durationPreview = form.starts_at && form.ends_at ? durationText(form.starts_at, form.ends_at) : '—';
 
   if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
@@ -524,7 +559,7 @@ export function TeachingReportsPage() {
             </div>
             <div className="teaching-report-context-grid">
               <div>
-                <span><UserRound size={15}/>Pengajar</span>
+                <span><UserRound size={15}/>Pengajar Utama</span>
                 <strong>{classTeacherName}</strong>
               </div>
               <div>
@@ -755,7 +790,7 @@ export function TeachingReportsPage() {
                   <ReportCard
                     key={row.report_id}
                     row={row}
-                    canEdit={Boolean(user && row.teacher_id === user.id)}
+                    canEdit={Boolean(user && ownCurrentClass && row.teacher_id === user.id)}
                     expanded={expandedReportIds.has(row.report_id)}
                     onEdit={() => beginEdit(row)}
                     onToggle={() => toggleReport(row.report_id)}

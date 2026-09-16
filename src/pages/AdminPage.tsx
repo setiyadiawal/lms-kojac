@@ -129,6 +129,28 @@ type ClassForm = {
   status: ClassRow['status'];
 };
 
+type SubstituteAssignment = {
+  assignment_id: string;
+  class_id: string;
+  teacher_id: string | null;
+  teacher_name: string;
+  assignment_type: 'substitute';
+  starts_on: string;
+  ends_on: string;
+  note: string | null;
+  is_active: boolean;
+  assigned_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+type SubstituteForm = {
+  teacher_id: string;
+  starts_on: string;
+  ends_on: string;
+  note: string;
+};
+
 const MANAGEMENT_ROLES = new Set<AppRole>(['administrator', 'manager', 'co_founder', 'founder']);
 const TEACHER_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 const ENROLLMENT_STATUSES: StudentEnrollmentDetail['enrollment_status'][] = ['active', 'paused', 'completed', 'cancelled'];
@@ -145,6 +167,8 @@ const emptyClassForm: ClassForm = {
   ends_on: '',
   status: 'planned',
 };
+
+const emptySubstituteForm: SubstituteForm = { teacher_id: '', starts_on: '', ends_on: '', note: '' };
 
 const modalBackdropStyle = {
   position: 'fixed' as const,
@@ -249,6 +273,11 @@ export function AdminPage() {
   const [editingClass, setEditingClass] = useState<ClassRow | null>(null);
   const [classForm, setClassForm] = useState<ClassForm>(emptyClassForm);
   const [classSaving, setClassSaving] = useState(false);
+  const [substituteAssignments, setSubstituteAssignments] = useState<SubstituteAssignment[]>([]);
+  const [substituteLoading, setSubstituteLoading] = useState(false);
+  const [substituteSaving, setSubstituteSaving] = useState(false);
+  const [substituteMessage, setSubstituteMessage] = useState('');
+  const [substituteForm, setSubstituteForm] = useState<SubstituteForm>(emptySubstituteForm);
 
   async function loadUsers(options: LoadUsersOptions = {}) {
     const { silent = false, clearMessage = true } = options;
@@ -641,6 +670,20 @@ export function AdminPage() {
     setBusyId(null);
   }
 
+  async function loadSubstituteAssignments(classId: string) {
+    setSubstituteLoading(true);
+    setSubstituteMessage('');
+    const { data, error } = await supabase.rpc('get_class_teacher_assignments', { p_class_id: classId });
+    if (error) {
+      console.error('KOJAC substitute assignments load failed', error);
+      setSubstituteAssignments([]);
+      setSubstituteMessage('Data pengajar pengganti belum dapat dimuat.');
+    } else {
+      setSubstituteAssignments((data ?? []) as SubstituteAssignment[]);
+    }
+    setSubstituteLoading(false);
+  }
+
   function openClassEditor(classRow?: ClassRow) {
     setEditingClass(classRow ?? null);
     setClassForm(classRow ? {
@@ -653,8 +696,67 @@ export function AdminPage() {
       ends_on: classRow.ends_on ?? '',
       status: classRow.status,
     } : emptyClassForm);
+    setSubstituteAssignments([]);
+    setSubstituteForm(emptySubstituteForm);
+    setSubstituteMessage('');
     setCatalogMessage('');
     setClassEditorOpen(true);
+    if (classRow) void loadSubstituteAssignments(classRow.id);
+  }
+
+  async function saveSubstituteAssignment() {
+    if (!editingClass || substituteSaving) return;
+    if (!substituteForm.teacher_id || !substituteForm.starts_on || !substituteForm.ends_on) {
+      setSubstituteMessage('Pengajar, tanggal mulai, dan tanggal selesai wajib diisi.');
+      return;
+    }
+    if (substituteForm.ends_on < substituteForm.starts_on) {
+      setSubstituteMessage('Tanggal selesai pengganti tidak boleh sebelum tanggal mulai.');
+      return;
+    }
+
+    setSubstituteSaving(true);
+    setSubstituteMessage('');
+    const { error } = await supabase.rpc('create_class_teacher_assignment', {
+      p_class_id: editingClass.id,
+      p_teacher_id: substituteForm.teacher_id,
+      p_starts_on: substituteForm.starts_on,
+      p_ends_on: substituteForm.ends_on,
+      p_note: substituteForm.note.trim() || null,
+    });
+
+    if (error) {
+      console.error('KOJAC substitute assignment save failed', error);
+      if (errorContains(error, 'teacher_already_primary')) setSubstituteMessage('Pengajar tersebut sudah menjadi pengajar utama kelas ini.');
+      else if (errorContains(error, 'teacher_not_eligible')) setSubstituteMessage('Akun yang dipilih tidak dapat menjadi pengajar pengganti.');
+      else if (errorContains(error, 'class_not_open_for_substitute')) setSubstituteMessage('Pengajar pengganti hanya dapat ditambahkan pada kelas yang direncanakan atau aktif.');
+      else if (errorContains(error, 'assignment_outside_class_period')) setSubstituteMessage('Periode pengajar pengganti harus berada di dalam periode kelas.');
+      else if (errorContains(error, 'substitute_assignment_overlap')) setSubstituteMessage('Periode pengganti bertumpang tindih dengan penugasan aktif yang sudah ada.');
+      else if (errorContains(error, 'invalid_assignment_dates')) setSubstituteMessage('Periode pengajar pengganti tidak valid.');
+      else setSubstituteMessage('Pengajar pengganti belum dapat ditambahkan. Silakan coba lagi.');
+    } else {
+      setSubstituteForm(emptySubstituteForm);
+      setSubstituteMessage('Pengajar pengganti berhasil ditambahkan.');
+      await loadSubstituteAssignments(editingClass.id);
+    }
+    setSubstituteSaving(false);
+  }
+
+  async function deactivateSubstituteAssignment(assignment: SubstituteAssignment) {
+    if (!editingClass || substituteSaving) return;
+    setSubstituteSaving(true);
+    setSubstituteMessage('');
+    const { error } = await supabase.rpc('deactivate_class_teacher_assignment', {
+      p_assignment_id: assignment.assignment_id,
+    });
+    if (error) {
+      console.error('KOJAC substitute assignment deactivate failed', error);
+      setSubstituteMessage('Penugasan pengganti belum dapat dinonaktifkan.');
+    } else {
+      setSubstituteMessage('Penugasan pengganti dinonaktifkan.');
+      await loadSubstituteAssignments(editingClass.id);
+    }
+    setSubstituteSaving(false);
   }
 
   async function saveClass() {
@@ -689,6 +791,7 @@ export function AdminPage() {
       if (errorContains(result.error, 'class_code_exists')) setCatalogMessage('Kode kelas sudah digunakan.');
       else if (errorContains(result.error, 'teacher_not_eligible')) setCatalogMessage('Akun yang dipilih tidak dapat menjadi pengajar kelas.');
       else if (errorContains(result.error, 'invalid_class_dates')) setCatalogMessage('Periode kelas tidak valid.');
+      else if (errorContains(result.error, 'teacher_has_substitute_assignment')) setCatalogMessage('Pengajar utama yang dipilih masih tercatat sebagai pengajar pengganti di kelas ini. Nonaktifkan penugasan pengganti terlebih dahulu.');
       else setCatalogMessage('Kelas belum dapat disimpan. Silakan coba lagi.');
     } else {
       setClassEditorOpen(false);
@@ -844,17 +947,39 @@ export function AdminPage() {
       </section>
     </div>}
 
-    {classEditorOpen && <div role="presentation" style={modalBackdropStyle} onMouseDown={(event)=>{ if (event.currentTarget===event.target && !classSaving) setClassEditorOpen(false); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="class-editor-title" style={{ ...modalCardStyle, width:'min(100%,640px)' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'start' }}><div><p className="eyebrow">CLASS</p><h2 id="class-editor-title" style={{ margin:'5px 0 0' }}>{editingClass?'Edit Kelas':'Buat Kelas'}</h2></div><button className="ghost-btn" type="button" disabled={classSaving} onClick={()=>setClassEditorOpen(false)}><X size={17}/> Tutup</button></div>
+    {classEditorOpen && <div role="presentation" style={modalBackdropStyle} onMouseDown={(event)=>{ if (event.currentTarget===event.target && !classSaving && !substituteSaving) setClassEditorOpen(false); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="class-editor-title" style={{ ...modalCardStyle, width:'min(100%,760px)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'start' }}><div><p className="eyebrow">CLASS</p><h2 id="class-editor-title" style={{ margin:'5px 0 0' }}>{editingClass?'Edit Kelas':'Buat Kelas'}</h2></div><button className="ghost-btn" type="button" disabled={classSaving || substituteSaving} onClick={()=>setClassEditorOpen(false)}><X size={17}/> Tutup</button></div>
         <form onSubmit={(event)=>{ event.preventDefault(); void saveClass(); }} style={{ display:'grid', gap:14, marginTop:20 }}>
           <label>Program<select value={classForm.program_id} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,program_id:event.target.value}))}><option value="">Pilih program</option>{programs.map(program=><option key={program.id} value={program.id}>{program.name}{program.is_active?'':' (Nonaktif)'}</option>)}</select></label>
           <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,2fr)', gap:12 }}><label>Kode Kelas<input value={classForm.code} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,code:event.target.value}))} placeholder="SP-N4-A" /></label><label>Nama Kelas<input value={classForm.name} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,name:event.target.value}))} placeholder="SP-N4 Malam A" /></label></div>
           <label>Deskripsi<textarea value={classForm.description} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,description:event.target.value}))} rows={3} /></label>
-          <label>Pengajar<select value={classForm.teacher_id} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,teacher_id:event.target.value}))}><option value="">Pilih pengajar</option>{teacherOptions.map(teacher=><option key={teacher.user_id} value={teacher.user_id}>{teacher.full_name || 'Tanpa nama'} — {APP_ROLE_LABEL[teacher.role]}</option>)}</select></label>
+          <label>Pengajar Utama<select value={classForm.teacher_id} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,teacher_id:event.target.value}))}><option value="">Pilih pengajar</option>{teacherOptions.map(teacher=><option key={teacher.user_id} value={teacher.user_id}>{teacher.full_name || 'Tanpa nama'} — {APP_ROLE_LABEL[teacher.role]}</option>)}</select></label>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))', gap:12 }}><label>Tanggal Mulai<input type="date" value={classForm.starts_on} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,starts_on:event.target.value}))} /></label><label>Tanggal Selesai<input type="date" value={classForm.ends_on} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,ends_on:event.target.value}))} /></label><label>Status<select value={classForm.status} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,status:event.target.value as ClassRow['status']}))}>{CLASS_STATUSES.map(status=><option key={status} value={status}>{statusLabel(status)}</option>)}</select></label></div>
-          <div style={{ display:'flex', justifyContent:'flex-end', gap:8 }}><button className="ghost-btn" type="button" disabled={classSaving} onClick={()=>setClassEditorOpen(false)}>Batal</button><button className="primary-btn" type="submit" disabled={classSaving}>{classSaving?'Menyimpan...':'Simpan Kelas'}</button></div>
+          <div style={{ display:'flex', justifyContent:'flex-end', gap:8 }}><button className="ghost-btn" type="button" disabled={classSaving || substituteSaving} onClick={()=>setClassEditorOpen(false)}>Batal</button><button className="primary-btn" type="submit" disabled={classSaving || substituteSaving}>{classSaving?'Menyimpan...':'Simpan Kelas'}</button></div>
         </form>
+
+        {editingClass && <section className="admin-substitute-section">
+          <div className="admin-substitute-heading">
+            <div><p className="eyebrow">PENGAJAR</p><h3>Pengajar Pengganti</h3><p>Pengajar utama tetap <strong>{teacherNameById.get(classForm.teacher_id) || 'Belum ditentukan'}</strong>. Tambahkan pengganti hanya untuk periode tertentu.</p></div>
+          </div>
+
+          {substituteMessage && <div className="notice admin-substitute-notice">{substituteMessage}</div>}
+
+          {substituteLoading ? <div className="admin-substitute-empty">Memuat pengajar pengganti…</div> : substituteAssignments.length > 0 ? <div className="admin-substitute-list">
+            {substituteAssignments.map((assignment)=><div className={`admin-substitute-row ${assignment.is_active?'':'is-inactive'}`} key={assignment.assignment_id}>
+              <div><strong>{assignment.teacher_name}</strong><span>{formatDate(assignment.starts_on)} — {formatDate(assignment.ends_on)}</span>{assignment.note && <small>{assignment.note}</small>}</div>
+              <div className="admin-substitute-row-actions"><span className={`status ${assignment.is_active?'approved':'blocked'}`}>{assignment.is_active?'Aktif':'Nonaktif'}</span>{assignment.is_active && <button className="mini" type="button" disabled={substituteSaving} onClick={()=>void deactivateSubstituteAssignment(assignment)}>Nonaktifkan</button>}</div>
+            </div>)}
+          </div> : <div className="admin-substitute-empty">Belum ada pengajar pengganti untuk kelas ini.</div>}
+
+          <div className="admin-substitute-form">
+            <label>Pengajar<select value={substituteForm.teacher_id} disabled={substituteSaving} onChange={(event)=>setSubstituteForm(current=>({...current,teacher_id:event.target.value}))}><option value="">Pilih pengajar pengganti</option>{teacherOptions.filter(teacher=>teacher.user_id!==classForm.teacher_id).map(teacher=><option key={teacher.user_id} value={teacher.user_id}>{teacher.full_name || 'Tanpa nama'} — {APP_ROLE_LABEL[teacher.role]}</option>)}</select></label>
+            <div className="admin-substitute-date-grid"><label>Mulai<input type="date" value={substituteForm.starts_on} disabled={substituteSaving} onChange={(event)=>setSubstituteForm(current=>({...current,starts_on:event.target.value}))} /></label><label>Sampai<input type="date" value={substituteForm.ends_on} disabled={substituteSaving} onChange={(event)=>setSubstituteForm(current=>({...current,ends_on:event.target.value}))} /></label></div>
+            <label>Catatan <span style={{ color:'var(--muted)', fontWeight:500 }}>(Opsional)</span><textarea rows={2} maxLength={1000} value={substituteForm.note} disabled={substituteSaving} onChange={(event)=>setSubstituteForm(current=>({...current,note:event.target.value}))} placeholder="Contoh: Menggantikan pengajar utama pada pertemuan ini." /></label>
+            <div style={{ display:'flex', justifyContent:'flex-end' }}><button className="ghost-btn" type="button" disabled={substituteSaving} onClick={()=>void saveSubstituteAssignment()}><Plus size={16}/>{substituteSaving?'Menyimpan…':'Tambah Pengajar Pengganti'}</button></div>
+          </div>
+        </section>}
       </section>
     </div>}
 

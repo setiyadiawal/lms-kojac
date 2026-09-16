@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle,
+  ArrowLeft,
   BookOpenCheck,
   CalendarDays,
+  ChevronRight,
   FileText,
   History,
   RefreshCw,
@@ -19,6 +21,7 @@ import type { AppRole } from '../types';
 
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
 type EnrollmentStatus = 'active' | 'paused' | 'completed' | 'cancelled';
+type WorkspaceMode = 'mine' | 'all';
 
 type TeachingClassRow = {
   class_id: string;
@@ -34,6 +37,23 @@ type TeachingClassRow = {
   student_count_total_current: number;
 };
 
+type ManagementClassRow = {
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  class_status: ClassStatus;
+  program_name: string | null;
+  program_code: string | null;
+  primary_teacher_id: string | null;
+  primary_teacher_name: string | null;
+  starts_on: string | null;
+  ends_on: string | null;
+  student_active_count: number;
+  student_paused_count: number;
+  report_count: number;
+  last_report_date: string | null;
+};
+
 type TeachingStudentRow = {
   user_id: string;
   full_name: string | null;
@@ -43,7 +63,23 @@ type TeachingStudentRow = {
   completed_at: string | null;
 };
 
+type StudentDetailRow = {
+  student_id: string;
+  full_name: string | null;
+  nickname: string | null;
+  program_id: string | null;
+  program_code: string | null;
+  program_name: string | null;
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  enrollment_status: EnrollmentStatus;
+  joined_at: string;
+  completed_at: string | null;
+};
+
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
+const MANAGEMENT_ROLES = new Set<AppRole>(['administrator', 'manager', 'co_founder', 'founder']);
 
 const classLabels: Record<ClassStatus, string> = {
   planned: 'Direncanakan',
@@ -98,7 +134,17 @@ function SummaryCard({ icon, value, label }: { icon: React.ReactNode; value: num
   );
 }
 
-function ClassCard({ row, onOpen, busy }: { row: TeachingClassRow; onOpen: () => void; busy: boolean }) {
+function ClassCard({
+  row,
+  onOpen,
+  busy,
+  management,
+}: {
+  row: TeachingClassRow;
+  onOpen: () => void;
+  busy: boolean;
+  management?: ManagementClassRow;
+}) {
   return (
     <article className="class-card">
       <div className="class-card-header">
@@ -110,21 +156,34 @@ function ClassCard({ row, onOpen, busy }: { row: TeachingClassRow; onOpen: () =>
         <span className={classStatusClass(row.class_status)}>{classLabels[row.class_status]}</span>
       </div>
 
-      <div className="class-info-grid">
+      <div className={`class-info-grid ${management ? 'class-info-grid-management' : ''}`}>
         <div className="class-info-item">
           <span className="class-info-label"><CalendarDays/>Periode</span>
           <strong className="class-info-value">{formatPeriod(row.starts_on, row.ends_on)}</strong>
         </div>
+        {management && (
+          <div className="class-info-item">
+            <span className="class-info-label"><UserRound/>Pengajar Utama</span>
+            <strong className="class-info-value">{management.primary_teacher_name || 'Belum ditentukan'}</strong>
+          </div>
+        )}
         <div className="class-info-item">
           <span className="class-info-label"><UsersRound/>Jumlah Siswa</span>
           <strong className="class-info-value">{row.student_count_total_current} siswa</strong>
           <span className="class-info-subvalue">Aktif {row.student_count_active} · Dijeda {row.student_count_paused}</span>
         </div>
+        {management && (
+          <div className="class-info-item">
+            <span className="class-info-label"><FileText/>Laporan</span>
+            <strong className="class-info-value">{management.report_count} laporan</strong>
+            <span className="class-info-subvalue">Terakhir {formatDate(management.last_report_date)}</span>
+          </div>
+        )}
       </div>
 
       <div className="class-action-row">
-        <Link className="class-action-primary" to={`/kelas-mengajar/${row.class_id}/laporan`}>
-          <FileText size={16}/>Laporan Mengajar
+        <Link className={management ? 'class-action-secondary' : 'class-action-primary'} to={`/kelas-mengajar/${row.class_id}/laporan`}>
+          <FileText size={16}/>{management ? 'Lihat Laporan' : 'Laporan Mengajar'}
         </Link>
         <button className="class-action-secondary" type="button" disabled={busy} onClick={onOpen}>
           <UsersRound size={16}/>{busy ? 'Memuat…' : 'Lihat Siswa'}
@@ -134,10 +193,10 @@ function ClassCard({ row, onOpen, busy }: { row: TeachingClassRow; onOpen: () =>
   );
 }
 
-function StudentRow({ row }: { row: TeachingStudentRow }) {
+function StudentRow({ row, onOpen }: { row: TeachingStudentRow; onOpen: () => void }) {
   const displayName = row.full_name?.trim() || row.nickname?.trim() || 'Siswa KOJAC';
   return (
-    <article className="class-student-row">
+    <button className="class-student-row class-student-row-button" type="button" onClick={onOpen}>
       <div className="class-student-name">
         <strong>{displayName}</strong>
         {row.nickname && row.nickname !== displayName && <span>{row.nickname}</span>}
@@ -148,8 +207,9 @@ function StudentRow({ row }: { row: TeachingStudentRow }) {
           Bergabung {formatDate(row.joined_at)}
           {row.completed_at ? ` · Selesai ${formatDate(row.completed_at)}` : ''}
         </span>
+        <ChevronRight className="class-student-chevron" size={18} aria-hidden="true"/>
       </div>
-    </article>
+    </button>
   );
 }
 
@@ -171,39 +231,72 @@ function LoadingState() {
   );
 }
 
+function managementToTeachingRow(row: ManagementClassRow): TeachingClassRow {
+  return {
+    class_id: row.class_id,
+    class_code: row.class_code,
+    class_name: row.class_name,
+    class_status: row.class_status,
+    starts_on: row.starts_on,
+    ends_on: row.ends_on,
+    program_code: row.program_code,
+    program_name: row.program_name,
+    student_count_active: row.student_active_count,
+    student_count_paused: row.student_paused_count,
+    student_count_total_current: row.student_active_count + row.student_paused_count,
+  };
+}
+
 export function TeachingClassesPage() {
   const { role, loading: authLoading } = useAuth();
+  const [mode, setMode] = useState<WorkspaceMode>('mine');
   const [classes, setClasses] = useState<TeachingClassRow[]>([]);
+  const [managementClasses, setManagementClasses] = useState<ManagementClassRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedClass, setSelectedClass] = useState<TeachingClassRow | null>(null);
   const [students, setStudents] = useState<TeachingStudentRow[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<TeachingStudentRow | null>(null);
+  const [studentDetail, setStudentDetail] = useState<StudentDetailRow | null>(null);
+  const [studentDetailLoading, setStudentDetailLoading] = useState(false);
+  const [studentDetailError, setStudentDetailError] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const canTeach = Boolean(role && TEACHING_ROLES.has(role));
+  const canManage = Boolean(role && MANAGEMENT_ROLES.has(role));
 
   const loadClasses = useCallback(async () => {
     if (!role || !TEACHING_ROLES.has(role)) return;
     setLoading(true);
     setError(false);
 
-    const { data, error: loadError } = await supabase.rpc('get_my_teaching_classes');
-    if (loadError) {
-      console.error('KOJAC teaching classes load failed', loadError);
+    const ownPromise = supabase.rpc('get_my_teaching_classes');
+    const managementPromise = MANAGEMENT_ROLES.has(role)
+      ? supabase.rpc('get_management_classes_overview')
+      : Promise.resolve({ data: null, error: null });
+    const [ownResult, managementResult] = await Promise.all([ownPromise, managementPromise]);
+
+    if (ownResult.error || managementResult.error) {
+      console.error('KOJAC teaching classes load failed', ownResult.error ?? managementResult.error);
       setClasses([]);
+      setManagementClasses([]);
       setError(true);
       setLoading(false);
       return;
     }
 
-    setClasses((data ?? []) as TeachingClassRow[]);
+    setClasses((ownResult.data ?? []) as TeachingClassRow[]);
+    setManagementClasses((managementResult.data ?? []) as ManagementClassRow[]);
     setLoading(false);
   }, [role]);
 
   const loadStudents = useCallback(async (classRow: TeachingClassRow) => {
     setSelectedClass(classRow);
+    setSelectedStudent(null);
+    setStudentDetail(null);
+    setStudentDetailError(false);
     setStudents([]);
     setStudentsLoading(true);
     setStudentsError(false);
@@ -223,16 +316,56 @@ export function TeachingClassesPage() {
     setStudentsLoading(false);
   }, []);
 
+  const loadStudentDetail = useCallback(async (row: TeachingStudentRow) => {
+    if (!selectedClass) return;
+    setSelectedStudent(row);
+    setStudentDetail(null);
+    setStudentDetailLoading(true);
+    setStudentDetailError(false);
+
+    const { data, error: loadError } = await supabase.rpc('get_class_student_detail', {
+      p_class_id: selectedClass.class_id,
+      p_student_id: row.user_id,
+    });
+
+    if (loadError) {
+      console.error('KOJAC class student detail load failed', loadError);
+      setStudentDetailError(true);
+      setStudentDetailLoading(false);
+      return;
+    }
+
+    const detailRows = (data ?? []) as StudentDetailRow[];
+    setStudentDetail(detailRows[0] ?? null);
+    setStudentDetailError(detailRows.length === 0);
+    setStudentDetailLoading(false);
+  }, [selectedClass]);
+
+  const backToStudentList = useCallback(() => {
+    setSelectedStudent(null);
+    setStudentDetail(null);
+    setStudentDetailError(false);
+    setStudentDetailLoading(false);
+  }, []);
+
   const closeStudents = useCallback(() => {
     setSelectedClass(null);
     setStudents([]);
     setStudentsError(false);
     setStudentsLoading(false);
+    setSelectedStudent(null);
+    setStudentDetail(null);
+    setStudentDetailError(false);
+    setStudentDetailLoading(false);
   }, []);
 
   useEffect(() => {
     if (!authLoading && canTeach) void loadClasses();
   }, [authLoading, canTeach, loadClasses]);
+
+  useEffect(() => {
+    if (!canManage && mode === 'all') setMode('mine');
+  }, [canManage, mode]);
 
   useEffect(() => {
     if (!selectedClass) return undefined;
@@ -241,7 +374,9 @@ export function TeachingClassesPage() {
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeStudents();
+      if (event.key !== 'Escape') return;
+      if (selectedStudent) backToStudentList();
+      else closeStudents();
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -252,18 +387,26 @@ export function TeachingClassesPage() {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [selectedClass, closeStudents]);
+  }, [selectedClass, selectedStudent, backToStudentList, closeStudents]);
 
-  const activeClassCount = useMemo(() => classes.filter((row) => row.class_status === 'active').length, [classes]);
-  const plannedClassCount = useMemo(() => classes.filter((row) => row.class_status === 'planned').length, [classes]);
-  const totalActiveStudents = useMemo(() => classes.reduce((sum, row) => sum + row.student_count_active, 0), [classes]);
+  const displayedClasses = useMemo(
+    () => mode === 'all' ? managementClasses.map(managementToTeachingRow) : classes,
+    [mode, managementClasses, classes],
+  );
+  const managementByClassId = useMemo(
+    () => new Map(managementClasses.map((row) => [row.class_id, row])),
+    [managementClasses],
+  );
+  const activeClassCount = useMemo(() => displayedClasses.filter((row) => row.class_status === 'active').length, [displayedClasses]);
+  const plannedClassCount = useMemo(() => displayedClasses.filter((row) => row.class_status === 'planned').length, [displayedClasses]);
+  const totalActiveStudents = useMemo(() => displayedClasses.reduce((sum, row) => sum + row.student_count_active, 0), [displayedClasses]);
   const currentClasses = useMemo(
-    () => classes.filter((row) => row.class_status === 'active' || row.class_status === 'planned'),
-    [classes],
+    () => displayedClasses.filter((row) => row.class_status === 'active' || row.class_status === 'planned'),
+    [displayedClasses],
   );
   const historyClasses = useMemo(
-    () => classes.filter((row) => row.class_status === 'completed' || row.class_status === 'cancelled'),
-    [classes],
+    () => displayedClasses.filter((row) => row.class_status === 'completed' || row.class_status === 'cancelled'),
+    [displayedClasses],
   );
   const currentStudents = useMemo(
     () => students.filter((row) => row.enrollment_status === 'active' || row.enrollment_status === 'paused'),
@@ -285,9 +428,16 @@ export function TeachingClassesPage() {
         <div className="class-page-header-copy">
           <p className="eyebrow">PENGAJAR KOJAC</p>
           <h1>Kelas Mengajar</h1>
-          <p>Kelola kelas yang ditugaskan kepada Anda.</p>
+          <p>{mode === 'all' ? 'Pantau seluruh kelas KOJAC untuk kebutuhan monitoring dan rekap.' : 'Kelola kelas yang ditugaskan kepada Anda.'}</p>
         </div>
       </header>
+
+      {canManage && (
+        <div className="class-workspace-tabs" role="tablist" aria-label="Mode kelas mengajar">
+          <button type="button" role="tab" aria-selected={mode === 'mine'} className={mode === 'mine' ? 'is-active' : ''} onClick={() => setMode('mine')}>Kelas Saya</button>
+          <button type="button" role="tab" aria-selected={mode === 'all'} className={mode === 'all' ? 'is-active' : ''} onClick={() => setMode('all')}>Semua Kelas</button>
+        </div>
+      )}
 
       <section className="class-summary-grid" aria-label="Ringkasan kelas mengajar">
         <SummaryCard icon={<BookOpenCheck size={20}/>} value={activeClassCount} label="Kelas Aktif" />
@@ -306,10 +456,10 @@ export function TeachingClassesPage() {
             <RefreshCw size={16}/>Coba Lagi
           </button>
         </section>
-      ) : classes.length === 0 ? (
+      ) : displayedClasses.length === 0 ? (
         <section className="class-state-card">
           <div className="class-state-icon"><School size={30}/></div>
-          <h2>Belum ada kelas yang ditugaskan kepada akun Anda.</h2>
+          <h2>{mode === 'all' ? 'Belum ada kelas KOJAC.' : 'Belum ada kelas yang ditugaskan kepada akun Anda.'}</h2>
           {role === 'pengajar' && (
             <p>Silakan hubungi admin KOJAC jika Anda seharusnya sudah menjadi pengajar suatu kelas.</p>
           )}
@@ -319,7 +469,7 @@ export function TeachingClassesPage() {
           <section className="class-section">
             <div className="class-section-heading">
               <div>
-                <p className="eyebrow">KELAS SAAT INI</p>
+                <p className="eyebrow">{mode === 'all' ? 'MONITORING KELAS' : 'KELAS SAAT INI'}</p>
                 <h2>Kelas Aktif & Direncanakan</h2>
               </div>
               <span className="class-section-count">{currentClasses.length} kelas</span>
@@ -331,6 +481,7 @@ export function TeachingClassesPage() {
                   <ClassCard
                     key={row.class_id}
                     row={row}
+                    management={mode === 'all' ? managementByClassId.get(row.class_id) : undefined}
                     busy={studentsLoading && selectedClass?.class_id === row.class_id}
                     onOpen={() => void loadStudents(row)}
                   />
@@ -348,7 +499,7 @@ export function TeachingClassesPage() {
               <div className="class-section-heading">
                 <div>
                   <p className="eyebrow">RIWAYAT</p>
-                  <h2>Riwayat Kelas Mengajar</h2>
+                  <h2>Riwayat Kelas</h2>
                 </div>
                 <span className="class-section-count">{historyClasses.length} kelas</span>
               </div>
@@ -357,6 +508,7 @@ export function TeachingClassesPage() {
                   <ClassCard
                     key={row.class_id}
                     row={row}
+                    management={mode === 'all' ? managementByClassId.get(row.class_id) : undefined}
                     busy={studentsLoading && selectedClass?.class_id === row.class_id}
                     onOpen={() => void loadStudents(row)}
                   />
@@ -383,8 +535,12 @@ export function TeachingClassesPage() {
           >
             <header className="class-dialog-header">
               <div style={{ minWidth: 0 }}>
-                <p className="eyebrow">DAFTAR SISWA</p>
-                <h2 id="teaching-students-title">{selectedClass.class_name}</h2>
+                <p className="eyebrow">{selectedStudent ? 'DETAIL SISWA' : 'DAFTAR SISWA'}</p>
+                <h2 id="teaching-students-title">
+                  {selectedStudent
+                    ? (selectedStudent.full_name?.trim() || selectedStudent.nickname?.trim() || 'Siswa KOJAC')
+                    : selectedClass.class_name}
+                </h2>
                 <p id="teaching-students-description" className="class-dialog-code">
                   {selectedClass.program_name || 'Program KOJAC'} · {selectedClass.class_code || 'Tanpa kode kelas'}
                 </p>
@@ -401,46 +557,81 @@ export function TeachingClassesPage() {
             </header>
 
             <div className="class-dialog-body">
-              <div className="class-student-summary" aria-label="Ringkasan siswa kelas">
-                <div><strong>{modalActiveCount}</strong><span>Siswa Aktif</span></div>
-                <div><strong>{modalPausedCount}</strong><span>Dijeda</span></div>
-              </div>
-
-              {studentsLoading ? (
-                <div className="class-skeleton-grid" style={{ marginTop: 0 }} aria-busy="true" aria-label="Memuat daftar siswa">
-                  {[0, 1, 2].map((item) => (
-                    <div className="class-skeleton-field" key={item} style={{ height: 64 }} />
-                  ))}
-                </div>
-              ) : studentsError ? (
-                <div className="class-state-card" style={{ marginTop: 0, paddingBlock: 26 }} role="alert">
-                  <div className="class-state-icon"><AlertCircle size={24}/></div>
-                  <h2>Daftar siswa belum dapat dimuat.</h2>
-                  <p>Silakan coba lagi.</p>
-                  <button className="class-action-secondary" type="button" onClick={() => void loadStudents(selectedClass)}>
-                    <RefreshCw size={16}/>Coba Lagi
+              {selectedStudent ? (
+                <div className="class-student-detail-view">
+                  <button className="class-student-detail-back" type="button" onClick={backToStudentList}>
+                    <ArrowLeft size={16}/> Kembali ke Daftar Siswa
                   </button>
+
+                  {studentDetailLoading ? (
+                    <div className="class-student-detail-grid" aria-busy="true">
+                      {[0, 1, 2, 3, 4, 5].map((item) => <div className="class-skeleton-field" key={item}/>) }
+                    </div>
+                  ) : studentDetailError || !studentDetail ? (
+                    <div className="class-state-card" style={{ marginTop: 0, paddingBlock: 26 }} role="alert">
+                      <div className="class-state-icon"><AlertCircle size={24}/></div>
+                      <h2>Detail siswa belum dapat dimuat.</h2>
+                      <p>Silakan coba lagi.</p>
+                      <button className="class-action-secondary" type="button" onClick={() => void loadStudentDetail(selectedStudent)}>
+                        <RefreshCw size={16}/>Coba Lagi
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="class-student-detail-grid">
+                      <div className="class-student-detail-item is-wide"><span>Nama Lengkap</span><strong>{studentDetail.full_name || '—'}</strong></div>
+                      <div className="class-student-detail-item"><span>Nama Panggilan</span><strong>{studentDetail.nickname || '—'}</strong></div>
+                      <div className="class-student-detail-item"><span>Status</span><strong><span className={enrollmentStatusClass(studentDetail.enrollment_status)}>{enrollmentLabels[studentDetail.enrollment_status]}</span></strong></div>
+                      <div className="class-student-detail-item"><span>Program</span><strong>{studentDetail.program_name || '—'}</strong></div>
+                      <div className="class-student-detail-item"><span>Kelas</span><strong>{studentDetail.class_name}</strong></div>
+                      <div className="class-student-detail-item"><span>Bergabung</span><strong>{formatDate(studentDetail.joined_at)}</strong></div>
+                      <div className="class-student-detail-item"><span>Selesai</span><strong>{formatDate(studentDetail.completed_at)}</strong></div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <>
-                  <section className="class-student-section">
-                    <h3 className="class-student-section-title"><UserRound size={18}/>Siswa Aktif</h3>
-                    {currentStudents.length > 0 ? (
-                      <div className="class-student-list">
-                        {currentStudents.map((row) => <StudentRow key={row.user_id} row={row}/>) }
-                      </div>
-                    ) : (
-                      <div className="class-student-empty">Belum ada siswa aktif atau dijeda pada kelas ini.</div>
-                    )}
-                  </section>
+                  <div className="class-student-summary" aria-label="Ringkasan siswa kelas">
+                    <div><strong>{modalActiveCount}</strong><span>Siswa Aktif</span></div>
+                    <div><strong>{modalPausedCount}</strong><span>Dijeda</span></div>
+                  </div>
 
-                  {historyStudents.length > 0 && (
-                    <section className="class-student-section">
-                      <h3 className="class-student-section-title"><History size={18}/>Riwayat Siswa</h3>
-                      <div className="class-student-list">
-                        {historyStudents.map((row) => <StudentRow key={row.user_id} row={row}/>) }
-                      </div>
-                    </section>
+                  {studentsLoading ? (
+                    <div className="class-skeleton-grid" style={{ marginTop: 0 }} aria-busy="true" aria-label="Memuat daftar siswa">
+                      {[0, 1, 2].map((item) => (
+                        <div className="class-skeleton-field" key={item} style={{ height: 64 }} />
+                      ))}
+                    </div>
+                  ) : studentsError ? (
+                    <div className="class-state-card" style={{ marginTop: 0, paddingBlock: 26 }} role="alert">
+                      <div className="class-state-icon"><AlertCircle size={24}/></div>
+                      <h2>Daftar siswa belum dapat dimuat.</h2>
+                      <p>Silakan coba lagi.</p>
+                      <button className="class-action-secondary" type="button" onClick={() => void loadStudents(selectedClass)}>
+                        <RefreshCw size={16}/>Coba Lagi
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <section className="class-student-section">
+                        <h3 className="class-student-section-title"><UserRound size={18}/>Siswa Aktif</h3>
+                        {currentStudents.length > 0 ? (
+                          <div className="class-student-list">
+                            {currentStudents.map((row) => <StudentRow key={row.user_id} row={row} onOpen={() => void loadStudentDetail(row)}/>) }
+                          </div>
+                        ) : (
+                          <div className="class-student-empty">Belum ada siswa aktif atau dijeda pada kelas ini.</div>
+                        )}
+                      </section>
+
+                      {historyStudents.length > 0 && (
+                        <section className="class-student-section">
+                          <h3 className="class-student-section-title"><History size={18}/>Riwayat Siswa</h3>
+                          <div className="class-student-list">
+                            {historyStudents.map((row) => <StudentRow key={row.user_id} row={row} onOpen={() => void loadStudentDetail(row)}/>) }
+                          </div>
+                        </section>
+                      )}
+                    </>
                   )}
                 </>
               )}
