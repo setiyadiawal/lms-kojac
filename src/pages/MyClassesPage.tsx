@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  AlertCircle,
   BookOpenCheck,
   CalendarDays,
   History,
   PauseCircle,
   RefreshCw,
   School,
+  Sparkles,
   UserRound,
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
+import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 
@@ -63,52 +66,53 @@ function formatPeriod(start: string | null, end: string | null) {
   return `Sampai ${formatDate(end)}`;
 }
 
-function badgeStyle(status: EnrollmentStatus): React.CSSProperties {
-  if (status === 'active') return { background: '#eef8f1', color: '#257142', borderColor: '#cbe8d3' };
-  if (status === 'paused') return { background: '#fff8e8', color: '#8a6218', borderColor: '#efdca7' };
-  if (status === 'completed') return { background: '#f2f4f8', color: '#48566a', borderColor: '#dbe0e8' };
-  return { background: '#fff1f3', color: '#8f2634', borderColor: '#efcbd1' };
+function statusClass(status: EnrollmentStatus | ClassStatus) {
+  return `class-status-badge is-${status}`;
 }
 
-function SummaryItem({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
+function SummaryCard({ icon, value, label }: { icon: React.ReactNode; value: number; label: string }) {
   return (
-    <div className="stat" style={{ minWidth: 0 }}>
-      <div className="stat-icon">{icon}</div>
-      <div><strong>{value}</strong><span>{label}</span></div>
+    <div className="class-summary-card">
+      <div className="class-summary-icon">{icon}</div>
+      <div className="class-summary-copy">
+        <strong className="class-summary-value">{value}</strong>
+        <span className="class-summary-label">{label}</span>
+      </div>
     </div>
   );
 }
 
 function ActiveClassCard({ row }: { row: MyClassRow }) {
   return (
-    <article className="panel" style={{ padding: 20, minWidth: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0 }}>
-          <p className="eyebrow" style={{ marginBottom: 5 }}>{row.program_name || 'PROGRAM KOJAC'}</p>
-          <h3 style={{ margin: 0, overflowWrap: 'anywhere' }}>{row.class_name}</h3>
-          <p style={{ margin: '5px 0 0', color: 'var(--muted)', fontSize: 13, overflowWrap: 'anywhere' }}>
-            {row.class_code || 'Tanpa kode kelas'}
-          </p>
+    <article className="class-card">
+      <div className="class-card-header">
+        <div className="class-card-heading">
+          <p className="class-card-program">{row.program_name || 'PROGRAM KOJAC'}</p>
+          <h3 className="class-card-title">{row.class_name}</h3>
+          <span className="class-code-badge">{row.class_code || 'Tanpa kode kelas'}</span>
         </div>
-        <span className="status" style={{ ...badgeStyle(row.enrollment_status), borderStyle: 'solid', borderWidth: 1 }}>
+        <span className={statusClass(row.enrollment_status)}>
           {enrollmentLabels[row.enrollment_status]}
         </span>
       </div>
 
-      <div style={{ display: 'grid', gap: 12, marginTop: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '24px minmax(0,1fr)', gap: 9, alignItems: 'start' }}>
-          <UserRound size={18}/><div><small style={{ color: 'var(--muted)' }}>Pengajar</small><strong style={{ display: 'block', overflowWrap: 'anywhere' }}>{row.teacher_name || 'Belum ditentukan'}</strong></div>
+      <div className="class-info-grid">
+        <div className="class-info-item">
+          <span className="class-info-label"><UserRound/>Pengajar</span>
+          <strong className="class-info-value">{row.teacher_name || 'Belum ditentukan'}</strong>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '24px minmax(0,1fr)', gap: 9, alignItems: 'start' }}>
-          <CalendarDays size={18}/><div><small style={{ color: 'var(--muted)' }}>Periode</small><strong style={{ display: 'block' }}>{formatPeriod(row.starts_on, row.ends_on)}</strong></div>
+        <div className="class-info-item">
+          <span className="class-info-label"><CalendarDays/>Periode</span>
+          <strong className="class-info-value">{formatPeriod(row.starts_on, row.ends_on)}</strong>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '24px minmax(0,1fr)', gap: 9, alignItems: 'start' }}>
-          <BookOpenCheck size={18}/><div><small style={{ color: 'var(--muted)' }}>Bergabung</small><strong style={{ display: 'block' }}>{formatDate(row.joined_at)}</strong></div>
+        <div className="class-info-item">
+          <span className="class-info-label"><BookOpenCheck/>Bergabung</span>
+          <strong className="class-info-value">{formatDate(row.joined_at)}</strong>
         </div>
-      </div>
-
-      <div style={{ marginTop: 16, paddingTop: 13, borderTop: '1px solid #eee4e6', color: 'var(--muted)', fontSize: 13 }}>
-        Status kelas: <strong style={{ color: 'var(--ink)' }}>{classLabels[row.class_status]}</strong>
+        <div className="class-info-item">
+          <span className="class-info-label"><School/>Status Kelas</span>
+          <span className="class-info-value"><span className={statusClass(row.class_status)}>{classLabels[row.class_status]}</span></span>
+        </div>
       </div>
     </article>
   );
@@ -116,21 +120,45 @@ function ActiveClassCard({ row }: { row: MyClassRow }) {
 
 function HistoryRow({ row }: { row: MyClassRow }) {
   return (
-    <article style={{ border: '1px solid #eadfe1', borderRadius: 12, padding: 15, background: '#fff', minWidth: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0 }}>
-          <strong style={{ display: 'block', overflowWrap: 'anywhere' }}>{row.class_name}</strong>
-          <span style={{ color: 'var(--muted)', fontSize: 13 }}>{row.program_name || 'Program KOJAC'} · {row.class_code || 'Tanpa kode'}</span>
-        </div>
-        <span className="status" style={{ ...badgeStyle(row.enrollment_status), borderStyle: 'solid', borderWidth: 1 }}>
-          {enrollmentLabels[row.enrollment_status]}
+    <article className="class-history-row">
+      <div className="class-history-main">
+        <strong className="class-history-title">{row.class_name}</strong>
+        <span className="class-history-program">
+          {row.program_name || 'Program KOJAC'} · {row.class_code || 'Tanpa kode'}
         </span>
       </div>
-      <div style={{ marginTop: 9, color: 'var(--muted)', fontSize: 13, lineHeight: 1.6 }}>
-        Pengajar: {row.teacher_name || 'Belum ditentukan'} · Bergabung {formatDate(row.joined_at)}
-        {row.completed_at ? ` · Selesai ${formatDate(row.completed_at)}` : ''}
+
+      <div className="class-history-meta">
+        <span>Pengajar <strong>{row.teacher_name || 'Belum ditentukan'}</strong></span>
+        <span>Periode <strong>{formatPeriod(row.starts_on, row.ends_on)}</strong></span>
+        <span>Bergabung <strong>{formatDate(row.joined_at)}</strong></span>
+        <span>Status kelas <strong>{classLabels[row.class_status]}</strong></span>
       </div>
+
+      <span className={statusClass(row.enrollment_status)}>
+        {enrollmentLabels[row.enrollment_status]}
+      </span>
     </article>
+  );
+}
+
+function LoadingState() {
+  return (
+    <div className="class-skeleton-grid" aria-label="Memuat kelas Anda" aria-busy="true">
+      {[0, 1, 2].map((item) => (
+        <div className="class-skeleton-card" key={item}>
+          <div className="class-skeleton-block is-short" />
+          <div className="class-skeleton-block is-title" />
+          <div className="class-skeleton-block is-medium" />
+          <div className="class-skeleton-fields">
+            <div className="class-skeleton-field" />
+            <div className="class-skeleton-field" />
+            <div className="class-skeleton-field" />
+            <div className="class-skeleton-field" />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -162,8 +190,14 @@ export function MyClassesPage() {
     if (!authLoading && role === 'siswa') void loadClasses();
   }, [authLoading, role, loadClasses]);
 
-  const activeRows = useMemo(() => rows.filter((row) => row.enrollment_status === 'active' || row.enrollment_status === 'paused'), [rows]);
-  const historyRows = useMemo(() => rows.filter((row) => row.enrollment_status === 'completed' || row.enrollment_status === 'cancelled'), [rows]);
+  const activeRows = useMemo(
+    () => rows.filter((row) => row.enrollment_status === 'active' || row.enrollment_status === 'paused'),
+    [rows],
+  );
+  const historyRows = useMemo(
+    () => rows.filter((row) => row.enrollment_status === 'completed' || row.enrollment_status === 'cancelled'),
+    [rows],
+  );
   const activeCount = useMemo(() => rows.filter((row) => row.enrollment_status === 'active').length, [rows]);
   const pausedCount = useMemo(() => rows.filter((row) => row.enrollment_status === 'paused').length, [rows]);
 
@@ -171,59 +205,73 @@ export function MyClassesPage() {
   if (role !== 'siswa') return <Navigate to="/" replace />;
 
   return (
-    <div className="page" style={{ minWidth: 0 }}>
-      <div className="page-header">
-        <div>
-          <p className="eyebrow">PROGRAM KOJAC</p>
-          <h1 className="title-icon"><School/>Kelas Saya</h1>
-          <p>Lihat program dan kelas KOJAC yang terhubung dengan akun Anda.</p>
+    <div className="page class-experience-page">
+      <header className="class-page-header">
+        <div className="class-page-header-copy">
+          <p className="eyebrow">KELAS SAYA</p>
+          <h1>Kelas Saya</h1>
+          <p>Program dan kelas KOJAC yang sedang Anda ikuti.</p>
         </div>
-      </div>
+        {activeCount > 0 && (
+          <span className="class-context-badge"><Sparkles size={14}/>Program Aktif</span>
+        )}
+      </header>
 
-      <section className="stats-grid" aria-label="Ringkasan kelas" style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))' }}>
-        <SummaryItem icon={<BookOpenCheck size={20}/>} value={activeCount} label="Kelas Aktif" />
-        <SummaryItem icon={<PauseCircle size={20}/>} value={pausedCount} label="Kelas Dijeda" />
-        <SummaryItem icon={<History size={20}/>} value={historyRows.length} label="Riwayat Kelas" />
+      <section className="class-summary-grid" aria-label="Ringkasan kelas">
+        <SummaryCard icon={<BookOpenCheck size={20}/>} value={activeCount} label="Kelas Aktif" />
+        <SummaryCard icon={<PauseCircle size={20}/>} value={pausedCount} label="Kelas Dijeda" />
+        <SummaryCard icon={<History size={20}/>} value={historyRows.length} label="Riwayat Kelas" />
       </section>
 
       {loading ? (
-        <div className="panel" style={{ marginTop: 20, textAlign: 'center', padding: 32 }}>Memuat kelas Anda…</div>
+        <LoadingState />
       ) : error ? (
-        <div className="panel" style={{ marginTop: 20, textAlign: 'center', padding: 28 }}>
-          <p style={{ marginTop: 0 }}>Data kelas belum dapat dimuat. Silakan coba lagi.</p>
-          <button className="ghost-btn" type="button" onClick={() => void loadClasses()}><RefreshCw size={16}/> Muat Ulang</button>
-        </div>
+        <section className="class-state-card" role="alert">
+          <div className="class-state-icon"><AlertCircle size={28}/></div>
+          <h2>Data kelas belum dapat dimuat.</h2>
+          <p>Silakan coba lagi. Jika kendala berlanjut, hubungi admin KOJAC.</p>
+          <button className="class-action-secondary" type="button" onClick={() => void loadClasses()}>
+            <RefreshCw size={16}/>Coba Lagi
+          </button>
+        </section>
       ) : rows.length === 0 ? (
-        <div className="panel" style={{ marginTop: 20, textAlign: 'center', padding: 34 }}>
-          <School size={34} style={{ marginBottom: 10 }}/>
-          <h2 style={{ margin: '0 0 8px' }}>Belum ada kelas yang terhubung dengan akun Anda.</h2>
-          <p style={{ margin: 0, color: 'var(--muted)', lineHeight: 1.65 }}>
-            Jika Anda sudah terdaftar sebagai peserta kelas KOJAC, silakan hubungi admin agar akun Anda dihubungkan ke kelas.
-          </p>
-        </div>
+        <section className="class-state-card">
+          <div className="class-state-icon"><School size={30}/></div>
+          <h2>Belum ada kelas yang terhubung.</h2>
+          <p>Jika Anda sudah mengikuti program KOJAC, hubungi admin agar akun Anda dihubungkan ke kelas.</p>
+        </section>
       ) : (
         <>
-          <section style={{ marginTop: 24 }}>
-            <div style={{ marginBottom: 12 }}>
-              <p className="eyebrow">KELAS BERJALAN</p>
-              <h2 style={{ margin: '4px 0 0' }}>Kelas Aktif & Dijeda</h2>
+          <section className="class-section">
+            <div className="class-section-heading">
+              <div>
+                <p className="eyebrow">KELAS SAAT INI</p>
+                <h2>Kelas Aktif & Dijeda</h2>
+              </div>
+              <span className="class-section-count">{activeRows.length} kelas</span>
             </div>
+
             {activeRows.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,300px),1fr))', gap: 14 }}>
+              <div className="class-card-grid">
                 {activeRows.map((row) => <ActiveClassCard key={row.class_id} row={row}/>) }
               </div>
             ) : (
-              <div className="panel" style={{ padding: 20, color: 'var(--muted)' }}>Tidak ada kelas aktif atau dijeda saat ini.</div>
+              <div className="class-state-card" style={{ marginTop: 0, paddingBlock: 26 }}>
+                <p style={{ margin: 0 }}>Tidak ada kelas aktif atau dijeda saat ini.</p>
+              </div>
             )}
           </section>
 
           {historyRows.length > 0 && (
-            <section style={{ marginTop: 28 }}>
-              <div style={{ marginBottom: 12 }}>
-                <p className="eyebrow">RIWAYAT</p>
-                <h2 style={{ margin: '4px 0 0' }}>Riwayat Kelas</h2>
+            <section className="class-section">
+              <div className="class-section-heading">
+                <div>
+                  <p className="eyebrow">RIWAYAT</p>
+                  <h2>Riwayat Kelas</h2>
+                </div>
+                <span className="class-section-count">{historyRows.length} kelas</span>
               </div>
-              <div style={{ display: 'grid', gap: 10 }}>
+              <div className="class-history-list">
                 {historyRows.map((row) => <HistoryRow key={row.class_id} row={row}/>) }
               </div>
             </section>
