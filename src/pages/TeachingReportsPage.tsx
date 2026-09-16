@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
+  BookOpenCheck,
   CalendarDays,
+  ChevronDown,
+  ChevronUp,
   Clock3,
   Edit3,
   FileText,
@@ -14,6 +18,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
+import '../classroom.css';
 
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
 
@@ -69,8 +74,18 @@ type ReportForm = {
   evaluation_notes: string;
 };
 
+type ReportField = keyof ReportForm | 'time';
+type ReportFieldErrors = Partial<Record<ReportField, string>>;
+
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 const MANAGEMENT_ROLES = new Set<AppRole>(['administrator', 'manager', 'co_founder', 'founder']);
+
+const classLabels: Record<ClassStatus, string> = {
+  planned: 'Direncanakan',
+  active: 'Aktif',
+  completed: 'Selesai',
+  cancelled: 'Dibatalkan',
+};
 
 function localToday() {
   const now = new Date();
@@ -147,60 +162,87 @@ function reportErrorMessage(error: unknown) {
   if (errorContains(error, 'report_date_future')) return 'Tanggal laporan tidak boleh melebihi hari ini.';
   if (errorContains(error, 'invalid_report_time')) return 'Waktu selesai harus setelah waktu mulai.';
   if (errorContains(error, 'report_time_required')) return 'Jam mulai dan jam selesai wajib diisi.';
-  if (errorContains(error, 'material_required')) return 'Materi pembelajaran wajib diisi.';
-  if (errorContains(error, 'assignment_required')) return 'Tugas wajib diisi.';
-  if (errorContains(error, 'next_plan_required')) return 'Rencana pembelajaran berikutnya wajib diisi.';
+  if (errorContains(error, 'material_required')) return 'Materi yang diajarkan wajib diisi.';
+  if (errorContains(error, 'assignment_required')) return 'Tugas / latihan wajib diisi.';
+  if (errorContains(error, 'next_plan_required')) return 'Rencana pertemuan berikutnya wajib diisi.';
   if (errorContains(error, 'report_text_too_long')) return 'Isi laporan terlalu panjang. Ringkas lalu coba lagi.';
   if (errorContains(error, 'teaching_report_access_denied')) return 'Anda tidak memiliki izin untuk mengubah laporan ini.';
   if (errorContains(error, 'management_access_required')) return 'Anda tidak memiliki izin untuk melihat laporan kelas ini.';
   return 'Laporan belum dapat diproses. Silakan coba lagi.';
 }
 
+function ReportContentBlock({ label, value, expanded }: { label: string; value: string | null; expanded: boolean }) {
+  return (
+    <div className="teaching-report-history-block">
+      <span>{label}</span>
+      <p className={expanded ? '' : 'is-clamped'}>{value || '—'}</p>
+    </div>
+  );
+}
+
 function ReportCard({
   row,
   canEdit,
+  expanded,
   onEdit,
+  onToggle,
 }: {
   row: TeachingReportRow;
   canEdit: boolean;
+  expanded: boolean;
   onEdit: () => void;
+  onToggle: () => void;
 }) {
+  const hasLongContent = [row.material_summary, row.assignment_summary, row.next_plan, row.evaluation_notes ?? '']
+    .some((value) => value.length > 180 || value.split('\n').length > 3);
+
   return (
-    <article className="panel" style={{ padding: 20, minWidth: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0 }}>
-          <p className="eyebrow" style={{ marginBottom: 5 }}>{formatDate(row.report_date)}</p>
-          <h3 style={{ margin: 0, overflowWrap: 'anywhere' }}>{row.teacher_name || 'Pengajar KOJAC'}</h3>
-          <p style={{ margin: '6px 0 0', color: 'var(--muted)', fontSize: 13 }}>
-            {shortTime(row.starts_at)} – {shortTime(row.ends_at)} · {durationText(row.starts_at, row.ends_at)}
-          </p>
+    <article className="teaching-report-history-card">
+      <div className="teaching-report-history-header">
+        <div className="teaching-report-history-heading">
+          <p className="eyebrow">{formatDate(row.report_date)}</p>
+          <h3>{row.teacher_name || 'Pengajar KOJAC'}</h3>
+          <div className="teaching-report-time-line">
+            <Clock3 size={15}/>
+            <span>{shortTime(row.starts_at)} – {shortTime(row.ends_at)}</span>
+            <strong>{durationText(row.starts_at, row.ends_at)}</strong>
+          </div>
         </div>
         {canEdit && (
-          <button className="mini" type="button" onClick={onEdit}>
+          <button className="class-action-secondary teaching-report-edit-button" type="button" onClick={onEdit}>
             <Edit3 size={15}/> Edit
           </button>
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,220px),1fr))', gap: 12, marginTop: 18 }}>
-        <div style={{ minWidth: 0 }}>
-          <small style={{ color: 'var(--muted)' }}>Materi</small>
-          <p style={{ margin: '5px 0 0', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.6 }}>{row.material_summary}</p>
-        </div>
-        <div style={{ minWidth: 0 }}>
-          <small style={{ color: 'var(--muted)' }}>Tugas</small>
-          <p style={{ margin: '5px 0 0', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.6 }}>{row.assignment_summary}</p>
-        </div>
-        <div style={{ minWidth: 0 }}>
-          <small style={{ color: 'var(--muted)' }}>Rencana Berikutnya</small>
-          <p style={{ margin: '5px 0 0', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.6 }}>{row.next_plan}</p>
-        </div>
-        <div style={{ minWidth: 0 }}>
-          <small style={{ color: 'var(--muted)' }}>Evaluasi / Catatan</small>
-          <p style={{ margin: '5px 0 0', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', lineHeight: 1.6 }}>{row.evaluation_notes || '—'}</p>
-        </div>
+      <div className="teaching-report-history-content">
+        <ReportContentBlock label="Materi" value={row.material_summary} expanded={expanded}/>
+        <ReportContentBlock label="Tugas" value={row.assignment_summary} expanded={expanded}/>
+        <ReportContentBlock label="Rencana Berikutnya" value={row.next_plan} expanded={expanded}/>
+        <ReportContentBlock label="Evaluasi" value={row.evaluation_notes} expanded={expanded}/>
       </div>
+
+      {hasLongContent && (
+        <button className="teaching-report-detail-toggle" type="button" onClick={onToggle} aria-expanded={expanded}>
+          {expanded ? <ChevronUp size={15}/> : <ChevronDown size={15}/>} {expanded ? 'Ringkas' : 'Lihat Detail'}
+        </button>
+      )}
     </article>
+  );
+}
+
+function ReportPageSkeleton() {
+  return (
+    <div className="teaching-report-skeleton" aria-label="Memuat laporan kelas">
+      <div className="teaching-report-skeleton-hero"/>
+      <div className="teaching-report-skeleton-form">
+        <div/>
+        <div/>
+        <div className="is-wide"/>
+        <div className="is-wide is-tall"/>
+        <div className="is-wide is-tall"/>
+      </div>
+    </div>
   );
 }
 
@@ -214,12 +256,14 @@ export function TeachingReportsPage() {
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState('');
   const [form, setForm] = useState<ReportForm>(emptyReportForm);
+  const [fieldErrors, setFieldErrors] = useState<ReportFieldErrors>({});
   const [editingReport, setEditingReport] = useState<TeachingReportRow | null>(null);
   const [saving, setSaving] = useState(false);
   const [formMessage, setFormMessage] = useState('');
+  const [formMessageTone, setFormMessageTone] = useState<'success' | 'error'>('error');
+  const [expandedReportIds, setExpandedReportIds] = useState<Set<string>>(() => new Set());
 
   const canTeach = Boolean(role && TEACHING_ROLES.has(role));
-  const isManagement = Boolean(role && MANAGEMENT_ROLES.has(role));
   const teacherDisplayName = profile?.full_name?.trim() || 'Pengajar KOJAC';
 
   const loadPage = useCallback(async () => {
@@ -245,21 +289,21 @@ export function TeachingReportsPage() {
 
     if (classResult.error || !classResult.data) {
       console.error('KOJAC teaching report class context failed', classResult.error);
-      setPageError('Kelas belum dapat dimuat atau tidak tersedia untuk akun Anda.');
+      setPageError('Laporan belum dapat dimuat.');
       setLoading(false);
       return;
     }
 
     if (ownClassesResult.error) {
       console.error('KOJAC teaching report own classes failed', ownClassesResult.error);
-      setPageError('Data kelas mengajar belum dapat dimuat. Silakan coba lagi.');
+      setPageError('Laporan belum dapat dimuat.');
       setLoading(false);
       return;
     }
 
     if (reportsResult.error) {
       console.error('KOJAC teaching reports load failed', reportsResult.error);
-      setPageError(reportErrorMessage(reportsResult.error));
+      setPageError('Laporan belum dapat dimuat.');
       setLoading(false);
       return;
     }
@@ -313,14 +357,32 @@ export function TeachingReportsPage() {
     [ownClasses],
   );
   const canCreateForCurrentClass = Boolean(ownCurrentClass && ownCurrentClass.class_status === 'active');
+  const classTeacherName = ownCurrentClass
+    ? teacherDisplayName
+    : reports[0]?.teacher_name || 'Pengajar kelas';
+  const durationPreview = form.starts_at && form.ends_at ? durationText(form.starts_at, form.ends_at) : '—';
 
   if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
   if (!canTeach || !classId) return <Navigate to="/" replace />;
 
+  function updateFormField<K extends keyof ReportForm>(field: K, value: ReportForm[K]) {
+    setForm((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => {
+      if (!current[field] && !((field === 'starts_at' || field === 'ends_at') && current.time)) return current;
+      const next = { ...current };
+      delete next[field];
+      if (field === 'starts_at' || field === 'ends_at') delete next.time;
+      return next;
+    });
+    if (formMessageTone === 'error' && formMessage) setFormMessage('');
+  }
+
   function resetForm() {
     setEditingReport(null);
     setForm(emptyReportForm());
+    setFieldErrors({});
     setFormMessage('');
+    setFormMessageTone('error');
   }
 
   function beginEdit(row: TeachingReportRow) {
@@ -335,21 +397,31 @@ export function TeachingReportsPage() {
       next_plan: row.next_plan,
       evaluation_notes: row.evaluation_notes ?? '',
     });
+    setFieldErrors({});
     setFormMessage('');
+    setFormMessageTone('error');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function validateForm() {
-    if (!form.report_date) return 'Tanggal wajib diisi.';
-    if (form.report_date > localToday()) return 'Tanggal laporan tidak boleh melebihi hari ini.';
-    if (!form.starts_at || !form.ends_at) return 'Jam mulai dan jam selesai wajib diisi.';
-    const start = minutesFromTime(form.starts_at);
-    const end = minutesFromTime(form.ends_at);
-    if (start === null || end === null || end <= start) return 'Waktu selesai harus setelah waktu mulai.';
-    if (!form.material_summary.trim()) return 'Materi pembelajaran wajib diisi.';
-    if (!form.assignment_summary.trim()) return 'Tugas wajib diisi.';
-    if (!form.next_plan.trim()) return 'Rencana pembelajaran berikutnya wajib diisi.';
-    return '';
+    const errors: ReportFieldErrors = {};
+    if (!form.report_date) errors.report_date = 'Tanggal mengajar wajib diisi.';
+    else if (form.report_date > localToday()) errors.report_date = 'Tanggal laporan tidak boleh melebihi hari ini.';
+
+    if (!form.starts_at) errors.starts_at = 'Jam mulai wajib diisi.';
+    if (!form.ends_at) errors.ends_at = 'Jam selesai wajib diisi.';
+    if (form.starts_at && form.ends_at) {
+      const start = minutesFromTime(form.starts_at);
+      const end = minutesFromTime(form.ends_at);
+      if (start === null || end === null || end <= start) errors.time = 'Waktu selesai harus setelah waktu mulai.';
+    }
+
+    if (!form.material_summary.trim()) errors.material_summary = 'Materi yang diajarkan wajib diisi.';
+    if (!form.assignment_summary.trim()) errors.assignment_summary = 'Tugas / latihan wajib diisi.';
+    if (!form.next_plan.trim()) errors.next_plan = 'Rencana pertemuan berikutnya wajib diisi.';
+
+    setFieldErrors(errors);
+    return Object.values(errors)[0] ?? '';
   }
 
   async function submitReport(event: FormEvent) {
@@ -358,11 +430,13 @@ export function TeachingReportsPage() {
     const validation = validateForm();
     if (validation) {
       setFormMessage(validation);
+      setFormMessageTone('error');
       return;
     }
 
     setSaving(true);
     setFormMessage('');
+    setFormMessageTone('error');
 
     const args = {
       p_report_date: form.report_date,
@@ -374,6 +448,7 @@ export function TeachingReportsPage() {
       p_evaluation_notes: form.evaluation_notes.trim() || null,
     };
 
+    const wasEditing = Boolean(editingReport);
     const result = editingReport
       ? await supabase.rpc('update_teaching_report', {
           p_report_id: editingReport.report_id,
@@ -387,141 +462,303 @@ export function TeachingReportsPage() {
     if (result.error) {
       console.error('KOJAC teaching report save failed', result.error);
       setFormMessage(reportErrorMessage(result.error));
+      setFormMessageTone('error');
       setSaving(false);
       return;
     }
 
     setEditingReport(null);
     setForm(emptyReportForm());
-    setFormMessage(editingReport ? 'Laporan berhasil diperbarui.' : 'Laporan berhasil disimpan.');
+    setFieldErrors({});
+    setFormMessage(wasEditing ? 'Perubahan laporan berhasil disimpan.' : 'Laporan berhasil disimpan.');
+    setFormMessageTone('success');
     await loadPage();
     setSaving(false);
+  }
+
+  function toggleReport(reportId: string) {
+    setExpandedReportIds((current) => {
+      const next = new Set(current);
+      if (next.has(reportId)) next.delete(reportId);
+      else next.add(reportId);
+      return next;
+    });
   }
 
   const showForm = editingReport !== null || canCreateForCurrentClass;
 
   return (
-    <div className="page" style={{ minWidth: 0 }}>
-      <div className="page-header" style={{ gap: 14, flexWrap: 'wrap' }}>
-        <div style={{ minWidth: 0 }}>
+    <div className="page class-experience-page teaching-report-page">
+      <div className="class-page-header teaching-report-page-header">
+        <div className="class-page-header-copy">
           <p className="eyebrow">PENGAJAR KOJAC</p>
-          <h1 className="title-icon"><FileText/>Laporan Belajar Mengajar</h1>
-          <p>Catat hasil pembelajaran setelah pertemuan kelas selesai.</p>
+          <h1 className="title-icon"><FileText/>Laporan Mengajar</h1>
+          <p>Catat materi, tugas, evaluasi, dan rencana pembelajaran setelah kelas selesai.</p>
         </div>
-        <Link className="ghost-btn" to="/kelas-mengajar"><ArrowLeft size={16}/> Kelas Mengajar</Link>
+        <Link className="class-action-secondary teaching-report-back" to="/kelas-mengajar">
+          <ArrowLeft size={16}/> Kelas Mengajar
+        </Link>
       </div>
 
       {loading ? (
-        <div className="panel" style={{ padding: 32, textAlign: 'center' }}>Memuat laporan kelas…</div>
+        <ReportPageSkeleton/>
       ) : pageError ? (
-        <div className="panel" style={{ padding: 28, textAlign: 'center' }}>
-          <p style={{ marginTop: 0 }}>{pageError}</p>
-          <button className="ghost-btn" type="button" onClick={() => void loadPage()}><RefreshCw size={16}/> Muat Ulang</button>
+        <div className="class-state-card teaching-report-error" role="alert">
+          <div className="class-state-icon"><AlertTriangle size={28}/></div>
+          <h2>Laporan belum dapat dimuat.</h2>
+          <p>Silakan coba lagi. Detail teknis tidak ditampilkan di halaman ini.</p>
+          <button className="class-action-secondary" type="button" onClick={() => void loadPage()}>
+            <RefreshCw size={16}/> Coba Lagi
+          </button>
         </div>
       ) : classContext ? (
         <>
-          <section className="panel" style={{ padding: 20, marginBottom: 18, minWidth: 0 }}>
-            <p className="eyebrow">KELAS</p>
-            <h2 style={{ margin: '5px 0 4px', overflowWrap: 'anywhere' }}>{classContext.name}</h2>
-            <p style={{ margin: 0, color: 'var(--muted)', lineHeight: 1.6 }}>
-              {classContext.program_name || 'Program KOJAC'} · {classContext.code || 'Tanpa kode'} · {formatPeriod(classContext.starts_on, classContext.ends_on)}
-            </p>
+          <section className="teaching-report-context-card" aria-label="Ringkasan kelas">
+            <div className="teaching-report-context-heading">
+              <div>
+                <p className="class-card-program">{classContext.program_name || 'PROGRAM KOJAC'}</p>
+                <h2>{classContext.name}</h2>
+                <span className="class-code-badge">{classContext.code || 'Tanpa kode kelas'}</span>
+              </div>
+              <span className={`class-status-badge is-${classContext.status}`}>{classLabels[classContext.status]}</span>
+            </div>
+            <div className="teaching-report-context-grid">
+              <div>
+                <span><UserRound size={15}/>Pengajar</span>
+                <strong>{classTeacherName}</strong>
+              </div>
+              <div>
+                <span><CalendarDays size={15}/>Periode</span>
+                <strong>{formatPeriod(classContext.starts_on, classContext.ends_on)}</strong>
+              </div>
+              <div>
+                <span><School size={15}/>Status</span>
+                <strong>{classLabels[classContext.status]}</strong>
+              </div>
+            </div>
           </section>
 
           {showForm ? (
-            <section className="panel" style={{ padding: 22, minWidth: 0 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+            <section className="teaching-report-form-shell" aria-labelledby="teaching-report-form-title">
+              <div className="teaching-report-form-header">
                 <div>
-                  <p className="eyebrow">{editingReport ? 'EDIT LAPORAN' : 'LAPORAN BELAJAR MENGAJAR'}</p>
-                  <h2 style={{ margin: '4px 0 0' }}>{editingReport ? 'Perbarui laporan' : 'Buat laporan pertemuan'}</h2>
+                  <p className="eyebrow">{editingReport ? 'EDIT LAPORAN' : 'LAPORAN PERTEMUAN'}</p>
+                  <h2 id="teaching-report-form-title">{editingReport ? 'Edit Laporan' : 'Buat Laporan Mengajar'}</h2>
+                  <p>{editingReport ? 'Perbarui catatan pertemuan tanpa menghapus riwayat laporan.' : 'Isi laporan singkat setelah kegiatan belajar mengajar selesai.'}</p>
                 </div>
-                {editingReport && <button className="ghost-btn" type="button" disabled={saving} onClick={resetForm}>Batal Edit</button>}
+                {editingReport && (
+                  <button className="class-action-secondary" type="button" disabled={saving} onClick={resetForm}>
+                    Batal Edit
+                  </button>
+                )}
               </div>
 
-              <form onSubmit={submitReport} style={{ display: 'grid', gap: 14, marginTop: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,220px),1fr))', gap: 12 }}>
-                  <label>Nama Pengajar
-                    <input value={editingReport?.teacher_name || teacherDisplayName} readOnly />
-                  </label>
-                  <label>Tanggal
-                    <input type="date" max={localToday()} value={form.report_date} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, report_date: event.target.value }))} required />
-                  </label>
-                </div>
+              <form className="teaching-report-form" onSubmit={submitReport} noValidate>
+                <section className="teaching-report-form-section">
+                  <div className="teaching-report-form-section-heading">
+                    <span className="teaching-report-section-icon"><CalendarDays size={18}/></span>
+                    <div><h3>Informasi Pertemuan</h3><p>Waktu dan konteks pertemuan yang telah dilaksanakan.</p></div>
+                  </div>
 
-                <label>Kelas
-                  {editingReport ? (
-                    <input value={`${classContext.program_name || 'Program KOJAC'} — ${classContext.name}`} readOnly />
-                  ) : (
-                    <select value={classId} disabled={saving} onChange={(event) => navigate(`/kelas-mengajar/${event.target.value}/laporan`)}>
-                      {ownActiveClasses.map((row) => (
-                        <option key={row.class_id} value={row.class_id}>{row.program_name || 'Program KOJAC'} — {row.class_name}</option>
-                      ))}
-                    </select>
+                  <div className="teaching-report-form-grid two-columns">
+                    <div className="teaching-report-field">
+                      <label htmlFor="report-teacher">Pengajar</label>
+                      <input id="report-teacher" value={editingReport?.teacher_name || teacherDisplayName} readOnly />
+                    </div>
+                    <div className="teaching-report-field">
+                      <label htmlFor="report-date">Tanggal Mengajar</label>
+                      <input
+                        id="report-date"
+                        type="date"
+                        max={localToday()}
+                        value={form.report_date}
+                        disabled={saving}
+                        aria-invalid={Boolean(fieldErrors.report_date)}
+                        aria-describedby={fieldErrors.report_date ? 'report-date-error' : undefined}
+                        onChange={(event) => updateFormField('report_date', event.target.value)}
+                        required
+                      />
+                      {fieldErrors.report_date && <span id="report-date-error" className="teaching-report-field-error">{fieldErrors.report_date}</span>}
+                    </div>
+                  </div>
+
+                  <div className="teaching-report-field">
+                    <label htmlFor="report-class">Kelas</label>
+                    {editingReport ? (
+                      <input id="report-class" value={`${classContext.program_name || 'Program KOJAC'} — ${classContext.name}`} readOnly />
+                    ) : (
+                      <select id="report-class" value={classId} disabled={saving} onChange={(event) => navigate(`/kelas-mengajar/${event.target.value}/laporan`)}>
+                        {ownActiveClasses.map((row) => (
+                          <option key={row.class_id} value={row.class_id}>{row.program_name || 'Program KOJAC'} — {row.class_name}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  <div className="teaching-report-form-grid time-grid">
+                    <div className="teaching-report-field">
+                      <label htmlFor="report-start">Jam Mulai</label>
+                      <input
+                        id="report-start"
+                        type="time"
+                        value={form.starts_at}
+                        disabled={saving}
+                        aria-invalid={Boolean(fieldErrors.starts_at || fieldErrors.time)}
+                        onChange={(event) => updateFormField('starts_at', event.target.value)}
+                        required
+                      />
+                      {fieldErrors.starts_at && <span className="teaching-report-field-error">{fieldErrors.starts_at}</span>}
+                    </div>
+                    <div className="teaching-report-field">
+                      <label htmlFor="report-end">Jam Selesai</label>
+                      <input
+                        id="report-end"
+                        type="time"
+                        value={form.ends_at}
+                        disabled={saving}
+                        aria-invalid={Boolean(fieldErrors.ends_at || fieldErrors.time)}
+                        aria-describedby={fieldErrors.time ? 'report-time-error' : undefined}
+                        onChange={(event) => updateFormField('ends_at', event.target.value)}
+                        required
+                      />
+                      {fieldErrors.ends_at && <span className="teaching-report-field-error">{fieldErrors.ends_at}</span>}
+                      {fieldErrors.time && <span id="report-time-error" className="teaching-report-field-error">{fieldErrors.time}</span>}
+                    </div>
+                    <div className="teaching-report-duration" aria-live="polite">
+                      <Clock3 size={18}/><div><span>Durasi</span><strong>{durationPreview}</strong></div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="teaching-report-form-section">
+                  <div className="teaching-report-form-section-heading">
+                    <span className="teaching-report-section-icon"><BookOpenCheck size={18}/></span>
+                    <div><h3>Pembelajaran</h3><p>Catat materi, tugas, dan arah pembelajaran berikutnya.</p></div>
+                  </div>
+
+                  <div className="teaching-report-field">
+                    <label htmlFor="report-material">Materi yang Diajarkan</label>
+                    <textarea
+                      id="report-material"
+                      rows={5}
+                      maxLength={10000}
+                      value={form.material_summary}
+                      disabled={saving}
+                      aria-invalid={Boolean(fieldErrors.material_summary)}
+                      aria-describedby={fieldErrors.material_summary ? 'report-material-error' : 'report-material-help'}
+                      onChange={(event) => updateFormField('material_summary', event.target.value)}
+                      required
+                    />
+                    <span id="report-material-help" className="teaching-report-helper">Contoh: Bab 10 pola ～てもいいです, kosakata aktivitas sehari-hari.</span>
+                    {fieldErrors.material_summary && <span id="report-material-error" className="teaching-report-field-error">{fieldErrors.material_summary}</span>}
+                  </div>
+
+                  <div className="teaching-report-field">
+                    <label htmlFor="report-assignment">Tugas / Latihan</label>
+                    <textarea
+                      id="report-assignment"
+                      rows={4}
+                      maxLength={10000}
+                      value={form.assignment_summary}
+                      disabled={saving}
+                      aria-invalid={Boolean(fieldErrors.assignment_summary)}
+                      onChange={(event) => updateFormField('assignment_summary', event.target.value)}
+                      required
+                    />
+                    <span className="teaching-report-helper">Contoh: kerjakan latihan Bab 10 dan hafalkan 20 kosakata.</span>
+                    {fieldErrors.assignment_summary && <span className="teaching-report-field-error">{fieldErrors.assignment_summary}</span>}
+                  </div>
+
+                  <div className="teaching-report-field">
+                    <label htmlFor="report-next-plan">Rencana Pertemuan Berikutnya</label>
+                    <textarea
+                      id="report-next-plan"
+                      rows={4}
+                      maxLength={10000}
+                      value={form.next_plan}
+                      disabled={saving}
+                      aria-invalid={Boolean(fieldErrors.next_plan)}
+                      onChange={(event) => updateFormField('next_plan', event.target.value)}
+                      required
+                    />
+                    <span className="teaching-report-helper">Contoh: lanjut Bab 11 dan latihan percakapan.</span>
+                    {fieldErrors.next_plan && <span className="teaching-report-field-error">{fieldErrors.next_plan}</span>}
+                  </div>
+                </section>
+
+                <section className="teaching-report-form-section">
+                  <div className="teaching-report-form-section-heading">
+                    <span className="teaching-report-section-icon"><FileText size={18}/></span>
+                    <div><h3>Evaluasi</h3><p>Catatan tambahan untuk perkembangan dan tindak lanjut pembelajaran.</p></div>
+                  </div>
+                  <div className="teaching-report-field">
+                    <label htmlFor="report-evaluation">Evaluasi / Catatan Tambahan <span className="teaching-report-optional">Opsional</span></label>
+                    <textarea
+                      id="report-evaluation"
+                      rows={4}
+                      maxLength={10000}
+                      value={form.evaluation_notes}
+                      disabled={saving}
+                      onChange={(event) => updateFormField('evaluation_notes', event.target.value)}
+                    />
+                    <span className="teaching-report-helper">Catatan perkembangan siswa, kendala belajar, atau hal penting lainnya. Contoh: beberapa siswa masih perlu latihan membaca dan kosakata.</span>
+                  </div>
+                </section>
+
+                {formMessage && (
+                  <div className={`teaching-report-notice is-${formMessageTone}`} role={formMessageTone === 'error' ? 'alert' : 'status'}>
+                    {formMessage}
+                  </div>
+                )}
+
+                <div className="teaching-report-form-actions">
+                  {editingReport && (
+                    <button className="class-action-secondary" type="button" disabled={saving} onClick={resetForm}>
+                      Batal Edit
+                    </button>
                   )}
-                </label>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,180px),1fr))', gap: 12 }}>
-                  <label>Jam Mulai
-                    <input type="time" value={form.starts_at} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, starts_at: event.target.value }))} required />
-                  </label>
-                  <label>Jam Selesai
-                    <input type="time" value={form.ends_at} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, ends_at: event.target.value }))} required />
-                  </label>
-                  <label>Durasi
-                    <input value={form.starts_at && form.ends_at ? durationText(form.starts_at, form.ends_at) : '—'} readOnly />
-                  </label>
-                </div>
-
-                <label>Materi Pembelajaran
-                  <textarea rows={4} maxLength={10000} value={form.material_summary} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, material_summary: event.target.value }))} required />
-                </label>
-                <label>Tugas
-                  <textarea rows={3} maxLength={10000} value={form.assignment_summary} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, assignment_summary: event.target.value }))} required />
-                </label>
-                <label>Rencana Pembelajaran Berikutnya
-                  <textarea rows={3} maxLength={10000} value={form.next_plan} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, next_plan: event.target.value }))} required />
-                </label>
-                <label>Evaluasi / Catatan Tambahan
-                  <textarea rows={3} maxLength={10000} value={form.evaluation_notes} disabled={saving} onChange={(event) => setForm((current) => ({ ...current, evaluation_notes: event.target.value }))} />
-                </label>
-
-                {formMessage && <div className="notice" role="status">{formMessage}</div>}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, flexWrap: 'wrap' }}>
-                  <button className="primary-btn" type="submit" disabled={saving}>
-                    <Save size={16}/> {saving ? 'Menyimpan…' : editingReport ? 'Simpan Perubahan' : 'Simpan Laporan'}
+                  <button className="class-action-primary teaching-report-save" type="submit" disabled={saving}>
+                    <Save size={17}/> {saving ? 'Menyimpan…' : editingReport ? 'Simpan Perubahan' : 'Simpan Laporan'}
                   </button>
                 </div>
               </form>
             </section>
           ) : (
-            <section className="panel" style={{ padding: 20, color: 'var(--muted)' }}>
-              {ownCurrentClass
-                ? 'Kelas ini sudah tidak aktif. Laporan lama tetap dapat dilihat dan laporan milik Anda tetap dapat diedit.'
-                : 'Anda dapat melihat laporan kelas ini, tetapi hanya pengajar yang ditugaskan pada kelas aktif yang dapat membuat laporan.'}
+            <section className="teaching-report-readonly-note">
+              <FileText size={20}/>
+              <p>
+                {ownCurrentClass
+                  ? 'Kelas ini sudah tidak aktif. Laporan lama tetap dapat dilihat dan laporan milik Anda tetap dapat diedit.'
+                  : 'Anda dapat melihat laporan kelas ini, tetapi hanya pengajar yang ditugaskan pada kelas aktif yang dapat membuat laporan.'}
+              </p>
             </section>
           )}
 
-          <section style={{ marginTop: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+          <section className="teaching-report-history-section">
+            <div className="class-section-heading">
               <div>
                 <p className="eyebrow">RIWAYAT LAPORAN</p>
-                <h2 style={{ margin: '4px 0 0' }}>Pertemuan terbaru</h2>
+                <h2>Riwayat kegiatan belajar mengajar kelas ini.</h2>
               </div>
-              <span style={{ color: 'var(--muted)', fontSize: 13 }}>{reports.length} laporan</span>
+              <span className="class-section-count">{reports.length} laporan</span>
             </div>
 
             {reports.length === 0 ? (
-              <div className="panel" style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>
-                Belum ada laporan belajar mengajar untuk kelas ini.
+              <div className="class-state-card teaching-report-empty-state">
+                <div className="class-state-icon"><FileText size={28}/></div>
+                <h2>Belum ada laporan mengajar.</h2>
+                <p>Laporan yang disimpan setelah mengajar akan muncul di sini.</p>
               </div>
             ) : (
-              <div style={{ display: 'grid', gap: 12 }}>
+              <div className="teaching-report-history-list">
                 {reports.map((row) => (
                   <ReportCard
                     key={row.report_id}
                     row={row}
                     canEdit={Boolean(user && row.teacher_id === user.id)}
+                    expanded={expandedReportIds.has(row.report_id)}
                     onEdit={() => beginEdit(row)}
+                    onToggle={() => toggleReport(row.report_id)}
                   />
                 ))}
               </div>

@@ -7,25 +7,25 @@ import {
   Languages,
   LogOut,
   Menu,
+  MessageSquareText,
   School,
   ShieldCheck,
   Trophy,
-  MessageSquareText,
   X,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../state/AuthContext';
 import { APP_ROLE_LABEL, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
+import '../classroom.css';
 
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 
-const menu = [
+const learningMenu = [
   { to: '/', label: 'Beranda', icon: Home, end: true },
   { to: '/belajar', label: 'Belajar', icon: BookOpen },
   { to: '/latihan', label: 'Latihan', icon: Dumbbell },
-  { to: '/jlpt', label: 'Simulasi JLPT', icon: Trophy },
+  { to: '/jlpt', label: 'Ujian', icon: Trophy },
   { to: '/progress', label: 'Progres', icon: BarChart3 },
-  { to: '/kritik-saran', label: 'Kritik & Saran', icon: MessageSquareText },
 ];
 
 type AppNavigationContentProps = {
@@ -36,41 +36,78 @@ type AppNavigationContentProps = {
   onSignOut: () => void;
 };
 
+function NavigationLink({
+  to,
+  label,
+  icon: Icon,
+  end,
+  onNavigate,
+}: {
+  to: string;
+  label: string;
+  icon: typeof Home;
+  end?: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <NavLink
+      end={end}
+      to={to}
+      onClick={onNavigate}
+      className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+    >
+      <Icon size={18}/>
+      <span className="nav-item-label">{label}</span>
+    </NavLink>
+  );
+}
+
 function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut }: AppNavigationContentProps) {
+  const canTeach = Boolean(role && TEACHING_ROLES.has(role));
+
   return <>
     <div className="brand">
       <div className="brand-mark">空</div>
       <div><strong>KOJAC</strong><span>Japanese LMS</span></div>
     </div>
-    <nav>
-      {menu.map(({ to, label, icon: Icon, end }, index) => (
-        <span key={to} style={{ display: 'contents' }}>
-          <NavLink end={end} to={to} onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Icon size={18} />
-            <span className="nav-item-label">{label}</span>
-          </NavLink>
-          {index === 0 && role === 'siswa' && (
-            <NavLink to="/kelas-saya" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <School size={18} />
-              <span className="nav-item-label">Kelas Saya</span>
-            </NavLink>
-          )}
-          {index === 0 && role && TEACHING_ROLES.has(role) && (
-            <NavLink to="/kelas-mengajar" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <School size={18} />
-              <span className="nav-item-label">Kelas Mengajar</span>
-            </NavLink>
-          )}
-        </span>
-      ))}
-      {canAdmin && (
-        <NavLink to="/admin" onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <ShieldCheck size={18} /> <span className="nav-item-label">Admin</span>
-        </NavLink>
+
+    <nav aria-label="Navigasi utama KOJAC">
+      <div className="app-nav-section">
+        <span className="app-nav-section-label">BELAJAR</span>
+        {learningMenu.map(({ to, label, icon, end }) => (
+          <NavigationLink key={to} to={to} label={label} icon={icon} end={end} onNavigate={onNavigate}/>
+        ))}
+      </div>
+
+      {role === 'siswa' && (
+        <div className="app-nav-section">
+          <span className="app-nav-section-label">SISWA</span>
+          <NavigationLink to="/kelas-saya" label="Kelas Saya" icon={School} onNavigate={onNavigate}/>
+        </div>
       )}
+
+      {canTeach && (
+        <div className="app-nav-section">
+          <span className="app-nav-section-label">PENGAJAR</span>
+          <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
+        </div>
+      )}
+
+      {canAdmin && (
+        <div className="app-nav-section">
+          <span className="app-nav-section-label">MANAJEMEN</span>
+          <NavigationLink to="/admin" label="Pengguna & Kelas" icon={ShieldCheck} onNavigate={onNavigate}/>
+        </div>
+      )}
+
+      <div className="app-nav-section">
+        <span className="app-nav-section-label">LAINNYA</span>
+        <NavigationLink to="/kritik-saran" label="Kritik & Saran" icon={MessageSquareText} onNavigate={onNavigate}/>
+      </div>
     </nav>
+
     <div className="sidebar-bottom">
-      <div className="user-mini"><Languages size={17}/><div><strong>{fullName || 'Siswa KOJAC'}</strong><span>{role ? APP_ROLE_LABEL[role] : 'Umum'}</span></div></div>
+      <div className="user-mini"><Languages size={17}/><div><strong>{fullName || 'Pengguna KOJAC'}</strong><span>{role ? APP_ROLE_LABEL[role] : 'Umum'}</span></div></div>
       <button className="ghost-btn" onClick={() => { onNavigate?.(); onSignOut(); }}><LogOut size={17}/> Keluar</button>
     </div>
   </>;
