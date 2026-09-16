@@ -4,6 +4,7 @@ import {
   BookOpen,
   Check,
   Eye,
+  FileText,
   Pencil,
   Plus,
   RefreshCw,
@@ -14,6 +15,7 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import { APP_ROLE_LABEL, APP_ROLE_RANK, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
@@ -763,7 +765,7 @@ export function AdminPage() {
             <td>{classRow.teacher_id ? teacherNameById.get(classRow.teacher_id) || 'Pengajar tidak ditemukan' : '—'}</td>
             <td><small>{formatDate(classRow.starts_on)} — {formatDate(classRow.ends_on)}</small></td>
             <td><span className={`status ${classRow.status==='active'?'approved':classRow.status==='cancelled'?'blocked':'pending'}`}>{statusLabel(classRow.status)}</span></td>
-            <td><button className="mini" type="button" onClick={()=>openClassEditor(classRow)}><Pencil size={15}/> Edit</button></td>
+            <td><div className="action-row"><button className="mini" type="button" onClick={()=>openClassEditor(classRow)}><Pencil size={15}/> Edit</button><Link className="mini" to={`/kelas-mengajar/${classRow.id}/laporan`}><FileText size={15}/> Laporan</Link></div></td>
           </tr>)}</tbody></table></div>}
         </div>
       </>}

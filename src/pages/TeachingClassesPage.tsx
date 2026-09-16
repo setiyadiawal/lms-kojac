@@ -3,12 +3,13 @@ import {
   BookOpenCheck,
   CalendarDays,
   History,
+  FileText,
   RefreshCw,
   School,
   UserRound,
   UsersRound,
 } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -130,9 +131,14 @@ function ClassCard({ row, onOpen, busy }: { row: TeachingClassRow; onOpen: () =>
         </div>
       </div>
 
-      <button className="ghost-btn" type="button" disabled={busy} onClick={onOpen} style={{ marginTop: 18 }}>
-        <UsersRound size={16}/> Lihat Siswa
-      </button>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
+        <button className="ghost-btn" type="button" disabled={busy} onClick={onOpen}>
+          <UsersRound size={16}/> Lihat Siswa
+        </button>
+        <Link className="ghost-btn" to={`/kelas-mengajar/${row.class_id}/laporan`}>
+          <FileText size={16}/> Laporan Mengajar
+        </Link>
+      </div>
     </article>
   );
 }
