@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
   CalendarDays,
+  Download,
+  FileSpreadsheet,
   FileText,
   Filter,
   RefreshCw,
@@ -15,9 +17,15 @@ import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
+import {
+  downloadClassRecapCsv,
+  downloadClassRecapXlsx,
+  type ClassRecapExportMetadata,
+} from '../lib/classRecapExport';
 
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
 type ReportPeriod = 'month' | '30d' | '3m' | 'all';
+type ExportFormat = 'xlsx' | 'csv';
 
 type RecapSummary = {
   active_class_count: number;
@@ -202,6 +210,9 @@ export function ManagementClassRecapPage() {
   const [payload, setPayload] = useState<RecapPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [loadedFilterSignature, setLoadedFilterSignature] = useState('');
+  const [exporting, setExporting] = useState<ExportFormat | null>(null);
+  const [exportNotice, setExportNotice] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
 
   const [reportPeriod, setReportPeriod] = useState<ReportPeriod>('month');
   const [programId, setProgramId] = useState('');
@@ -212,6 +223,10 @@ export function ManagementClassRecapPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const canManage = Boolean(role && MANAGEMENT_ROLES.has(role));
+  const currentFilterSignature = useMemo(
+    () => JSON.stringify([reportPeriod, programId, classId, teacherId, classStatus, debouncedSearch]),
+    [reportPeriod, programId, classId, teacherId, classStatus, debouncedSearch],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearch(search.trim()), 280);
@@ -223,6 +238,7 @@ export function ManagementClassRecapPage() {
     setLoading(true);
     setError(false);
 
+    const requestFilterSignature = currentFilterSignature;
     const { data, error: loadError } = await supabase.rpc('get_management_class_recap', {
       p_report_period: reportPeriod,
       p_program_id: programId || null,
@@ -246,8 +262,9 @@ export function ManagementClassRecapPage() {
       rows: [],
       filters: { programs: [], classes: [], teachers: [] },
     });
+    setLoadedFilterSignature(requestFilterSignature);
     setLoading(false);
-  }, [role, reportPeriod, programId, classId, teacherId, classStatus, debouncedSearch]);
+  }, [role, reportPeriod, programId, classId, teacherId, classStatus, debouncedSearch, currentFilterSignature]);
 
   useEffect(() => {
     if (!authLoading && canManage) void loadRecap();
@@ -268,6 +285,62 @@ export function ManagementClassRecapPage() {
     active_teacher_count: 0,
   };
   const rows = payload?.rows ?? [];
+  const searchPending = search.trim() !== debouncedSearch;
+  const exportReady = rows.length > 0
+    && !loading
+    && !error
+    && !searchPending
+    && loadedFilterSignature === currentFilterSignature
+    && exporting === null;
+
+  const selectedProgram = programId
+    ? payload?.filters.programs.find((option) => option.id === programId)?.name || 'Program dipilih'
+    : 'Semua';
+  const selectedClass = classId
+    ? payload?.filters.classes.find((option) => option.id === classId)
+    : null;
+  const selectedTeacher = teacherId
+    ? payload?.filters.teachers.find((option) => option.id === teacherId)?.name || 'Pengajar dipilih'
+    : 'Semua';
+  const selectedPeriod = periodOptions.find((option) => option.value === reportPeriod)?.label || 'Semua';
+  const selectedStatus = classStatus
+    ? classStatusLabels[classStatus as ClassStatus] || 'Status dipilih'
+    : 'Semua';
+
+  async function handleExport(format: ExportFormat) {
+    if (!exportReady || rows.length === 0) return;
+    setExporting(format);
+    setExportNotice(null);
+
+    try {
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+      const exportedAt = new Date();
+
+      if (format === 'csv') {
+        downloadClassRecapCsv(rows, exportedAt);
+      } else {
+        const metadata: ClassRecapExportMetadata = {
+          reportPeriod: selectedPeriod,
+          program: selectedProgram,
+          className: selectedClass
+            ? `${selectedClass.name}${selectedClass.code ? ` · ${selectedClass.code}` : ''}`
+            : 'Semua',
+          teacher: selectedTeacher,
+          status: selectedStatus,
+          search: debouncedSearch || '—',
+          exportedAt,
+        };
+        downloadClassRecapXlsx(rows, metadata);
+      }
+
+      setExportNotice({ tone: 'success', text: 'Rekap berhasil diekspor.' });
+    } catch (exportError) {
+      console.error('KOJAC management recap export failed', exportError);
+      setExportNotice({ tone: 'error', text: 'Rekap belum dapat diekspor. Silakan coba lagi.' });
+    } finally {
+      setExporting(null);
+    }
+  }
 
   return (
     <div className="page class-experience-page class-recap-page">
@@ -376,6 +449,31 @@ export function ManagementClassRecapPage() {
                 </div>
               </label>
             </div>
+
+            <div className="class-action-row class-recap-export-actions" aria-label="Export rekap kelas">
+              <button
+                className="class-action-secondary"
+                type="button"
+                disabled={!exportReady}
+                onClick={() => void handleExport('xlsx')}
+              >
+                <FileSpreadsheet size={16}/> {exporting === 'xlsx' ? 'Mengekspor…' : 'Export Excel'}
+              </button>
+              <button
+                className="class-action-secondary"
+                type="button"
+                disabled={!exportReady}
+                onClick={() => void handleExport('csv')}
+              >
+                <Download size={16}/> {exporting === 'csv' ? 'Mengekspor…' : 'Export CSV'}
+              </button>
+            </div>
+
+            {exportNotice && (
+              <div className={`notice class-recap-export-notice ${exportNotice.tone}`} role={exportNotice.tone === 'error' ? 'alert' : 'status'}>
+                {exportNotice.text}
+              </div>
+            )}
           </section>
 
           {error && payload && (
