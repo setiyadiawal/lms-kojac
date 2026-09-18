@@ -100,6 +100,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
           <span className="app-nav-section-label">MANAJEMEN</span>
           <NavigationLink to="/admin" label="Pengguna & Kelas" icon={ShieldCheck} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/siswa" label="Siswa" icon={UsersRound} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/pengajar" label="Pengajar" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/kritik-saran" label="Kritik & Saran Masuk" icon={Inbox} onNavigate={onNavigate}/>
           <NavigationLink to="/rekap-kelas" label="Rekap Kelas" icon={BarChart3} onNavigate={onNavigate}/>
         </div>

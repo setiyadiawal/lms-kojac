@@ -1,0 +1,79 @@
+/* Management Phase 2A — Teacher Directory + Teacher 360 */
+.teacher-management-page{min-width:0}
+.teacher-management-summary-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}
+.teacher-management-summary-card{min-width:0}
+.teacher-management-filter-card{margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(55,27,32,.035)}
+.teacher-management-filter-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;color:var(--ink)}
+.teacher-management-filter-heading>div{display:flex;align-items:center;gap:8px}.teacher-management-filter-heading svg{color:var(--maroon)}
+.teacher-management-filter-heading strong{font-size:14px}.teacher-management-filter-heading>span{color:var(--muted);font-size:11px;font-weight:700}
+.teacher-management-filter-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:12px}
+.teacher-management-filter-grid label{min-width:0}.teacher-management-filter-grid label>span{display:block;margin-bottom:6px;color:#5f5355;font-size:10px;font-weight:800;letter-spacing:.035em;text-transform:uppercase}
+.teacher-management-filter-grid select,.teacher-management-filter-grid input{width:100%;min-height:42px;border:1px solid #dacdd0;border-radius:10px;background:#fff;color:var(--ink);padding:9px 11px;font:inherit;font-size:12px;outline:none}
+.teacher-management-filter-grid select:focus,.teacher-management-filter-grid input:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(122,31,43,.09)}
+.teacher-management-search-field{grid-column:1/-1}.teacher-management-search-field>div{position:relative}.teacher-management-search-field svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9b8589;pointer-events:none}.teacher-management-search-field input{padding-left:34px}
+.teacher-management-inline-error{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.teacher-management-inline-error button{border:0;background:transparent;color:var(--maroon);font:inherit;font-size:11px;font-weight:800;text-decoration:underline}
+.teacher-management-account,.teacher-management-teaching,.teacher-management-relationship,.teacher-management-history-state{display:inline-flex;align-items:center;justify-content:center;min-height:25px;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:850;line-height:1.2}
+.teacher-management-account.is-active{background:#edf8f1;color:#237145}.teacher-management-account.is-pending{background:#f8f0df;color:#86631b}.teacher-management-account.is-blocked{background:#fff0f2;color:#9b3545}
+.teacher-management-teaching.is-teaching{background:#eef7f1;color:#2c714a}.teacher-management-teaching.is-no_active{background:#f4f1f2;color:#786b6d}
+.teacher-management-relationship.is-primary{background:#f8ecee;color:var(--maroon)}.teacher-management-relationship.is-substitute{background:#eef2fb;color:#4b6095}
+.teacher-management-muted{color:var(--muted);font-size:10px}
+.teacher-management-desktop-list{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 7px 22px rgba(55,27,32,.03)}
+.teacher-management-desktop-head,.teacher-management-desktop-row{display:grid;grid-template-columns:minmax(150px,1.1fr) minmax(115px,.72fr) minmax(120px,.78fr) minmax(205px,1.45fr) minmax(82px,.55fr) minmax(80px,.52fr) minmax(135px,.86fr) minmax(112px,.72fr);align-items:stretch}
+.teacher-management-desktop-head{border-bottom:1px solid var(--line);background:#faf7f7}.teacher-management-desktop-head>span{padding:11px 10px;color:#75696b;font-size:8.5px;font-weight:850;letter-spacing:.055em;text-transform:uppercase}
+.teacher-management-desktop-row{border-bottom:1px solid #f0e7e8}.teacher-management-desktop-row:last-child{border-bottom:0}.teacher-management-desktop-row>div{min-width:0;padding:12px 10px;border-right:1px solid #f4edef;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px}.teacher-management-desktop-row>div:last-child{border-right:0}
+.teacher-management-desktop-row strong{color:var(--ink);font-size:11px;line-height:1.4;overflow-wrap:anywhere}.teacher-management-desktop-row small{color:var(--muted);font-size:9px;line-height:1.4}
+.teacher-management-name-cell .teacher-management-teaching{margin-top:3px}
+.teacher-management-compact-classes{display:grid;gap:5px;min-width:0}.teacher-management-compact-classes>div{display:grid;gap:1px}.teacher-management-compact-classes strong{font-size:10px}.teacher-management-compact-classes small{font-size:8.5px}.teacher-management-compact-classes>span{color:var(--maroon);font-size:9px;font-weight:800}
+.teacher-management-detail-button{width:100%;min-height:34px;justify-content:center;padding:7px 8px;font-size:10px;white-space:nowrap}
+.teacher-management-mobile-list{display:none}.teacher-management-mobile-card{padding:16px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 7px 22px rgba(55,27,32,.035)}
+.teacher-management-mobile-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.teacher-management-mobile-card>header>div{min-width:0}.teacher-management-mobile-card>header strong{display:block;color:var(--ink);font-size:15px;overflow-wrap:anywhere}.teacher-management-mobile-card>header>div>span{display:block;margin-top:3px;color:var(--muted);font-size:10px}.teacher-management-mobile-badges{margin-top:10px}
+.teacher-management-mobile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:13px 0}.teacher-management-mobile-grid>div{min-width:0;padding:10px;border:1px solid #eee4e6;border-radius:10px;background:#fcfafa}.teacher-management-mobile-grid>.is-wide{grid-column:1/-1}.teacher-management-mobile-grid>div>span{display:block;margin-bottom:5px;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}.teacher-management-mobile-grid strong{color:var(--ink);font-size:11px}
+.teacher-management-pagination{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:#fff}.teacher-management-pagination>div{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.teacher-management-pagination select{min-height:34px;border:1px solid #dacdd0;border-radius:8px;background:#fff;padding:5px 8px;font:inherit}.teacher-management-pagination .class-action-secondary{min-height:34px;padding:7px 10px;font-size:10px}.teacher-management-pagination button:disabled{opacity:.45;cursor:not-allowed}
+.teacher-management-empty{padding:34px 20px}.teacher-management-empty svg{color:#aa8a90}.teacher-management-empty h3{margin:10px 0 0;color:var(--ink);font-size:15px}
+.teacher-management-modal-backdrop{position:fixed;inset:0;z-index:170;display:grid;place-items:center;padding:20px;background:rgba(35,20,24,.58)}
+.teacher-management-modal{width:min(100%,940px);max-height:92vh;overflow-y:auto;border:1px solid #ead7da;border-radius:18px;background:#fff;box-shadow:0 24px 70px rgba(45,18,24,.28)}
+.teacher-management-modal-header{position:sticky;top:0;z-index:4;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 22px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.98);backdrop-filter:blur(8px)}.teacher-management-modal-header h2{margin:4px 0 0;color:var(--ink);font-size:21px}.teacher-management-modal-header>div>span{display:block;margin-top:5px;color:var(--muted);font-size:11px}.teacher-management-modal-close{display:grid;place-items:center;flex:0 0 auto;width:38px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.teacher-management-detail-loading{display:grid;gap:12px;padding:22px}.teacher-management-detail-loading>div{height:92px;border-radius:14px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}
+.teacher-management-detail-content{display:grid;gap:18px;padding:20px 22px 24px}
+.teacher-management-tabs{position:sticky;top:79px;z-index:3;display:flex;gap:6px;padding:7px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
+.teacher-management-tabs button{flex:1;min-height:38px;border:0;border-radius:8px;background:transparent;color:#685a5d;font:inherit;font-size:10px;font-weight:800;cursor:pointer}.teacher-management-tabs button:hover{background:#faf7f7;color:var(--maroon)}.teacher-management-tabs button.active{background:var(--soft);color:var(--maroon)}
+.teacher-management-tab-panel{display:grid;gap:16px}.teacher-management-detail-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.teacher-management-detail-summary>div{min-width:0;padding:13px 14px;border:1px solid #eee4e6;border-radius:12px;background:#fcfafa}.teacher-management-detail-summary>div>span{display:block;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}.teacher-management-detail-summary>div>strong{display:block;margin-top:6px;color:var(--ink);font-size:13px;overflow-wrap:anywhere}
+.teacher-management-readonly-note{margin:0;padding:12px 14px;border:1px solid #eadfe1;border-radius:11px;background:#fcfafa;color:var(--muted);font-size:10px;line-height:1.55}
+.teacher-management-tab-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.teacher-management-tab-heading h3{margin:0;color:var(--ink);font-size:16px}.teacher-management-tab-heading p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.5}.teacher-management-tab-heading>span{flex:0 0 auto;color:var(--muted);font-size:10px;font-weight:800}
+.teacher-management-detail-list,.teacher-management-history-list,.teacher-management-report-list{display:grid;gap:11px}.teacher-management-class-card,.teacher-management-history-card,.teacher-management-report-card{padding:15px;border:1px solid #eadfe1;border-radius:14px;background:#fff;box-shadow:0 5px 16px rgba(55,27,32,.025)}
+.teacher-management-class-card>header,.teacher-management-report-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.teacher-management-class-card header>div>span,.teacher-management-history-card>div:first-child>span,.teacher-management-report-card header>div>span{color:var(--maroon);font-size:8px;font-weight:850;text-transform:uppercase}.teacher-management-class-card h4,.teacher-management-history-card h4,.teacher-management-report-card h4{margin:4px 0 0;color:var(--ink);font-size:14px}.teacher-management-class-card small,.teacher-management-history-card small,.teacher-management-report-card small{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+.teacher-management-class-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:13px 0}.teacher-management-class-meta>div{padding:9px 10px;border:1px solid #f0e7e8;border-radius:9px;background:#fcfafa}.teacher-management-class-meta span{display:block;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}.teacher-management-class-meta strong{display:block;margin-top:5px;color:var(--ink);font-size:10px}
+.teacher-management-report-link{min-height:34px;padding:7px 10px;font-size:10px;justify-content:center}
+.teacher-management-history-warning{display:flex;align-items:flex-start;gap:9px;padding:12px 13px;border:1px solid #e8d8bb;border-radius:11px;background:#fffaf0;color:#755b28;font-size:10px;line-height:1.55}.teacher-management-history-warning svg{flex:0 0 auto;margin-top:1px}.teacher-management-history-warning code,.teacher-management-tab-heading code{font-size:.95em}
+.teacher-management-history-card{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.teacher-management-history-meta{display:flex;align-items:flex-end;flex-direction:column;gap:6px;text-align:right}.teacher-management-history-meta>strong{color:#675a5d;font-size:10px}.teacher-management-history-state{background:#f4f1f2;color:#73676a}
+.teacher-management-report-card>header>strong{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:10px;white-space:nowrap}.teacher-management-report-card>p{margin:12px 0;color:#574b4e;font-size:11px;line-height:1.6}
+.teacher-management-detail-empty{margin:0;padding:26px 16px;border:1px dashed #dfd1d4;border-radius:13px;background:#fcfafa;color:var(--muted);font-size:11px;text-align:center}
+.teacher-management-skeleton{display:grid;gap:18px}.teacher-management-skeleton-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.teacher-management-skeleton-summary>div{height:92px;border-radius:16px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}.teacher-management-skeleton-filter{height:176px;border-radius:18px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}.teacher-management-skeleton-list{display:grid;gap:8px}.teacher-management-skeleton-list>div{height:98px;border-radius:14px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}
+
+@media(max-width:1280px){
+  .teacher-management-desktop-head,.teacher-management-desktop-row{grid-template-columns:minmax(140px,1fr) minmax(105px,.7fr) minmax(110px,.72fr) minmax(180px,1.32fr) 75px 72px minmax(120px,.82fr) 105px}
+}
+@media(max-width:1100px){
+  .teacher-management-desktop-list{display:none}.teacher-management-mobile-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+}
+@media(max-width:768px){
+  .teacher-management-summary-grid,.teacher-management-skeleton-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .teacher-management-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.teacher-management-search-field{grid-column:1/-1}
+  .teacher-management-pagination{align-items:stretch;flex-direction:column}.teacher-management-pagination>div{justify-content:space-between}
+  .teacher-management-detail-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .teacher-management-filter-card{padding:14px}.teacher-management-filter-grid{grid-template-columns:1fr}.teacher-management-search-field{grid-column:auto}
+  .teacher-management-mobile-list{grid-template-columns:1fr}.teacher-management-mobile-grid{grid-template-columns:1fr}.teacher-management-mobile-grid>.is-wide{grid-column:auto}
+  .teacher-management-pagination>div{flex-wrap:wrap;justify-content:flex-start}.teacher-management-pagination>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px}.teacher-management-pagination>div:last-child>span{grid-column:1/-1;text-align:center}
+  .teacher-management-modal-backdrop{padding:0}.teacher-management-modal{width:100%;height:100vh;max-height:100vh;border:0;border-radius:0}.teacher-management-modal-header{padding:16px}.teacher-management-detail-content{padding:14px 16px 18px}
+  .teacher-management-tabs{top:69px;overflow-x:auto}.teacher-management-tabs button{min-width:92px}
+  .teacher-management-detail-summary{grid-template-columns:1fr}.teacher-management-class-meta{grid-template-columns:1fr}
+  .teacher-management-history-card{display:grid}.teacher-management-history-meta{align-items:flex-start;text-align:left}
+}
+@media(max-width:390px){
+  .teacher-management-summary-grid,.teacher-management-skeleton-summary{gap:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .teacher-management-skeleton-summary>div,.teacher-management-skeleton-filter,.teacher-management-skeleton-list>div,.teacher-management-detail-loading>div{animation:none}
+}
