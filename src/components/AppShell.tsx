@@ -5,6 +5,7 @@ import {
   Dumbbell,
   Home,
   Inbox,
+  FileText,
   Languages,
   LogOut,
   Menu,
@@ -103,6 +104,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
           <NavigationLink to="/manajemen/pengajar" label="Pengajar" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/kritik-saran" label="Kritik & Saran Masuk" icon={Inbox} onNavigate={onNavigate}/>
           <NavigationLink to="/rekap-kelas" label="Rekap Kelas" icon={BarChart3} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/laporan-pembelajaran" label="Laporan Pembelajaran" icon={FileText} onNavigate={onNavigate}/>
         </div>
       )}
 
