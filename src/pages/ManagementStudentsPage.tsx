@@ -82,6 +82,40 @@ type StudentDetailClass = {
   completed_at: string | null;
 };
 
+type ReviewModuleProgress = {
+  reviewed: number;
+  mastered: number;
+  total: number;
+  last_activity: string | null;
+};
+
+type ReadingModuleProgress = {
+  attempted: number;
+  mastered: number;
+  repeat: number;
+  total: null;
+  last_activity: string | null;
+};
+
+type ListeningModuleProgress = {
+  attempted: number;
+  completed: number;
+  mastered: number;
+  total: null;
+  last_activity: string | null;
+};
+
+type StudentLearningProgress = {
+  hiragana: ReviewModuleProgress | null;
+  katakana: ReviewModuleProgress | null;
+  vocabulary: ReviewModuleProgress | null;
+  kanji: ReviewModuleProgress | null;
+  grammar: ReviewModuleProgress | null;
+  reading: ReadingModuleProgress | null;
+  listening: ListeningModuleProgress | null;
+  last_learning_activity: string | null;
+};
+
 type StudentDetail = {
   profile: {
     student_id: string;
@@ -90,9 +124,13 @@ type StudentDetail = {
   };
   academic_status: AcademicStatus;
   account_status: AccountStatus;
+  first_joined_at: string | null;
   current_classes: StudentDetailClass[];
   class_history: StudentDetailClass[];
+  learning_progress: StudentLearningProgress;
 };
+
+type StudentDetailTab = 'summary' | 'academic' | 'progress';
 
 const MANAGEMENT_ROLES = new Set<AppRole>(['administrator', 'manager', 'co_founder', 'founder']);
 
@@ -205,6 +243,107 @@ function DetailClassCard({ row }: { row: StudentDetailClass }) {
   );
 }
 
+
+function clampPercent(value: number) {
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function percent(part: number, total: number) {
+  return total > 0 ? clampPercent((part / total) * 100) : 0;
+}
+
+function ReviewProgressCard({
+  title,
+  metric,
+}: {
+  title: string;
+  metric: ReviewModuleProgress | null;
+}) {
+  if (!metric) {
+    return (
+      <article className="student-360-progress-card">
+        <header><h4>{title}</h4></header>
+        <p className="student-360-progress-empty">Belum tersedia.</p>
+      </article>
+    );
+  }
+
+  const coverage = percent(metric.reviewed, metric.total);
+  const mastery = percent(metric.mastered, metric.total);
+  const hasActivity = metric.reviewed > 0;
+
+  return (
+    <article className="student-360-progress-card">
+      <header>
+        <h4>{title}</h4>
+        <span>{metric.total.toLocaleString('id-ID')} materi published</span>
+      </header>
+
+      {!hasActivity && <p className="student-360-progress-empty">Belum ada aktivitas.</p>}
+
+      <div className="student-360-progress-stats">
+        <div><span>Dipelajari</span><strong>{metric.reviewed.toLocaleString('id-ID')}</strong></div>
+        <div><span>Dikuasai</span><strong>{metric.mastered.toLocaleString('id-ID')}</strong></div>
+        <div><span>Total</span><strong>{metric.total.toLocaleString('id-ID')}</strong></div>
+      </div>
+
+      <div className="student-360-progress-bars">
+        <div>
+          <div><span>Cakupan</span><strong>{coverage}%</strong></div>
+          <div className="student-360-progress-track"><i style={{ width: `${coverage}%` }}/></div>
+        </div>
+        <div>
+          <div><span>Penguasaan</span><strong>{mastery}%</strong></div>
+          <div className="student-360-progress-track is-mastery"><i style={{ width: `${mastery}%` }}/></div>
+        </div>
+      </div>
+
+      <small>Aktivitas terakhir: {formatDate(metric.last_activity)}</small>
+    </article>
+  );
+}
+
+function ReadingProgressCard({ metric }: { metric: ReadingModuleProgress | null }) {
+  if (!metric) {
+    return <article className="student-360-progress-card"><header><h4>Reading</h4></header><p className="student-360-progress-empty">Belum tersedia.</p></article>;
+  }
+  const hasActivity = metric.attempted > 0;
+  return (
+    <article className="student-360-progress-card">
+      <header><h4>Reading</h4><span>Metric completion & skor tersimpan</span></header>
+      {!hasActivity && <p className="student-360-progress-empty">Belum ada aktivitas.</p>}
+      <div className="student-360-progress-stats">
+        <div><span>Dikerjakan</span><strong>{metric.attempted}</strong></div>
+        <div><span>Dikuasai</span><strong>{metric.mastered}</strong></div>
+        <div><span>Perlu Diulang</span><strong>{metric.repeat}</strong></div>
+      </div>
+      <p className="student-360-progress-note">Total materi tidak dihitung di RPC agar denominator source-code tidak disamakan secara palsu dengan data progress database.</p>
+      <small>Aktivitas terakhir: {formatDate(metric.last_activity)}</small>
+    </article>
+  );
+}
+
+function ListeningProgressCard({ metric }: { metric: ListeningModuleProgress | null }) {
+  if (!metric) {
+    return <article className="student-360-progress-card"><header><h4>Listening</h4></header><p className="student-360-progress-empty">Belum tersedia.</p></article>;
+  }
+  const hasActivity = metric.attempted > 0;
+  return (
+    <article className="student-360-progress-card">
+      <header><h4>Listening</h4><span>Metric attempt, completion & skor tersimpan</span></header>
+      {!hasActivity && <p className="student-360-progress-empty">Belum ada aktivitas.</p>}
+      <div className="student-360-progress-stats">
+        <div><span>Dikerjakan</span><strong>{metric.attempted}</strong></div>
+        <div><span>Selesai</span><strong>{metric.completed}</strong></div>
+        <div><span>Dikuasai</span><strong>{metric.mastered}</strong></div>
+      </div>
+      <p className="student-360-progress-note">Total materi tidak dihitung di RPC agar denominator source-code tidak disamakan secara palsu dengan data progress database.</p>
+      <small>Aktivitas terakhir: {formatDate(metric.last_activity)}</small>
+    </article>
+  );
+}
+
+
 export function ManagementStudentsPage() {
   const { role, loading: authLoading } = useAuth();
   const canManage = Boolean(role && MANAGEMENT_ROLES.has(role));
@@ -227,6 +366,7 @@ export function ManagementStudentsPage() {
   const [detail, setDetail] = useState<StudentDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(false);
+  const [detailTab, setDetailTab] = useState<StudentDetailTab>('summary');
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const requestSequence = useRef(0);
 
@@ -283,12 +423,14 @@ export function ManagementStudentsPage() {
     setDetail(null);
     setDetailError(false);
     setDetailLoading(false);
+    setDetailTab('summary');
   }, []);
 
   const openDetail = useCallback(async (row: StudentDirectoryRow) => {
     setSelectedStudent(row);
     setDetail(null);
     setDetailError(false);
+    setDetailTab('summary');
     setDetailLoading(true);
 
     const { data, error: loadError } = await supabase.rpc('get_management_student_detail', {
@@ -526,7 +668,7 @@ export function ManagementStudentsPage() {
               <div>
                 <p className="eyebrow">DETAIL SISWA</p>
                 <h2 id="student-management-detail-title">{displayName(selectedStudent)}</h2>
-                <span>Ringkasan akademik read-only</span>
+                <span>Student 360 · akademik dan progress LMS read-only</span>
               </div>
               <button ref={closeButtonRef} type="button" className="student-management-modal-close" aria-label="Tutup detail siswa" onClick={closeDetail}><X size={20}/></button>
             </header>
@@ -539,27 +681,65 @@ export function ManagementStudentsPage() {
                 <button className="class-action-secondary" type="button" onClick={() => void openDetail(selectedStudent)}><RefreshCw size={15}/> Coba Lagi</button>
               </div>
             ) : (
-              <div className="student-management-detail-content">
-                <section className="student-management-detail-profile">
-                  <div><span>Nama Lengkap</span><strong>{detail.profile.full_name || '—'}</strong></div>
-                  <div><span>Nama Panggilan</span><strong>{detail.profile.nickname || '—'}</strong></div>
-                  <div><span>Status Akademik</span><AcademicBadge status={detail.academic_status}/></div>
-                  <div><span>Status Akun</span><strong>{accountLabels[detail.account_status]}</strong></div>
-                </section>
+              <div className="student-management-detail-content student-360-content">
+                <div className="student-360-tabs" role="tablist" aria-label="Detail siswa">
+                  <button type="button" role="tab" aria-selected={detailTab === 'summary'} className={detailTab === 'summary' ? 'active' : ''} onClick={() => setDetailTab('summary')}>Ringkasan</button>
+                  <button type="button" role="tab" aria-selected={detailTab === 'academic'} className={detailTab === 'academic' ? 'active' : ''} onClick={() => setDetailTab('academic')}>Akademik</button>
+                  <button type="button" role="tab" aria-selected={detailTab === 'progress'} className={detailTab === 'progress' ? 'active' : ''} onClick={() => setDetailTab('progress')}>Progress LMS</button>
+                </div>
 
-                <section className="student-management-detail-section">
-                  <div className="student-management-detail-section-heading"><BookOpenCheck size={17}/><div><h3>Kelas Aktif</h3><p>Program dan kelas yang sedang dijalani siswa.</p></div></div>
-                  {detail.current_classes.length === 0
-                    ? <p className="student-management-detail-empty">Tidak ada kelas aktif.</p>
-                    : <div className="student-management-detail-class-list">{detail.current_classes.map((row) => <DetailClassCard key={`${row.class_id}-${row.enrollment_status}`} row={row}/>)}</div>}
-                </section>
+                {detailTab === 'summary' && (
+                  <section className="student-360-tab-panel" role="tabpanel">
+                    <div className="student-management-detail-profile student-360-summary-grid">
+                      <div><span>Nama Lengkap</span><strong>{detail.profile.full_name || '—'}</strong></div>
+                      <div><span>Nama Panggilan</span><strong>{detail.profile.nickname || '—'}</strong></div>
+                      <div><span>Status Akademik</span><AcademicBadge status={detail.academic_status}/></div>
+                      <div><span>Status Akun</span><strong>{accountLabels[detail.account_status]}</strong></div>
+                      <div><span>Pertama Bergabung</span><strong>{formatDate(detail.first_joined_at)}</strong></div>
+                      <div><span>Aktivitas Belajar Terakhir</span><strong>{formatDate(detail.learning_progress.last_learning_activity)}</strong></div>
+                    </div>
+                    <p className="student-360-readonly-note">Data pada Student 360 hanya untuk pemantauan. Perubahan enrollment, akun, kelas, dan progress tetap dilakukan melalui workflow existing yang berwenang.</p>
+                  </section>
+                )}
 
-                <section className="student-management-detail-section">
-                  <div className="student-management-detail-section-heading"><BookOpenCheck size={17}/><div><h3>Riwayat Kelas</h3><p>Kelas paused, completed, dan cancelled tetap disimpan sebagai histori.</p></div></div>
-                  {detail.class_history.length === 0
-                    ? <p className="student-management-detail-empty">Belum ada riwayat kelas.</p>
-                    : <div className="student-management-detail-class-list">{detail.class_history.map((row) => <DetailClassCard key={`${row.class_id}-${row.enrollment_status}`} row={row}/>)}</div>}
-                </section>
+                {detailTab === 'academic' && (
+                  <section className="student-360-tab-panel" role="tabpanel">
+                    <section className="student-management-detail-section">
+                      <div className="student-management-detail-section-heading"><BookOpenCheck size={17}/><div><h3>Kelas Saat Ini</h3><p>Enrollment aktif dan dijeda. Multi-class didukung.</p></div></div>
+                      {detail.current_classes.length === 0
+                        ? <p className="student-management-detail-empty">Tidak ada kelas aktif atau dijeda.</p>
+                        : <div className="student-management-detail-class-list">{detail.current_classes.map((row) => <DetailClassCard key={`${row.class_id}-${row.enrollment_status}`} row={row}/>)}</div>}
+                    </section>
+
+                    <section className="student-management-detail-section">
+                      <div className="student-management-detail-section-heading"><BookOpenCheck size={17}/><div><h3>Riwayat Akademik</h3><p>Active/paused ditampilkan lebih dahulu, kemudian completed/cancelled terbaru. Histori tidak dihapus.</p></div></div>
+                      {detail.class_history.length === 0
+                        ? <p className="student-management-detail-empty">Belum ada riwayat kelas.</p>
+                        : <div className="student-management-detail-class-list">{detail.class_history.map((row) => <DetailClassCard key={`${row.class_id}-${row.enrollment_status}`} row={row}/>)}</div>}
+                    </section>
+                  </section>
+                )}
+
+                {detailTab === 'progress' && (
+                  <section className="student-360-tab-panel" role="tabpanel">
+                    <div className="student-360-progress-heading">
+                      <div>
+                        <h3>Progress LMS</h3>
+                        <p>Setiap metric mengikuti definisi progress modul existing. Tidak ada overall percentage gabungan.</p>
+                      </div>
+                      <span>Terakhir: {formatDate(detail.learning_progress.last_learning_activity)}</span>
+                    </div>
+                    <div className="student-360-progress-grid">
+                      <ReviewProgressCard title="Hiragana" metric={detail.learning_progress.hiragana}/>
+                      <ReviewProgressCard title="Katakana" metric={detail.learning_progress.katakana}/>
+                      <ReviewProgressCard title="Kosakata" metric={detail.learning_progress.vocabulary}/>
+                      <ReviewProgressCard title="Kanji" metric={detail.learning_progress.kanji}/>
+                      <ReviewProgressCard title="Tata Bahasa" metric={detail.learning_progress.grammar}/>
+                      <ReadingProgressCard metric={detail.learning_progress.reading}/>
+                      <ListeningProgressCard metric={detail.learning_progress.listening}/>
+                    </div>
+                  </section>
+                )}
               </div>
             )}
           </section>

@@ -580,3 +580,51 @@
 @media(max-width:560px){.feedback-inbox-filter-card{padding:14px}.feedback-inbox-filter-grid{grid-template-columns:1fr}.feedback-inbox-search-field{grid-column:auto}.feedback-inbox-mobile-list{grid-template-columns:1fr}.feedback-inbox-pagination>div{flex-wrap:wrap;justify-content:flex-start}.feedback-inbox-pagination>div:last-child{display:grid;grid-template-columns:1fr 1fr;gap:8px}.feedback-inbox-pagination>div:last-child>span{grid-column:1/-1;text-align:center}.feedback-inbox-modal-backdrop{padding:0}.feedback-inbox-modal{width:100%;height:100vh;max-height:100vh;border:0;border-radius:0}.feedback-inbox-modal-header{padding:16px}.feedback-inbox-detail-content{padding:16px}.feedback-inbox-status-controls{grid-template-columns:1fr}.feedback-inbox-status-controls .class-action-primary{width:100%;justify-content:center}.feedback-inbox-detail-button{width:100%;min-height:42px}.feedback-inbox-skeleton-filter{height:220px}}
 @media(max-width:390px){.feedback-inbox-summary-grid,.feedback-inbox-skeleton-summary{gap:9px}.feedback-inbox-summary-card{padding:13px 12px}}
 @media(prefers-reduced-motion:reduce){.feedback-inbox-skeleton-summary>div,.feedback-inbox-skeleton-filter,.feedback-inbox-skeleton-list>div{animation:none}}
+
+/* Management Phase 1B — Student 360 Detail */
+.student-management-modal{width:min(100%,960px)}
+.student-360-content{gap:16px}
+.student-360-tabs{position:sticky;top:79px;z-index:1;display:flex;gap:6px;padding:7px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(8px)}
+.student-360-tabs button{flex:1;min-height:38px;border:0;border-radius:8px;background:transparent;color:#685a5d;font:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.student-360-tabs button:hover{background:#faf7f7;color:var(--maroon)}
+.student-360-tabs button.active{background:var(--soft);color:var(--maroon)}
+.student-360-tab-panel{display:grid;gap:18px}
+.student-360-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.student-360-readonly-note{margin:0;padding:12px 14px;border:1px solid #eadfe1;border-radius:11px;background:#fcfafa;color:var(--muted);font-size:10px;line-height:1.55}
+.student-360-progress-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.student-360-progress-heading h3{margin:0;color:var(--ink);font-size:16px}
+.student-360-progress-heading p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.5}
+.student-360-progress-heading>span{flex:0 0 auto;color:var(--muted);font-size:10px;font-weight:700}
+.student-360-progress-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.student-360-progress-card{min-width:0;padding:15px;border:1px solid #eadfe1;border-radius:14px;background:#fff;box-shadow:0 5px 16px rgba(55,27,32,.025)}
+.student-360-progress-card>header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.student-360-progress-card>header h4{margin:0;color:var(--ink);font-size:14px}
+.student-360-progress-card>header span{max-width:58%;color:var(--muted);font-size:9px;line-height:1.4;text-align:right}
+.student-360-progress-card>small{display:block;margin-top:12px;color:var(--muted);font-size:9px}
+.student-360-progress-empty{margin:0 0 11px;padding:8px 10px;border-radius:9px;background:#faf7f7;color:var(--muted);font-size:10px}
+.student-360-progress-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.student-360-progress-stats>div{min-width:0;padding:9px;border:1px solid #f0e7e8;border-radius:9px;background:#fcfafa}
+.student-360-progress-stats span{display:block;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.035em;text-transform:uppercase}
+.student-360-progress-stats strong{display:block;margin-top:5px;color:var(--ink);font-size:15px;overflow-wrap:anywhere}
+.student-360-progress-bars{display:grid;gap:9px;margin-top:12px}
+.student-360-progress-bars>div>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;color:#6a5d60;font-size:9px;font-weight:800}
+.student-360-progress-track{height:7px;overflow:hidden;border-radius:999px;background:#eee6e7}
+.student-360-progress-track i{display:block;height:100%;border-radius:inherit;background:#9a626b}
+.student-360-progress-track.is-mastery i{background:var(--maroon)}
+.student-360-progress-note{margin:11px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+
+@media(max-width:768px){
+  .student-360-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .student-360-progress-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .student-360-tabs{top:68px;overflow-x:auto}
+  .student-360-tabs button{min-width:105px}
+  .student-360-summary-grid{grid-template-columns:1fr}
+  .student-360-progress-heading{display:grid;gap:6px}
+  .student-360-progress-heading>span{justify-self:start}
+  .student-360-progress-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:390px){
+  .student-360-progress-stats{grid-template-columns:1fr}
+}
