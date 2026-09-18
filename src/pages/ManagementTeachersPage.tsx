@@ -26,7 +26,7 @@ type TeachingStatus = 'teaching' | 'no_active';
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
 type Relationship = 'primary' | 'substitute';
 type SortMode = 'name_asc' | 'name_desc' | 'activity_desc' | 'class_count_desc';
-type DetailTab = 'summary' | 'classes' | 'history' | 'reports';
+type DetailTab = 'summary' | 'classes' | 'workload' | 'history' | 'reports';
 
 type DirectoryClass = {
   class_id: string;
@@ -119,6 +119,37 @@ type TeacherReportRow = {
   updated_at: string;
 };
 
+type TeacherWorkloadClass = {
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  program_id: string | null;
+  program_code: string | null;
+  program_name: string | null;
+  relationship: Relationship;
+  active_student_count: number;
+  reports_current_month: number;
+  reported_minutes_current_month: number;
+  last_report_date: string | null;
+  class_starts_on: string | null;
+  class_ends_on: string | null;
+  assignment_starts_on: string | null;
+  assignment_ends_on: string | null;
+};
+
+type TeacherWorkload = {
+  primary_class_count: number;
+  substitute_class_count: number;
+  current_class_count: number;
+  active_student_count: number;
+  reports_current_month: number;
+  reported_minutes_current_month: number;
+  last_report_date: string | null;
+  month_start: string;
+  next_month_start: string;
+  classes: TeacherWorkloadClass[];
+};
+
 type TeacherDetail = {
   profile: {
     teacher_id: string;
@@ -135,6 +166,7 @@ type TeacherDetail = {
   current_classes: TeacherCurrentClass[];
   history: TeacherHistoryRow[];
   recent_reports: TeacherReportRow[];
+  workload: TeacherWorkload;
 };
 
 const MANAGEMENT_ROLES = new Set<AppRole>(['administrator', 'manager', 'co_founder', 'founder']);
@@ -205,6 +237,16 @@ function formatPeriod(start: string | null | undefined, end: string | null | und
   if (start && end) return `${formatDate(start)} – ${formatDate(end)}`;
   if (start) return `Mulai ${formatDate(start)}`;
   return `Sampai ${formatDate(end)}`;
+}
+
+function recordedDurationLabel(minutes: number) {
+  const safeMinutes = Math.max(0, Math.trunc(minutes || 0));
+  if (safeMinutes < 60) return `${safeMinutes} menit`;
+  const hours = Math.floor(safeMinutes / 60);
+  const remaining = safeMinutes % 60;
+  return remaining > 0
+    ? `${safeMinutes} menit · ${hours} jam ${remaining} menit`
+    : `${safeMinutes} menit · ${hours} jam`;
 }
 
 function materialPreview(value: string) {
@@ -640,6 +682,7 @@ export function ManagementTeachersPage() {
                 <div className="teacher-management-tabs" role="tablist" aria-label="Teacher 360">
                   <button type="button" role="tab" aria-selected={detailTab === 'summary'} className={detailTab === 'summary' ? 'active' : ''} onClick={() => setDetailTab('summary')}>Ringkasan</button>
                   <button type="button" role="tab" aria-selected={detailTab === 'classes'} className={detailTab === 'classes' ? 'active' : ''} onClick={() => setDetailTab('classes')}>Kelas</button>
+                  <button type="button" role="tab" aria-selected={detailTab === 'workload'} className={detailTab === 'workload' ? 'active' : ''} onClick={() => setDetailTab('workload')}>Beban Mengajar</button>
                   <button type="button" role="tab" aria-selected={detailTab === 'history'} className={detailTab === 'history' ? 'active' : ''} onClick={() => setDetailTab('history')}>Riwayat</button>
                   <button type="button" role="tab" aria-selected={detailTab === 'reports'} className={detailTab === 'reports' ? 'active' : ''} onClick={() => setDetailTab('reports')}>Laporan</button>
                 </div>
@@ -687,6 +730,85 @@ export function ManagementTeachersPage() {
                                 <div><span>Periode Pengganti</span><strong>{formatPeriod(row.assignment_starts_on, row.assignment_ends_on)}</strong></div>
                               )}
                             </div>
+                            <Link className="class-action-secondary teacher-management-report-link" to={`/kelas-mengajar/${row.class_id}/laporan`}>
+                              <FileText size={14}/> Lihat Laporan Kelas
+                            </Link>
+                          </article>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                )}
+
+                {detailTab === 'workload' && (
+                  <section className="teacher-management-tab-panel teacher-workload-panel" role="tabpanel">
+                    <div className="teacher-management-tab-heading">
+                      <div>
+                        <h3>Beban &amp; Aktivitas Mengajar</h3>
+                        <p>Metric operasional faktual untuk bulan berjalan Asia/Jakarta. Tidak ada skor atau penilaian performa.</p>
+                      </div>
+                      <span>{formatDate(detail.workload.month_start)} – {formatDate(new Date(new Date(`${detail.workload.next_month_start}T00:00:00+07:00`).getTime() - 86400000).toISOString())}</span>
+                    </div>
+
+                    <div className="teacher-workload-summary-grid" aria-label="Ringkasan beban mengajar">
+                      <article><span>Kelas Utama</span><strong>{detail.workload.primary_class_count}</strong></article>
+                      <article><span>Kelas Pengganti</span><strong>{detail.workload.substitute_class_count}</strong></article>
+                      <article><span>Siswa Aktif</span><strong>{detail.workload.active_student_count}</strong></article>
+                      <article><span>Laporan Bulan Ini</span><strong>{detail.workload.reports_current_month}</strong></article>
+                      <article className="is-duration"><span>Durasi Tercatat</span><strong>{recordedDurationLabel(detail.workload.reported_minutes_current_month)}</strong></article>
+                    </div>
+
+                    <div className="teacher-workload-last-report">
+                      <CalendarDays size={16}/>
+                      <div>
+                        <span>Laporan Terakhir</span>
+                        <strong>{detail.workload.last_report_date ? formatDate(detail.workload.last_report_date) : 'Belum ada laporan.'}</strong>
+                      </div>
+                    </div>
+
+                    <p className="teacher-workload-duration-note">
+                      Durasi Tercatat hanya berasal dari waktu mulai–selesai yang tersimpan pada laporan mengajar. Ini bukan jam kerja, jadwal, absensi, atau target performa.
+                    </p>
+
+                    <div className="teacher-management-tab-heading">
+                      <div>
+                        <h3>Aktivitas per Kelas</h3>
+                        <p>Setiap kelas dihitung satu kali dan relationship Pengajar Utama / Pengajar Pengganti tetap dibedakan.</p>
+                      </div>
+                      <span>{detail.workload.classes.length} kelas</span>
+                    </div>
+
+                    {detail.workload.classes.length === 0 ? (
+                      <p className="teacher-management-detail-empty">Tidak ada kelas aktif yang sedang diajar.</p>
+                    ) : (
+                      <div className="teacher-workload-class-grid">
+                        {detail.workload.classes.map((row) => (
+                          <article className="teacher-workload-class-card" key={`${row.class_id}-${row.relationship}`}>
+                            <header>
+                              <div>
+                                <span>{row.program_name || 'PROGRAM KOJAC'}</span>
+                                <h4>{row.class_name}</h4>
+                                <small>{row.class_code || 'Tanpa kode'}</small>
+                              </div>
+                              <RelationshipBadge value={row.relationship}/>
+                            </header>
+
+                            <div className="teacher-workload-class-stats">
+                              <div><span>Siswa Aktif</span><strong>{row.active_student_count}</strong></div>
+                              <div><span>Laporan Bulan Ini</span><strong>{row.reports_current_month}</strong></div>
+                              <div><span>Durasi Tercatat</span><strong>{recordedDurationLabel(row.reported_minutes_current_month)}</strong></div>
+                              <div><span>Laporan Terakhir</span><strong>{row.last_report_date ? formatDate(row.last_report_date) : 'Belum ada laporan.'}</strong></div>
+                            </div>
+
+                            <div className="teacher-workload-period">
+                              <span>{row.relationship === 'substitute' ? 'Periode Pengganti' : 'Periode Kelas'}</span>
+                              <strong>
+                                {row.relationship === 'substitute'
+                                  ? formatPeriod(row.assignment_starts_on, row.assignment_ends_on)
+                                  : formatPeriod(row.class_starts_on, row.class_ends_on)}
+                              </strong>
+                            </div>
+
                             <Link className="class-action-secondary teacher-management-report-link" to={`/kelas-mengajar/${row.class_id}/laporan`}>
                               <FileText size={14}/> Lihat Laporan Kelas
                             </Link>
