@@ -628,3 +628,27 @@
 @media(max-width:390px){
   .student-360-progress-stats{grid-template-columns:1fr}
 }
+
+/* Management Phase 1C — Student Directory Export */
+.student-management-filter-heading{flex-wrap:wrap}
+.student-management-filter-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0}
+.student-management-filter-actions>span{color:var(--muted);font-size:11px;font-weight:700}
+.student-management-export-button{min-height:36px;padding:7px 10px;font-size:10px;white-space:nowrap}
+.student-management-export-button:disabled{opacity:.5;cursor:not-allowed}
+.student-management-export-message{margin:-8px 0 18px}
+.student-management-export-message.is-success{border-color:#cfe7d8;background:#f1faf4;color:#276442}
+.student-management-export-message.is-error{border-color:#ead0d4;background:#fff6f7;color:#8c2f3d}
+
+@media(max-width:768px){
+  .student-management-filter-heading{align-items:flex-start}
+  .student-management-filter-actions{width:100%;justify-content:flex-start}
+}
+@media(max-width:430px){
+  .student-management-filter-actions{display:grid;grid-template-columns:1fr 1fr}
+  .student-management-filter-actions>span{grid-column:1/-1}
+  .student-management-export-button{width:100%;justify-content:center}
+}
+@media(max-width:375px){
+  .student-management-filter-actions{grid-template-columns:1fr}
+  .student-management-filter-actions>span{grid-column:auto}
+}

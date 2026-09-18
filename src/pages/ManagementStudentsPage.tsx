@@ -4,6 +4,8 @@ import {
   BookOpenCheck,
   ChevronLeft,
   ChevronRight,
+  Download,
+  FileSpreadsheet,
   Filter,
   RefreshCw,
   Search,
@@ -14,6 +16,12 @@ import {
 import { Navigate } from 'react-router-dom';
 import '../classroom.css';
 import { supabase } from '../lib/supabase';
+import {
+  collectAllFilteredStudentRows,
+  downloadStudentDirectoryCsv,
+  downloadStudentDirectoryXlsx,
+  type StudentDirectoryExportMetadata,
+} from '../lib/studentDirectoryExport';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
 
@@ -21,6 +29,7 @@ type AcademicStatus = 'active' | 'inactive' | 'alumni';
 type AccountStatus = 'active' | 'pending' | 'blocked';
 type EnrollmentStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 type SortMode = 'name_asc' | 'name_desc' | 'joined_desc';
+type ExportFormat = 'xlsx' | 'csv';
 
 type StudentClassSummary = {
   class_id: string;
@@ -144,6 +153,12 @@ const accountLabels: Record<AccountStatus, string> = {
   active: 'Aktif',
   pending: 'Menunggu Approval',
   blocked: 'Diblokir',
+};
+
+const sortLabels: Record<SortMode, string> = {
+  name_asc: 'Nama A–Z',
+  name_desc: 'Nama Z–A',
+  joined_desc: 'Terbaru Bergabung',
 };
 
 const enrollmentLabels: Record<EnrollmentStatus, string> = {
@@ -367,6 +382,8 @@ export function ManagementStudentsPage() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(false);
   const [detailTab, setDetailTab] = useState<StudentDetailTab>('summary');
+  const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null);
+  const [exportMessage, setExportMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const requestSequence = useRef(0);
 
@@ -417,6 +434,71 @@ export function ManagementStudentsPage() {
     const options = payload?.filters.classes ?? [];
     return programId ? options.filter((item) => item.program_id === programId) : options;
   }, [payload, programId]);
+
+  const exportStudents = useCallback(async (format: ExportFormat) => {
+    if (!payload || exportingFormat || loading || payload.pagination.total_rows === 0) return;
+
+    // Capture the exact directory filter state at export start.
+    const snapshot = {
+      academicStatus,
+      programId,
+      classId,
+      teacherId,
+      search: debouncedSearch,
+      sort,
+    };
+
+    const metadata: StudentDirectoryExportMetadata = {
+      academicStatus: snapshot.academicStatus
+        ? academicLabels[snapshot.academicStatus as AcademicStatus]
+        : 'Semua status',
+      program: snapshot.programId
+        ? payload.filters.programs.find((item) => item.id === snapshot.programId)?.name || 'Program terpilih'
+        : 'Semua program',
+      className: snapshot.classId
+        ? payload.filters.classes.find((item) => item.id === snapshot.classId)?.name || 'Kelas terpilih'
+        : 'Semua kelas',
+      teacher: snapshot.teacherId
+        ? payload.filters.teachers.find((item) => item.id === snapshot.teacherId)?.name || 'Pengajar terpilih'
+        : 'Semua pengajar',
+      search: snapshot.search || '—',
+      sort: sortLabels[snapshot.sort],
+      exportedAt: new Date(),
+    };
+
+    setExportingFormat(format);
+    setExportMessage(null);
+
+    try {
+      const exportRows = await collectAllFilteredStudentRows(async (exportPage, exportPageSize) => {
+        const { data, error: exportError } = await supabase.rpc('get_management_students', {
+          p_student_status: snapshot.academicStatus || null,
+          p_program_id: snapshot.programId || null,
+          p_class_id: snapshot.classId || null,
+          p_teacher_id: snapshot.teacherId || null,
+          p_search: snapshot.search || null,
+          p_sort: snapshot.sort,
+          p_page: exportPage,
+          p_page_size: exportPageSize,
+        });
+
+        if (exportError) throw exportError;
+        return data as DirectoryPayload;
+      });
+
+      if (format === 'xlsx') downloadStudentDirectoryXlsx(exportRows, metadata);
+      else downloadStudentDirectoryCsv(exportRows, metadata.exportedAt);
+
+      setExportMessage({ kind: 'success', text: 'Data siswa berhasil diekspor.' });
+    } catch (exportError) {
+      console.error('KOJAC student directory export failed', exportError);
+      setExportMessage({ kind: 'error', text: 'Data siswa belum dapat diekspor. Silakan coba lagi.' });
+    } finally {
+      setExportingFormat(null);
+    }
+  }, [
+    academicStatus, classId, debouncedSearch, exportingFormat, loading, payload, programId, sort, teacherId,
+  ]);
 
   const closeDetail = useCallback(() => {
     setSelectedStudent(null);
@@ -510,7 +592,27 @@ export function ManagementStudentsPage() {
           <section className="student-management-filter-card" aria-label="Filter siswa">
             <div className="student-management-filter-heading">
               <div><Filter size={17}/><strong>Filter Siswa</strong></div>
-              {loading && <span>Memuat data…</span>}
+              <div className="student-management-filter-actions">
+                {loading && <span>Memuat data…</span>}
+                <button
+                  className="class-action-secondary student-management-export-button"
+                  type="button"
+                  disabled={Boolean(exportingFormat) || loading || pagination.total_rows === 0}
+                  onClick={() => void exportStudents('xlsx')}
+                >
+                  <FileSpreadsheet size={15}/>
+                  {exportingFormat === 'xlsx' ? 'Mengekspor...' : 'Export Excel'}
+                </button>
+                <button
+                  className="class-action-secondary student-management-export-button"
+                  type="button"
+                  disabled={Boolean(exportingFormat) || loading || pagination.total_rows === 0}
+                  onClick={() => void exportStudents('csv')}
+                >
+                  <Download size={15}/>
+                  {exportingFormat === 'csv' ? 'Mengekspor...' : 'Export CSV'}
+                </button>
+              </div>
             </div>
             <div className="student-management-filter-grid">
               <label>
@@ -570,6 +672,12 @@ export function ManagementStudentsPage() {
               </label>
             </div>
           </section>
+
+          {exportMessage && (
+            <div className={`notice student-management-export-message is-${exportMessage.kind}`} role={exportMessage.kind === 'error' ? 'alert' : 'status'}>
+              {exportMessage.text}
+            </div>
+          )}
 
           {error && payload && (
             <div className="notice student-management-inline-error" role="alert">
