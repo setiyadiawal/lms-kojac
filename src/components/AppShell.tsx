@@ -11,6 +11,7 @@ import {
   School,
   ShieldCheck,
   Trophy,
+  UsersRound,
   X,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -97,6 +98,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
         <div className="app-nav-section">
           <span className="app-nav-section-label">MANAJEMEN</span>
           <NavigationLink to="/admin" label="Pengguna & Kelas" icon={ShieldCheck} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/siswa" label="Siswa" icon={UsersRound} onNavigate={onNavigate}/>
           <NavigationLink to="/rekap-kelas" label="Rekap Kelas" icon={BarChart3} onNavigate={onNavigate}/>
         </div>
       )}
