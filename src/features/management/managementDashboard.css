@@ -1,0 +1,104 @@
+/* Management Phase 4A — Operational Overview */
+.management-dashboard-page{min-width:0}
+.management-dashboard-header{align-items:flex-start}
+.management-dashboard-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.management-dashboard-header-actions>span{color:var(--muted);font-size:10px;font-weight:700}
+.management-dashboard-header-actions .class-action-secondary:disabled{opacity:.5;cursor:not-allowed}
+
+.management-dashboard-inline-error{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.management-dashboard-inline-error button{border:0;background:transparent;color:var(--maroon);font:inherit;font-size:11px;font-weight:800;text-decoration:underline}
+
+.management-dashboard-summary-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.management-dashboard-summary-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;min-width:0;padding:15px 14px;border:1px solid var(--line);border-radius:15px;background:#fff;color:inherit;text-decoration:none;box-shadow:0 7px 20px rgba(55,27,32,.03)}
+.management-dashboard-summary-card:hover{border-color:#d8b9be;background:#fffafa}
+.management-dashboard-summary-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--maroon)}
+.management-dashboard-summary-card>div:nth-child(2){min-width:0}
+.management-dashboard-summary-card strong{display:block;color:var(--ink);font-size:20px;line-height:1.05}
+.management-dashboard-summary-card span{display:block;margin-top:4px;color:var(--muted);font-size:9px;font-weight:800;line-height:1.35;text-transform:uppercase}
+.management-dashboard-summary-card>svg{color:#b08c92}
+
+.management-dashboard-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.management-dashboard-panel{min-width:0;padding:17px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 7px 22px rgba(55,27,32,.03)}
+.management-dashboard-panel>header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:15px}
+.management-dashboard-panel>header h2{margin:3px 0 0;color:var(--ink);font-size:16px}
+.management-dashboard-panel>header a{display:inline-flex;align-items:center;gap:4px;color:var(--maroon);font-size:10px;font-weight:800;text-decoration:none;white-space:nowrap}
+.management-dashboard-panel>header a:hover{text-decoration:underline}
+
+.management-dashboard-composition-list{display:grid;gap:12px}
+.management-dashboard-composition-row>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.management-dashboard-composition-row span{color:#675a5d;font-size:10px;font-weight:750}
+.management-dashboard-composition-row strong{color:var(--ink);font-size:12px}
+.management-dashboard-composition-track{height:8px;overflow:hidden;border-radius:999px;background:#eee6e7}
+.management-dashboard-composition-track i{display:block;height:100%;border-radius:inherit;background:#95616a}
+
+.management-dashboard-feedback-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.management-dashboard-feedback-grid>div{min-width:0;padding:13px;border:1px solid #eee4e6;border-radius:11px;background:#fcfafa}
+.management-dashboard-feedback-grid span{display:block;color:var(--muted);font-size:8px;font-weight:850;text-transform:uppercase}
+.management-dashboard-feedback-grid strong{display:block;margin-top:6px;color:var(--ink);font-size:18px}
+
+.management-dashboard-operational-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.management-dashboard-operational-grid>a{min-width:0;padding:13px;border:1px solid #eee4e6;border-radius:11px;background:#fcfafa;color:inherit;text-decoration:none}
+.management-dashboard-operational-grid>a:hover{border-color:#d8b9be;background:#fffafa}
+.management-dashboard-operational-grid span{display:block;color:var(--muted);font-size:9px;font-weight:800;line-height:1.4;text-transform:uppercase}
+.management-dashboard-operational-grid strong{display:block;margin-top:7px;color:var(--ink);font-size:19px}
+
+.management-dashboard-two-column{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:14px;margin-top:14px}
+.management-dashboard-class-list,.management-dashboard-report-list{display:grid;gap:9px}
+.management-dashboard-class-card{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1.5fr);gap:12px;padding:12px;border:1px solid #eee4e6;border-radius:11px;background:#fcfafa}
+.management-dashboard-class-title{min-width:0}
+.management-dashboard-class-title>span{display:block;color:var(--maroon);font-size:8px;font-weight:850;text-transform:uppercase}
+.management-dashboard-class-title>strong{display:block;margin-top:4px;color:var(--ink);font-size:12px;overflow-wrap:anywhere}
+.management-dashboard-class-title>small{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+.management-dashboard-class-meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.management-dashboard-class-meta>div{min-width:0;padding:8px;border:1px solid #f0e7e8;border-radius:8px;background:#fff}
+.management-dashboard-class-meta span{display:block;color:var(--muted);font-size:7.5px;font-weight:850;text-transform:uppercase}
+.management-dashboard-class-meta strong{display:block;margin-top:4px;color:var(--ink);font-size:9.5px;line-height:1.4;overflow-wrap:anywhere}
+
+.management-dashboard-report-card{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.2fr);gap:12px;padding:12px;border:1px solid #eee4e6;border-radius:11px;background:#fcfafa}
+.management-dashboard-report-card>div{min-width:0}
+.management-dashboard-report-card>div:first-child>span{display:block;color:var(--maroon);font-size:8px;font-weight:850}
+.management-dashboard-report-card strong{display:block;margin-top:4px;color:var(--ink);font-size:11px;overflow-wrap:anywhere}
+.management-dashboard-report-card small{display:block;margin-top:3px;color:var(--muted);font-size:8.5px}
+.management-dashboard-report-card>div:last-child>span{display:block;color:#675a5d;font-size:9px;font-weight:800}
+.management-dashboard-report-card p{margin:6px 0 0;color:#5a4f51;font-size:9.5px;line-height:1.55;overflow-wrap:anywhere}
+
+.management-dashboard-empty-copy{margin:0;padding:21px 14px;border:1px dashed #dfd1d4;border-radius:11px;background:#fcfafa;color:var(--muted);font-size:11px;text-align:center}
+.management-dashboard-readonly-note{margin:14px 0 0;padding:11px 13px;border:1px solid #eadfe1;border-radius:11px;background:#fcfafa;color:var(--muted);font-size:10px;line-height:1.55}
+
+.management-dashboard-skeleton{display:grid;gap:16px}
+.management-dashboard-skeleton-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.management-dashboard-skeleton-summary>div{height:82px;border-radius:15px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}
+.management-dashboard-skeleton-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.management-dashboard-skeleton-panels>div{height:220px;border-radius:16px;background:#eee7e8;animation:classroom-pulse 1.1s ease-in-out infinite alternate}
+
+@media(max-width:1280px){
+  .management-dashboard-summary-grid,.management-dashboard-skeleton-summary{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .management-dashboard-operational-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .management-dashboard-two-column{grid-template-columns:1fr}
+}
+@media(max-width:1024px){
+  .management-dashboard-header{display:grid;gap:14px}
+  .management-dashboard-header-actions{justify-content:flex-start}
+  .management-dashboard-class-card{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .management-dashboard-overview-grid,.management-dashboard-skeleton-panels{grid-template-columns:1fr}
+  .management-dashboard-class-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .management-dashboard-summary-grid,.management-dashboard-skeleton-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .management-dashboard-summary-card{padding:13px 11px}
+  .management-dashboard-summary-card>svg{display:none}
+  .management-dashboard-feedback-grid{grid-template-columns:1fr}
+  .management-dashboard-operational-grid{grid-template-columns:1fr}
+  .management-dashboard-class-meta{grid-template-columns:1fr}
+  .management-dashboard-report-card{grid-template-columns:1fr}
+}
+@media(max-width:390px){
+  .management-dashboard-summary-grid,.management-dashboard-skeleton-summary{grid-template-columns:1fr}
+  .management-dashboard-header-actions{align-items:stretch}
+  .management-dashboard-header-actions .class-action-secondary{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .management-dashboard-skeleton-summary>div,.management-dashboard-skeleton-panels>div{animation:none}
+}

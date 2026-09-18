@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   BarChart3,
+  LayoutDashboard,
   BookOpen,
   Dumbbell,
   Home,
@@ -99,6 +100,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
       {canAdmin && (
         <div className="app-nav-section">
           <span className="app-nav-section-label">MANAJEMEN</span>
+          <NavigationLink to="/manajemen/dashboard" label="Dashboard Manajemen" icon={LayoutDashboard} onNavigate={onNavigate}/>
           <NavigationLink to="/admin" label="Pengguna & Kelas" icon={ShieldCheck} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/siswa" label="Siswa" icon={UsersRound} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/pengajar" label="Pengajar" icon={School} onNavigate={onNavigate}/>

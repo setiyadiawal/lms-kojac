@@ -16,6 +16,7 @@ import { ManagementStudentsPage } from './pages/ManagementStudentsPage';
 import { ManagementFeedbackPage } from './pages/ManagementFeedbackPage';
 import { ManagementTeachersPage } from './pages/ManagementTeachersPage';
 import { ManagementTeachingReportsPage } from './pages/ManagementTeachingReportsPage';
+import { ManagementDashboardPage } from './pages/ManagementDashboardPage';
 
 const HiraganaPage = lazy(() => import('./pages/HiraganaPage').then((module) => ({ default: module.HiraganaPage })));
 const KatakanaPage = lazy(() => import('./pages/KatakanaPage').then((module) => ({ default: module.KatakanaPage })));
@@ -44,6 +45,7 @@ export default function App() {
       <Route path="kelas-mengajar" element={<TeachingClassesPage />} />
       <Route path="kelas-mengajar/:classId/laporan" element={<TeachingReportsPage />} />
       <Route path="rekap-kelas" element={<ManagementClassRecapPage />} />
+      <Route path="manajemen/dashboard" element={<RoleRoute minimum="administrator"><ManagementDashboardPage /></RoleRoute>} />
       <Route path="manajemen/siswa" element={<RoleRoute minimum="administrator"><ManagementStudentsPage /></RoleRoute>} />
       <Route path="manajemen/pengajar" element={<RoleRoute minimum="administrator"><ManagementTeachersPage /></RoleRoute>} />
       <Route path="manajemen/kritik-saran" element={<RoleRoute minimum="administrator"><ManagementFeedbackPage /></RoleRoute>} />
