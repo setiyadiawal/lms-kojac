@@ -1,0 +1,96 @@
+/* KOJAC LMS v1.2 — Google Drive Video Upload */
+.recording-upload-page{padding-bottom:60px}
+.recording-upload-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.recording-upload-header h1{margin:4px 0 8px;font-size:31px;letter-spacing:-.035em}
+.recording-upload-header p:not(.eyebrow){margin:0;max-width:760px;color:var(--muted);line-height:1.55}
+.recording-drive-connect{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:9px 12px;border:1px solid #d7b9be;border-radius:10px;background:#fff;color:var(--maroon);font-size:10px;font-weight:850;white-space:nowrap}
+.recording-drive-connect.is-connected{border-color:#cce2d2;background:#f5fbf7;color:#25673c}
+.recording-drive-connect:disabled{opacity:.5;cursor:not-allowed}
+.recording-upload-config-warning{display:flex;align-items:flex-start;gap:10px;margin-bottom:15px;padding:13px 14px;border:1px solid #e8c989;border-radius:12px;background:#fff9e8;color:#73580c}
+.recording-upload-config-warning svg{flex:0 0 auto;margin-top:1px}
+.recording-upload-config-warning strong{font-size:11.5px}
+.recording-upload-config-warning p{margin:4px 0 0;font-size:10px;line-height:1.5}
+.recording-upload-config-warning code{padding:1px 4px;border-radius:4px;background:rgba(110,79,8,.08)}
+.recording-upload-panel{padding:20px}
+.recording-upload-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:15px}
+.recording-upload-section-heading h2{margin:4px 0 0;font-size:21px}
+.recording-upload-section-heading>span{color:var(--muted);font-size:9.5px}
+.recording-upload-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.recording-upload-form-grid label{display:block;color:#514547;font-size:10.5px;font-weight:800}
+.recording-upload-form-grid label.is-wide{grid-column:1/-1}
+.recording-upload-form-grid input:not([type="checkbox"]),.recording-upload-form-grid select,.recording-upload-form-grid textarea{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.recording-upload-form-grid input:not([type="checkbox"]),.recording-upload-form-grid select{min-height:41px;padding:8px 10px}
+.recording-upload-form-grid textarea{padding:10px 11px;resize:vertical;line-height:1.5}
+.recording-upload-toggle{display:flex!important;align-items:center;gap:9px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fcfafb}
+.recording-upload-toggle input{width:17px;height:17px;margin:0;flex:0 0 auto}
+.recording-upload-toggle strong,.recording-upload-toggle small{display:block}
+.recording-upload-toggle small{margin-top:2px;color:var(--muted);font-size:8.5px;font-weight:600}
+.recording-upload-file-block{margin-top:15px;padding:14px;border:1px solid #e7dddf;border-radius:12px;background:#fcfafb}
+.recording-upload-file-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.recording-upload-file-heading>div{display:flex;align-items:center;gap:8px}
+.recording-upload-file-heading>div>svg{color:var(--maroon)}
+.recording-upload-file-heading strong,.recording-upload-file-heading span{display:block}
+.recording-upload-file-heading strong{font-size:11px}
+.recording-upload-file-heading span{margin-top:2px;color:var(--muted);font-size:9px}
+.recording-upload-file-button{position:relative;display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #d7b9be;border-radius:9px;background:#fff;color:var(--maroon);font-size:9.5px;font-weight:850;cursor:pointer}
+.recording-upload-file-button input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%)}
+.recording-upload-selected-file{display:flex;align-items:center;gap:9px;margin-top:11px;padding:11px;border:1px solid #e5dcde;border-radius:10px;background:#fff}
+.recording-upload-selected-file>svg{color:var(--maroon);flex:0 0 auto}
+.recording-upload-selected-file strong,.recording-upload-selected-file span{display:block}
+.recording-upload-selected-file strong{font-size:10.5px;overflow-wrap:anywhere}
+.recording-upload-selected-file span{margin-top:2px;color:var(--muted);font-size:9px}
+.recording-upload-no-file{margin:11px 0 0;color:var(--muted);font-size:9.5px}
+.recording-upload-share-option{display:flex;align-items:flex-start;gap:9px;margin-top:13px;padding:12px 13px;border:1px solid #e5dddf;border-radius:11px;background:#fff}
+.recording-upload-share-option>input{width:17px;height:17px;margin:1px 0 0;flex:0 0 auto}
+.recording-upload-share-option>svg{color:#446a50;flex:0 0 auto}
+.recording-upload-share-option strong,.recording-upload-share-option small{display:block}
+.recording-upload-share-option strong{font-size:10.5px}
+.recording-upload-share-option small{margin-top:3px;color:var(--muted);font-size:8.8px;line-height:1.45}
+.recording-upload-progress-card{margin-top:14px;padding:13px;border:1px solid #d9dfe9;border-radius:11px;background:#f8faff}
+.recording-upload-progress-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.recording-upload-progress-top>div{display:flex;align-items:center;gap:7px;color:#405b7a;font-size:10px;font-weight:800}
+.recording-upload-progress-top strong{color:#315a89;font-size:11px}
+.recording-upload-progress-track{height:8px;margin-top:10px;overflow:hidden;border-radius:999px;background:#e3e8f0}
+.recording-upload-progress-track>span{display:block;height:100%;border-radius:999px;background:var(--maroon);transition:width .18s ease}
+.recording-upload-progress-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;color:var(--muted);font-size:8.8px}
+.recording-upload-progress-meta button{display:inline-flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #ead2d4;border-radius:7px;background:#fff;color:#92313b;font-size:8.8px;font-weight:800}
+.recording-upload-message{display:flex;align-items:flex-start;gap:7px;margin-top:13px;padding:10px 11px;border-radius:9px;font-size:9.8px;line-height:1.5}
+.recording-upload-message.is-error{border:1px solid #efcfd2;background:#fff7f7;color:#8b3038}
+.recording-upload-message.is-success{border:1px solid #cce3d2;background:#f5fbf7;color:#28683c}
+.recording-upload-completed{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding:12px 13px;border:1px solid #cfe3d4;border-radius:11px;background:#f7fcf8}
+.recording-upload-completed>div:first-child{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.recording-upload-completed>div:first-child>svg{flex:0 0 auto;color:#2f7043}
+.recording-upload-completed strong,.recording-upload-completed span{display:block}
+.recording-upload-completed strong{font-size:10.5px;overflow-wrap:anywhere}
+.recording-upload-completed span{margin-top:2px;color:var(--muted);font-size:8.5px;overflow-wrap:anywhere}
+.recording-upload-completed-actions{display:flex;gap:6px;flex-wrap:wrap}
+.recording-upload-completed-actions a,.recording-upload-completed-actions button{display:inline-flex;align-items:center;gap:5px;padding:7px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--maroon);font-size:8.8px;font-weight:800;text-decoration:none}
+.recording-upload-actions{display:flex;justify-content:flex-end;margin-top:14px}
+.recording-upload-primary{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:41px;padding:9px 14px;border:1px solid var(--maroon);border-radius:10px;background:var(--maroon);color:#fff;font-size:10.5px;font-weight:850}
+.recording-upload-primary:disabled{opacity:.5;cursor:not-allowed}
+.recording-upload-info{display:flex;align-items:flex-start;gap:9px;margin-top:14px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.recording-upload-info>svg{color:var(--maroon);flex:0 0 auto}
+.recording-upload-info strong{font-size:10.5px}
+.recording-upload-info p{margin:4px 0 0;color:var(--muted);font-size:9.2px;line-height:1.5}
+.recording-upload-loading,.recording-upload-empty{padding:36px 20px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:center;color:var(--muted)}
+.recording-upload-empty{display:grid;place-items:center;gap:7px}
+.recording-upload-empty svg{color:var(--maroon)}
+.recording-upload-empty h2{margin:2px 0 0;color:var(--ink);font-size:18px}
+.recording-upload-empty p{margin:0;font-size:10px}
+@media(max-width:800px){
+  .recording-upload-header{flex-direction:column}
+  .recording-upload-form-grid{grid-template-columns:1fr}
+  .recording-upload-form-grid label.is-wide{grid-column:auto}
+  .recording-upload-file-heading{align-items:flex-start;flex-direction:column}
+  .recording-upload-completed{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:480px){
+  .recording-upload-header h1{font-size:27px}
+  .recording-drive-connect,.recording-upload-primary{width:100%}
+  .recording-upload-actions{display:block}
+  .recording-upload-completed-actions{display:grid;width:100%;grid-template-columns:1fr}
+  .recording-upload-completed-actions a,.recording-upload-completed-actions button{justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .recording-upload-progress-track>span{transition:none}
+}

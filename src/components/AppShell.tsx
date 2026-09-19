@@ -15,6 +15,7 @@ import {
   School,
   ShieldCheck,
   Trophy,
+  UploadCloud,
   UsersRound,
   Video,
   X,
@@ -118,6 +119,7 @@ function AppNavigationContent({
           <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/pengajar/tugas" label="Tugas Kelas" icon={FileText} onNavigate={onNavigate}/>
           <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
+          <NavigationLink to="/pengajar/upload-video" label="Upload Video" icon={UploadCloud} onNavigate={onNavigate}/>
         </div>
       )}
 

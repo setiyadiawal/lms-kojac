@@ -10,6 +10,7 @@ import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from
 import { AdminPage } from './pages/AdminPage';
 import { MyClassesPage } from './pages/MyClassesPage';
 import { ClassRecordingsPage } from './pages/ClassRecordingsPage';
+import { UploadClassRecordingPage } from './pages/UploadClassRecordingPage';
 import { NotificationCenterPage } from './pages/NotificationCenterPage';
 import { StudentAssignmentsPage } from './pages/StudentAssignmentsPage';
 import { TeacherAssignmentsPage } from './pages/TeacherAssignmentsPage';
@@ -50,6 +51,7 @@ export default function App() {
       <Route path="kelas-saya" element={<MyClassesPage />} />
       <Route path="tugas-saya" element={<StudentAssignmentsPage />} />
       <Route path="rekaman-kelas" element={<ClassRecordingsPage />} />
+      <Route path="pengajar/upload-video" element={<UploadClassRecordingPage />} />
       <Route path="pengajar/dashboard" element={<TeacherDashboardPage />} />
       <Route path="pengajar/tugas" element={<TeacherAssignmentsPage />} />
       <Route path="kelas-mengajar" element={<TeachingClassesPage />} />
