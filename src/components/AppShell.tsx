@@ -93,6 +93,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
       {canTeach && (
         <div className="app-nav-section">
           <span className="app-nav-section-label">PENGAJAR</span>
+          <NavigationLink to="/pengajar/dashboard" label="Dashboard Pengajar" icon={LayoutDashboard} onNavigate={onNavigate}/>
           <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
         </div>
       )}
