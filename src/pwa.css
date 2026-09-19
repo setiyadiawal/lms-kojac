@@ -21,7 +21,7 @@
   height:46px;
   overflow:hidden;
   border-radius:13px;
-  background:#7a1f2b;
+  background:#f7f4f3;
 }
 .pwa-install-icon img{display:block;width:100%;height:100%;object-fit:cover}
 .pwa-install-copy{display:grid;gap:3px;min-width:0}

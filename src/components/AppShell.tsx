@@ -91,7 +91,7 @@ function AppNavigationContent({
 
   return <>
     <div className="brand">
-      <div className="brand-mark">空</div>
+      <img className="brand-logo-mark" src="/brand/kojac-symbol.png" alt="" />
       <div><strong>KOJAC</strong><span>Japanese LMS</span></div>
     </div>
 
@@ -289,7 +289,7 @@ export function AppShell() {
           <Menu size={22}/>
         </button>
         <div className="mobile-nav-brand" aria-label="KOJAC">
-          <div className="brand-mark">空</div>
+          <img className="brand-logo-mark" src="/brand/kojac-symbol.png" alt="" />
           <strong>KOJAC</strong>
         </div>
       </header>

@@ -125,7 +125,7 @@ export function PWAInstallPrompt() {
       </button>
 
       <div className="pwa-install-icon" aria-hidden="true">
-        <img src="/pwa-192.png" alt=""/>
+        <img src="/brand/kojac-app-192.png" alt=""/>
       </div>
 
       <div className="pwa-install-copy">

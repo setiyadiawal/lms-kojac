@@ -152,7 +152,7 @@ export function LoginPage() {
 
   return <div className="auth-screen">
     <section className="auth-copy">
-      <div className="brand hero-brand"><div className="brand-mark">空</div><div><strong>KOJAC</strong><span>Kuuhaku Online Japanese Class</span></div></div>
+      <div className="brand hero-brand"><img className="hero-brand-logo" src="/brand/kojac-wordmark.png" alt="KOJAC — Kuuhaku Online Japanese Class" /></div>
       <h1>From Zero<br/>to <em>Japan.</em></h1>
       <p>LMS bahasa Jepang terstruktur dari huruf dasar hingga persiapan JLPT N1.</p>
       <div className="pill-row"><span>N5 → N1</span><span>Flashcard & SRS</span><span>Progress Tracking</span></div>

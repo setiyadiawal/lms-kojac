@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'kojac-pwa-';
-const CACHE_VERSION = 'v1.2-phase2';
+const CACHE_VERSION = 'v1.2-brand1';
 const SHELL_CACHE = `${CACHE_PREFIX}${CACHE_VERSION}-shell`;
 const ASSET_CACHE = `${CACHE_PREFIX}${CACHE_VERSION}-assets`;
 
@@ -7,8 +7,10 @@ const APP_SHELL_URL = '/';
 const CORE_FILES = [
   APP_SHELL_URL,
   '/manifest.webmanifest',
-  '/pwa-192.png',
-  '/pwa-512.png',
+  '/brand/kojac-app-192.png',
+  '/brand/kojac-app-512.png',
+  '/brand/kojac-symbol.png',
+  '/brand/kojac-wordmark.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -88,8 +90,7 @@ self.addEventListener('fetch', (event) => {
   // are also safe to cache locally. Data/API requests are intentionally excluded.
   if (
     url.pathname.startsWith('/assets/')
-    || url.pathname === '/pwa-192.png'
-    || url.pathname === '/pwa-512.png'
+    || url.pathname.startsWith('/brand/')
   ) {
     event.respondWith(cacheFirstStatic(request));
   }
