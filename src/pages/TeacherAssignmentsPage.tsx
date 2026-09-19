@@ -17,6 +17,7 @@ import {
   listAssignmentPhotos,
   type AssignmentPhoto,
 } from '../features/assignments/assignmentPhotos';
+import { AssignmentImageViewer } from '../features/assignments/AssignmentImageViewer';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -81,6 +82,12 @@ type ReviewDraft = {
   feedback: string;
 };
 
+type ImageViewerState = {
+  photos: AssignmentPhoto[];
+  initialIndex: number;
+  studentName: string;
+};
+
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 
 const emptyForm: AssignmentForm = {
@@ -120,6 +127,7 @@ export function TeacherAssignmentsPage() {
   const [selectedAssignmentId, setSelectedAssignmentId] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
   const [photosByStudent, setPhotosByStudent] = useState<Record<string, AssignmentPhoto[]>>({});
+  const [imageViewer, setImageViewer] = useState<ImageViewerState | null>(null);
   const [reviewDrafts, setReviewDrafts] = useState<Record<string, ReviewDraft>>({});
   const [form, setForm] = useState<AssignmentForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -193,6 +201,7 @@ export function TeacherAssignmentsPage() {
     setSubmissionsLoading(true);
     setSubmissionsError(false);
     setPhotosByStudent({});
+    setImageViewer(null);
 
     const { data, error } = await supabase.rpc('get_assignment_submissions', {
       p_assignment_id: assignmentId,
@@ -241,6 +250,7 @@ export function TeacherAssignmentsPage() {
       setSelectedAssignmentId(null);
       setSubmissions([]);
       setPhotosByStudent({});
+      setImageViewer(null);
       setEditingId(null);
       setForm(emptyForm);
       setFormMessage('');
@@ -561,6 +571,7 @@ export function TeacherAssignmentsPage() {
                     setSelectedAssignmentId(null);
                     setSubmissions([]);
                     setPhotosByStudent({});
+                    setImageViewer(null);
                   }}
                 >
                   Tutup
@@ -582,12 +593,13 @@ export function TeacherAssignmentsPage() {
                     const draft = reviewDrafts[row.student_id] ?? { score: '', feedback: '' };
                     const canReview = row.submission_status !== 'not_submitted';
                     const photos = photosByStudent[row.student_id] ?? [];
+                    const studentName = displayName(row);
 
                     return (
                       <article className="teacher-submission-card" key={row.student_id}>
                         <div className="teacher-submission-header">
                           <div>
-                            <h3>{displayName(row)}</h3>
+                            <h3>{studentName}</h3>
                             <span>{row.enrollment_status}</span>
                           </div>
                           <span className={`assignment-status-badge is-${row.submission_status}`}>
@@ -615,19 +627,25 @@ export function TeacherAssignmentsPage() {
                                 <div className="teacher-submission-photo-title">
                                   <FileImage size={15}/>
                                   <strong>Foto Jawaban ({photos.length})</strong>
+                                  <span>Klik foto untuk membuka galeri dan memberi coretan.</span>
                                 </div>
+
                                 <div className="assignment-photo-grid teacher-view">
                                   {photos.map((photo, index) => (
-                                    <div className="assignment-photo-card" key={photo.path}>
-                                      <a
-                                        href={photo.signedUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        aria-label={`Buka foto jawaban ${index + 1} dari ${displayName(row)}`}
-                                      >
-                                        <img src={photo.signedUrl} alt={`Foto jawaban ${index + 1} dari ${displayName(row)}`}/>
-                                      </a>
-                                    </div>
+                                    <button
+                                      className="assignment-photo-card assignment-photo-open-button"
+                                      key={photo.path}
+                                      type="button"
+                                      aria-label={`Buka foto jawaban ${index + 1} dari ${studentName}`}
+                                      onClick={() => setImageViewer({
+                                        photos,
+                                        initialIndex: index,
+                                        studentName,
+                                      })}
+                                    >
+                                      <img src={photo.signedUrl} alt={`Foto jawaban ${index + 1} dari ${studentName}`}/>
+                                      <span>{index + 1}</span>
+                                    </button>
                                   ))}
                                 </div>
                               </div>
@@ -688,6 +706,15 @@ export function TeacherAssignmentsPage() {
             </section>
           )}
         </>
+      )}
+
+      {imageViewer && (
+        <AssignmentImageViewer
+          photos={imageViewer.photos}
+          initialIndex={imageViewer.initialIndex}
+          studentName={imageViewer.studentName}
+          onClose={() => setImageViewer(null)}
+        />
       )}
     </div>
   );

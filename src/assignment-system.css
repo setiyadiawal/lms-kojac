@@ -88,8 +88,19 @@
 .teacher-submission-answer small{color:var(--muted);font-size:9px}
 .teacher-review-grid{display:grid;grid-template-columns:150px 1fr;gap:12px;margin-top:12px}
 
+/* Submitted student state */
+.assignment-submitted-confirmation{display:flex;align-items:flex-start;gap:10px;margin-top:15px;padding:13px 14px;border:1px solid #cfe4d5;border-radius:12px;background:#f4fbf6;color:#275b36}
+.assignment-submitted-confirmation>svg{flex:0 0 auto;margin-top:1px}
+.assignment-submitted-confirmation strong,.assignment-submitted-confirmation span{display:block}
+.assignment-submitted-confirmation strong{font-size:12px}
+.assignment-submitted-confirmation span{margin-top:3px;color:#56715e;font-size:9.5px}
+.assignment-submitted-answer{margin-top:14px;padding:13px 14px;border:1px solid #e5dddf;border-radius:12px;background:#fcfafb}
+.assignment-submitted-answer>span{display:block;color:var(--muted);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+.assignment-submitted-answer p{margin:7px 0 0;white-space:pre-wrap;color:#514547;font-size:11.5px;line-height:1.6}
+
 /* Assignment photos */
 .assignment-photo-panel{margin-top:14px;padding:13px;border:1px solid #e9dfe1;border-radius:12px;background:#fcfafb}
+.assignment-photo-panel.is-readonly{background:#fff}
 .assignment-photo-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .assignment-photo-heading>div{display:flex;align-items:center;gap:8px;min-width:0}
 .assignment-photo-heading svg{color:var(--maroon);flex:0 0 auto}
@@ -104,14 +115,48 @@
 .assignment-photo-card{position:relative;min-width:0;aspect-ratio:1/1;border:1px solid #e8dddf;border-radius:10px;overflow:hidden;background:#f4eff0}
 .assignment-photo-card a{display:block;width:100%;height:100%}
 .assignment-photo-card img{display:block;width:100%;height:100%;object-fit:cover}
-.assignment-photo-card button{position:absolute;top:5px;right:5px;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.92);color:#8b303b;box-shadow:0 2px 8px rgba(50,20,25,.14)}
+.assignment-photo-card>button:not(.assignment-photo-open-button){position:absolute;top:5px;right:5px;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.92);color:#8b303b;box-shadow:0 2px 8px rgba(50,20,25,.14)}
 .assignment-photo-card button:disabled{opacity:.5}
 .assignment-photo-empty{margin:10px 0 0;color:var(--muted);font-size:9.5px}
 .assignment-photo-message{margin-top:9px;color:#6c4248;font-size:9.5px;line-height:1.45}
 .teacher-submission-photos{margin-top:12px;padding:11px;border:1px solid #e9dfe1;border-radius:10px;background:#fcfafb}
-.teacher-submission-photo-title{display:flex;align-items:center;gap:6px;color:#514547;font-size:10px}
+.teacher-submission-photo-title{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#514547;font-size:10px}
 .teacher-submission-photo-title svg{color:var(--maroon)}
+.teacher-submission-photo-title>span{width:100%;padding-left:21px;color:var(--muted);font-size:9px;font-weight:500}
 .assignment-photo-grid.teacher-view{grid-template-columns:repeat(5,minmax(0,110px));justify-content:start}
+.assignment-photo-open-button{position:relative;width:100%;padding:0;border:0;cursor:zoom-in}
+.assignment-photo-open-button>span{position:absolute;right:5px;bottom:5px;display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:rgba(22,16,17,.72);color:#fff;font-size:9px;font-weight:850}
+
+/* In-page assignment image viewer */
+.assignment-image-viewer-backdrop{position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:20px;background:rgba(18,12,13,.78);backdrop-filter:blur(4px)}
+.assignment-image-viewer{width:min(1180px,100%);max-height:calc(100vh - 40px);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;overflow:hidden;border-radius:18px;background:#161112;box-shadow:0 28px 80px rgba(0,0,0,.42)}
+.assignment-image-viewer-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:#fff;color:var(--ink)}
+.assignment-image-viewer-header strong,.assignment-image-viewer-header span{display:block}
+.assignment-image-viewer-header strong{font-size:13px}
+.assignment-image-viewer-header span{margin-top:2px;color:var(--muted);font-size:9.5px}
+.assignment-image-viewer-close{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.assignment-image-viewer-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;background:#f8f4f5;border-top:1px solid #eee4e6;border-bottom:1px solid #e6dcde}
+.assignment-image-viewer-toolbar>button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:7px 9px;border:1px solid #d9cacc;border-radius:8px;background:#fff;color:#5a4448;font-size:9.5px;font-weight:800}
+.assignment-image-viewer-toolbar>button.is-active{border-color:var(--maroon);background:#fff5f6;color:var(--maroon)}
+.assignment-image-viewer-toolbar>button:disabled{opacity:.45}
+.assignment-image-viewer-colors,.assignment-image-viewer-sizes{display:flex;align-items:center;gap:5px}
+.assignment-image-viewer-colors button{width:27px;height:27px;border:2px solid #fff;border-radius:999px;background:var(--brush-color);box-shadow:0 0 0 1px #cfc0c2}
+.assignment-image-viewer-colors button.is-active{box-shadow:0 0 0 2px var(--maroon)}
+.assignment-image-viewer-sizes button{min-width:29px;height:29px;padding:0 5px;border:1px solid #d9cacc;border-radius:7px;background:#fff;color:#594b4d;font-size:9px;font-weight:800}
+.assignment-image-viewer-sizes button.is-active{border-color:var(--maroon);color:var(--maroon)}
+.assignment-image-viewer-note{margin-left:auto;color:#796b6d;font-size:8.5px}
+.assignment-image-viewer-stage{position:relative;min-height:380px;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:pan-y;background:#100d0e;user-select:none}
+.assignment-image-viewer-stage>img{display:block;max-width:100%;max-height:calc(100vh - 255px);object-fit:contain;pointer-events:none}
+.assignment-image-viewer-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;touch-action:none}
+.assignment-image-viewer-stage.is-drawing .assignment-image-viewer-canvas{pointer-events:auto;cursor:crosshair}
+.assignment-image-viewer-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:56px;display:grid;place-items:center;border:0;border-radius:11px;background:rgba(255,255,255,.88);color:#3f3033;box-shadow:0 5px 20px rgba(0,0,0,.2)}
+.assignment-image-viewer-nav.is-prev{left:12px}
+.assignment-image-viewer-nav.is-next{right:12px}
+.assignment-image-viewer-thumbnails{display:flex;gap:7px;overflow-x:auto;padding:9px 12px;background:#21191b}
+.assignment-image-viewer-thumbnails button{position:relative;flex:0 0 58px;width:58px;height:58px;padding:0;overflow:hidden;border:2px solid transparent;border-radius:8px;background:#35292c}
+.assignment-image-viewer-thumbnails button.is-active{border-color:#fff}
+.assignment-image-viewer-thumbnails img{width:100%;height:100%;object-fit:cover}
+.assignment-image-viewer-thumbnails span{position:absolute;right:3px;bottom:3px;min-width:17px;height:17px;display:grid;place-items:center;padding:0 3px;border-radius:999px;background:rgba(0,0,0,.64);color:#fff;font-size:8px;font-weight:800}
 
 @media(max-width:1050px){
   .assignment-summary-grid.teacher{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -131,6 +176,11 @@
   .teacher-assignment-class-picker{grid-template-columns:1fr}
   .assignment-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .assignment-photo-heading{align-items:flex-start;flex-direction:column}
+  .assignment-image-viewer-backdrop{padding:0}
+  .assignment-image-viewer{width:100%;height:100%;max-height:none;border-radius:0}
+  .assignment-image-viewer-stage{min-height:0}
+  .assignment-image-viewer-stage>img{max-height:calc(100vh - 250px)}
+  .assignment-image-viewer-note{width:100%;margin-left:0}
 }
 @media(max-width:480px){
   .assignment-summary-grid.teacher{grid-template-columns:1fr}
@@ -138,5 +188,7 @@
   .assignment-page-header h1{font-size:27px}
   .student-assignment-card,.teacher-assignment-form,.teacher-submissions-section{padding:15px}
   .assignment-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .assignment-image-viewer-toolbar{gap:6px}
+  .assignment-image-viewer-toolbar>button{font-size:8.5px}
 }
 @media(prefers-reduced-motion:reduce){.assignment-skeleton{animation:none}}

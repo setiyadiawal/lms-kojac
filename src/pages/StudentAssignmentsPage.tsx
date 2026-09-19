@@ -6,6 +6,7 @@ import {
   Clock3,
   FileImage,
   FileText,
+  Pencil,
   RefreshCw,
   Save,
   School,
@@ -66,6 +67,7 @@ export function StudentAssignmentsPage() {
   const { role, loading: authLoading } = useAuth();
   const [assignments, setAssignments] = useState<StudentAssignmentRow[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [editingById, setEditingById] = useState<Record<string, boolean>>({});
   const [userId, setUserId] = useState('');
   const [photosByAssignment, setPhotosByAssignment] = useState<Record<string, AssignmentPhoto[]>>({});
   const [photoMessageById, setPhotoMessageById] = useState<Record<string, string>>({});
@@ -159,12 +161,14 @@ export function StudentAssignmentsPage() {
       return;
     }
 
+    setSavingId(null);
+    setEditingById((current) => ({ ...current, [row.assignment_id]: false }));
+    await loadAssignments();
+
     setMessageById((current) => ({
       ...current,
       [row.assignment_id]: 'Jawaban berhasil dikirim.',
     }));
-    setSavingId(null);
-    await loadAssignments();
   };
 
   const uploadPhotos = async (row: StudentAssignmentRow, fileList: FileList | null) => {
@@ -181,7 +185,7 @@ export function StudentAssignmentsPage() {
       await loadPhotosForAssignment(userId, row.assignment_id);
       setPhotoMessageById((current) => ({
         ...current,
-        [row.assignment_id]: 'Foto berhasil diunggah. Tekan Kirim Jawaban untuk mengumpulkan tugas.',
+        [row.assignment_id]: 'Foto berhasil diunggah. Tekan Kirim Jawaban untuk mengumpulkan perubahan.',
       }));
     } catch (photoError) {
       console.error('KOJAC assignment photo upload failed', photoError);
@@ -229,7 +233,7 @@ export function StudentAssignmentsPage() {
         <div>
           <p className="eyebrow">SISWA KOJAC</p>
           <h1 className="title-icon"><FileText/>Tugas Saya</h1>
-          <p>Kirim jawaban teks atau foto, lalu pantau nilai dan feedback pengajar.</p>
+          <p>Kirim jawaban teks atau foto, lalu pantau status, nilai, dan feedback pengajar.</p>
         </div>
       </header>
 
@@ -273,8 +277,11 @@ export function StudentAssignmentsPage() {
             const isOpen = row.assignment_status === 'published';
             const isOverdue = Boolean(row.due_at && new Date(row.due_at).getTime() < Date.now());
             const hasReview = row.submission_status === 'reviewed';
+            const hasSubmitted = row.submission_status !== 'not_submitted';
+            const isEditing = !hasSubmitted || editingById[row.assignment_id] === true;
             const photos = photosByAssignment[row.assignment_id] ?? [];
             const photoLimitReached = photos.length >= MAX_ASSIGNMENT_PHOTOS;
+            const canEdit = isOpen && isEditing;
 
             return (
               <article className="student-assignment-card" key={row.assignment_id}>
@@ -300,7 +307,7 @@ export function StudentAssignmentsPage() {
                   </div>
                 )}
 
-                {isOverdue && isOpen && (
+                {isOverdue && isOpen && !hasSubmitted && (
                   <div className="assignment-notice is-warning">
                     Tenggat telah lewat. Jawaban masih dapat dikirim dan akan ditandai terlambat.
                   </div>
@@ -309,6 +316,20 @@ export function StudentAssignmentsPage() {
                 {row.is_late && (
                   <div className="assignment-notice is-warning">
                     Pengumpulan terakhir tercatat terlambat.
+                  </div>
+                )}
+
+                {hasSubmitted && !isEditing && (
+                  <div className="assignment-submitted-confirmation">
+                    <CheckCircle2 size={21}/>
+                    <div>
+                      <strong>Jawaban sudah dikirim</strong>
+                      <span>
+                        {row.submitted_at
+                          ? `Dikirim ${formatDateTime(row.submitted_at)}`
+                          : 'Pengumpulan tercatat di sistem.'}
+                      </span>
+                    </div>
                   </div>
                 )}
 
@@ -325,38 +346,47 @@ export function StudentAssignmentsPage() {
                   </div>
                 )}
 
-                <div className="assignment-answer-field">
-                  <label htmlFor={`answer-${row.assignment_id}`}>Jawaban Teks <span>(opsional jika memakai foto)</span></label>
-                  <textarea
-                    id={`answer-${row.assignment_id}`}
-                    rows={6}
-                    maxLength={20000}
-                    value={answers[row.assignment_id] ?? ''}
-                    disabled={!isOpen || savingId === row.assignment_id}
-                    placeholder="Tulis jawaban tugas di sini, atau unggah foto di bawah…"
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      setAnswers((current) => ({ ...current, [row.assignment_id]: value }));
-                      setMessageById((current) => ({ ...current, [row.assignment_id]: '' }));
-                    }}
-                  />
-                  <div className="assignment-answer-help">
-                    <span>{(answers[row.assignment_id] ?? '').length.toLocaleString('id-ID')} / 20.000 karakter</span>
-                    {row.submitted_at && <span>Terakhir dikirim: {formatDateTime(row.submitted_at)}</span>}
+                {isEditing ? (
+                  <div className="assignment-answer-field">
+                    <label htmlFor={`answer-${row.assignment_id}`}>
+                      Jawaban Teks <span>(opsional jika memakai foto)</span>
+                    </label>
+                    <textarea
+                      id={`answer-${row.assignment_id}`}
+                      rows={6}
+                      maxLength={20000}
+                      value={answers[row.assignment_id] ?? ''}
+                      disabled={!isOpen || savingId === row.assignment_id}
+                      placeholder="Tulis jawaban tugas di sini, atau unggah foto di bawah…"
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setAnswers((current) => ({ ...current, [row.assignment_id]: value }));
+                        setMessageById((current) => ({ ...current, [row.assignment_id]: '' }));
+                      }}
+                    />
+                    <div className="assignment-answer-help">
+                      <span>{(answers[row.assignment_id] ?? '').length.toLocaleString('id-ID')} / 20.000 karakter</span>
+                      {row.submitted_at && <span>Versi sebelumnya: {formatDateTime(row.submitted_at)}</span>}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="assignment-submitted-answer">
+                    <span>Jawaban Teks Terkirim</span>
+                    <p>{row.answer_text?.trim() || 'Jawaban dikumpulkan dalam bentuk foto.'}</p>
+                  </div>
+                )}
 
-                <div className="assignment-photo-panel">
+                <div className={`assignment-photo-panel ${!isEditing ? 'is-readonly' : ''}`}>
                   <div className="assignment-photo-heading">
                     <div>
                       <FileImage size={17}/>
                       <div>
-                        <strong>Foto Jawaban</strong>
+                        <strong>{isEditing ? 'Foto Jawaban' : 'Foto Terkirim'}</strong>
                         <span>{photos.length} / {MAX_ASSIGNMENT_PHOTOS} foto · maks. 5 MB/foto</span>
                       </div>
                     </div>
 
-                    {isOpen && !photoLimitReached && (
+                    {canEdit && !photoLimitReached && (
                       <label className={`assignment-photo-upload ${uploadingPhotoId === row.assignment_id ? 'is-disabled' : ''}`}>
                         <Upload size={15}/>
                         {uploadingPhotoId === row.assignment_id ? 'Mengunggah…' : 'Tambah Foto'}
@@ -381,7 +411,7 @@ export function StudentAssignmentsPage() {
                           <a href={photo.signedUrl} target="_blank" rel="noreferrer" aria-label={`Buka foto ${index + 1}`}>
                             <img src={photo.signedUrl} alt={`Foto jawaban ${index + 1}`}/>
                           </a>
-                          {isOpen && (
+                          {canEdit && (
                             <button
                               type="button"
                               aria-label={`Hapus foto ${index + 1}`}
@@ -395,17 +425,19 @@ export function StudentAssignmentsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="assignment-photo-empty">Belum ada foto. Format: JPG, PNG, atau WebP.</p>
+                    <p className="assignment-photo-empty">
+                      {isEditing ? 'Belum ada foto. Format: JPG, PNG, atau WebP.' : 'Tidak ada foto pada pengumpulan ini.'}
+                    </p>
                   )}
 
-                  {photoMessageById[row.assignment_id] && (
+                  {isEditing && photoMessageById[row.assignment_id] && (
                     <div className="assignment-photo-message" role="status">
                       {photoMessageById[row.assignment_id]}
                     </div>
                   )}
                 </div>
 
-                {hasReview && isOpen && (
+                {hasReview && isEditing && isOpen && (
                   <p className="assignment-resubmit-note">
                     Jika jawaban dikirim ulang, nilai dan feedback sebelumnya akan kembali menunggu review pengajar.
                   </p>
@@ -418,22 +450,57 @@ export function StudentAssignmentsPage() {
                 )}
 
                 <div className="assignment-card-actions">
-                  {isOpen ? (
+                  {!isOpen ? (
+                    <span className="assignment-closed-note">Tugas sudah ditutup oleh pengajar.</span>
+                  ) : hasSubmitted && !isEditing ? (
                     <button
-                      className="assignment-primary-button"
+                      className="assignment-secondary-button"
                       type="button"
-                      disabled={savingId === row.assignment_id || uploadingPhotoId === row.assignment_id}
-                      onClick={() => void submitAnswer(row)}
+                      onClick={() => {
+                        setAnswers((current) => ({
+                          ...current,
+                          [row.assignment_id]: row.answer_text ?? '',
+                        }));
+                        setEditingById((current) => ({ ...current, [row.assignment_id]: true }));
+                        setMessageById((current) => ({ ...current, [row.assignment_id]: '' }));
+                      }}
                     >
-                      <Save size={16}/>
-                      {savingId === row.assignment_id
-                        ? 'Mengirim…'
-                        : row.submission_status === 'not_submitted'
-                          ? 'Kirim Jawaban'
-                          : 'Kirim Ulang'}
+                      <Pencil size={16}/> Edit / Kirim Ulang
                     </button>
                   ) : (
-                    <span className="assignment-closed-note">Tugas sudah ditutup oleh pengajar.</span>
+                    <>
+                      {hasSubmitted && (
+                        <button
+                          className="assignment-secondary-button"
+                          type="button"
+                          disabled={savingId === row.assignment_id || uploadingPhotoId === row.assignment_id}
+                          onClick={() => {
+                            setAnswers((current) => ({
+                              ...current,
+                              [row.assignment_id]: row.answer_text ?? '',
+                            }));
+                            setEditingById((current) => ({ ...current, [row.assignment_id]: false }));
+                            setMessageById((current) => ({ ...current, [row.assignment_id]: '' }));
+                          }}
+                        >
+                          Batal Edit
+                        </button>
+                      )}
+
+                      <button
+                        className="assignment-primary-button"
+                        type="button"
+                        disabled={savingId === row.assignment_id || uploadingPhotoId === row.assignment_id}
+                        onClick={() => void submitAnswer(row)}
+                      >
+                        <Save size={16}/>
+                        {savingId === row.assignment_id
+                          ? 'Mengirim…'
+                          : hasSubmitted
+                            ? 'Simpan & Kirim Ulang'
+                            : 'Kirim Jawaban'}
+                      </button>
+                    </>
                   )}
                 </div>
               </article>
