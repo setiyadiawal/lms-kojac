@@ -4,6 +4,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
+  FileImage,
   FileText,
   RefreshCw,
   Save,
@@ -12,6 +13,10 @@ import {
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import '../assignment-system.css';
+import {
+  listAssignmentPhotos,
+  type AssignmentPhoto,
+} from '../features/assignments/assignmentPhotos';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -114,6 +119,7 @@ export function TeacherAssignmentsPage() {
   const [assignments, setAssignments] = useState<TeacherAssignmentRow[]>([]);
   const [selectedAssignmentId, setSelectedAssignmentId] = useState<string | null>(null);
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
+  const [photosByStudent, setPhotosByStudent] = useState<Record<string, AssignmentPhoto[]>>({});
   const [reviewDrafts, setReviewDrafts] = useState<Record<string, ReviewDraft>>({});
   const [form, setForm] = useState<AssignmentForm>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -186,6 +192,7 @@ export function TeacherAssignmentsPage() {
     setSelectedAssignmentId(assignmentId);
     setSubmissionsLoading(true);
     setSubmissionsError(false);
+    setPhotosByStudent({});
 
     const { data, error } = await supabase.rpc('get_assignment_submissions', {
       p_assignment_id: assignmentId,
@@ -209,6 +216,19 @@ export function TeacherAssignmentsPage() {
       },
     ])));
     setSubmissionsLoading(false);
+
+    const submittedRows = rows.filter((row) => row.submission_status !== 'not_submitted');
+    const galleries = await Promise.all(submittedRows.map(async (row) => {
+      try {
+        const photos = await listAssignmentPhotos(row.student_id, assignmentId);
+        return [row.student_id, photos] as const;
+      } catch (photoError) {
+        console.error('KOJAC teacher assignment photos load failed', photoError);
+        return [row.student_id, [] as AssignmentPhoto[]] as const;
+      }
+    }));
+
+    setPhotosByStudent(Object.fromEntries(galleries));
   }, []);
 
   useEffect(() => {
@@ -220,6 +240,7 @@ export function TeacherAssignmentsPage() {
       void loadAssignments(selectedClassId);
       setSelectedAssignmentId(null);
       setSubmissions([]);
+      setPhotosByStudent({});
       setEditingId(null);
       setForm(emptyForm);
       setFormMessage('');
@@ -327,7 +348,7 @@ export function TeacherAssignmentsPage() {
         <div>
           <p className="eyebrow">PENGAJAR KOJAC</p>
           <h1 className="title-icon"><FileText/>Tugas Kelas</h1>
-          <p>Buat tugas, pantau pengumpulan, lalu berikan nilai dan feedback kepada siswa dalam scope kelas Anda.</p>
+          <p>Buat tugas, pantau jawaban teks dan foto, lalu berikan nilai serta feedback kepada siswa dalam scope kelas Anda.</p>
         </div>
       </header>
 
@@ -539,6 +560,7 @@ export function TeacherAssignmentsPage() {
                   onClick={() => {
                     setSelectedAssignmentId(null);
                     setSubmissions([]);
+                    setPhotosByStudent({});
                   }}
                 >
                   Tutup
@@ -559,6 +581,7 @@ export function TeacherAssignmentsPage() {
                   {submissions.map((row) => {
                     const draft = reviewDrafts[row.student_id] ?? { score: '', feedback: '' };
                     const canReview = row.submission_status !== 'not_submitted';
+                    const photos = photosByStudent[row.student_id] ?? [];
 
                     return (
                       <article className="teacher-submission-card" key={row.student_id}>
@@ -580,12 +603,35 @@ export function TeacherAssignmentsPage() {
                           <>
                             <div className="teacher-submission-answer">
                               <span>Jawaban Siswa</span>
-                              <p>{row.answer_text}</p>
+                              <p>{row.answer_text?.trim() || 'Jawaban dikumpulkan dalam bentuk foto.'}</p>
                               <small>
                                 {formatDateTime(row.submitted_at)}
                                 {row.is_late ? ' · Terlambat' : ''}
                               </small>
                             </div>
+
+                            {photos.length > 0 && (
+                              <div className="teacher-submission-photos">
+                                <div className="teacher-submission-photo-title">
+                                  <FileImage size={15}/>
+                                  <strong>Foto Jawaban ({photos.length})</strong>
+                                </div>
+                                <div className="assignment-photo-grid teacher-view">
+                                  {photos.map((photo, index) => (
+                                    <div className="assignment-photo-card" key={photo.path}>
+                                      <a
+                                        href={photo.signedUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        aria-label={`Buka foto jawaban ${index + 1} dari ${displayName(row)}`}
+                                      >
+                                        <img src={photo.signedUrl} alt={`Foto jawaban ${index + 1} dari ${displayName(row)}`}/>
+                                      </a>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
 
                             <div className="teacher-review-grid">
                               <div className="assignment-form-field">

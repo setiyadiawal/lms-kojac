@@ -48,6 +48,7 @@
 .assignment-review-box p{margin:5px 0 0;white-space:pre-wrap;color:#405145;font-size:11px;line-height:1.5}
 .assignment-answer-field{margin-top:15px}
 .assignment-answer-field label,.assignment-form-field label,.teacher-assignment-class-picker label{display:block;margin-bottom:6px;color:#514547;font-size:10.5px;font-weight:800}
+.assignment-answer-field label span{color:var(--muted);font-weight:650}
 .assignment-answer-field textarea,.assignment-form-field textarea,.assignment-form-field input,.assignment-form-field select,.teacher-assignment-class-picker select{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
 .assignment-answer-field textarea,.assignment-form-field textarea{padding:11px 12px;resize:vertical;line-height:1.5}
 .assignment-form-field input,.assignment-form-field select,.teacher-assignment-class-picker select{min-height:41px;padding:8px 10px}
@@ -86,7 +87,56 @@
 .teacher-submission-answer p{margin:6px 0;white-space:pre-wrap;color:#4d4244;font-size:11px;line-height:1.55}
 .teacher-submission-answer small{color:var(--muted);font-size:9px}
 .teacher-review-grid{display:grid;grid-template-columns:150px 1fr;gap:12px;margin-top:12px}
-@media(max-width:1050px){.assignment-summary-grid.teacher{grid-template-columns:repeat(2,minmax(0,1fr))}.teacher-assignment-grid{grid-template-columns:1fr}}
-@media(max-width:760px){.assignment-summary-grid{grid-template-columns:1fr}.assignment-summary-grid.teacher{grid-template-columns:1fr 1fr}.assignment-loading-grid{grid-template-columns:1fr}.teacher-assignment-form-grid{grid-template-columns:1fr}.teacher-review-grid{grid-template-columns:1fr}.assignment-review-box{grid-template-columns:1fr}.student-assignment-card-header,.teacher-assignment-card-header,.teacher-submission-header,.assignment-section-heading{flex-direction:column}.assignment-card-actions{flex-direction:column}.assignment-card-actions button{width:100%}.teacher-assignment-class-picker{grid-template-columns:1fr}}
-@media(max-width:480px){.assignment-summary-grid.teacher{grid-template-columns:1fr}.teacher-assignment-metrics{grid-template-columns:1fr}.assignment-page-header h1{font-size:27px}.student-assignment-card,.teacher-assignment-form,.teacher-submissions-section{padding:15px}}
+
+/* Assignment photos */
+.assignment-photo-panel{margin-top:14px;padding:13px;border:1px solid #e9dfe1;border-radius:12px;background:#fcfafb}
+.assignment-photo-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.assignment-photo-heading>div{display:flex;align-items:center;gap:8px;min-width:0}
+.assignment-photo-heading svg{color:var(--maroon);flex:0 0 auto}
+.assignment-photo-heading strong,.assignment-photo-heading span{display:block}
+.assignment-photo-heading strong{font-size:11px}
+.assignment-photo-heading span{margin-top:2px;color:var(--muted);font-size:9px}
+.assignment-photo-upload{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #d7b9be;border-radius:9px;background:#fff;color:var(--maroon);font-size:10px;font-weight:800;cursor:pointer}
+.assignment-photo-upload:hover{background:#fff8f9}
+.assignment-photo-upload.is-disabled{opacity:.55;cursor:not-allowed}
+.assignment-photo-upload input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}
+.assignment-photo-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:11px}
+.assignment-photo-card{position:relative;min-width:0;aspect-ratio:1/1;border:1px solid #e8dddf;border-radius:10px;overflow:hidden;background:#f4eff0}
+.assignment-photo-card a{display:block;width:100%;height:100%}
+.assignment-photo-card img{display:block;width:100%;height:100%;object-fit:cover}
+.assignment-photo-card button{position:absolute;top:5px;right:5px;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:999px;background:rgba(255,255,255,.92);color:#8b303b;box-shadow:0 2px 8px rgba(50,20,25,.14)}
+.assignment-photo-card button:disabled{opacity:.5}
+.assignment-photo-empty{margin:10px 0 0;color:var(--muted);font-size:9.5px}
+.assignment-photo-message{margin-top:9px;color:#6c4248;font-size:9.5px;line-height:1.45}
+.teacher-submission-photos{margin-top:12px;padding:11px;border:1px solid #e9dfe1;border-radius:10px;background:#fcfafb}
+.teacher-submission-photo-title{display:flex;align-items:center;gap:6px;color:#514547;font-size:10px}
+.teacher-submission-photo-title svg{color:var(--maroon)}
+.assignment-photo-grid.teacher-view{grid-template-columns:repeat(5,minmax(0,110px));justify-content:start}
+
+@media(max-width:1050px){
+  .assignment-summary-grid.teacher{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .teacher-assignment-grid{grid-template-columns:1fr}
+  .assignment-photo-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .assignment-summary-grid{grid-template-columns:1fr}
+  .assignment-summary-grid.teacher{grid-template-columns:1fr 1fr}
+  .assignment-loading-grid{grid-template-columns:1fr}
+  .teacher-assignment-form-grid{grid-template-columns:1fr}
+  .teacher-review-grid{grid-template-columns:1fr}
+  .assignment-review-box{grid-template-columns:1fr}
+  .student-assignment-card-header,.teacher-assignment-card-header,.teacher-submission-header,.assignment-section-heading{flex-direction:column}
+  .assignment-card-actions{flex-direction:column}
+  .assignment-card-actions button{width:100%}
+  .teacher-assignment-class-picker{grid-template-columns:1fr}
+  .assignment-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .assignment-photo-heading{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:480px){
+  .assignment-summary-grid.teacher{grid-template-columns:1fr}
+  .teacher-assignment-metrics{grid-template-columns:1fr}
+  .assignment-page-header h1{font-size:27px}
+  .student-assignment-card,.teacher-assignment-form,.teacher-submissions-section{padding:15px}
+  .assignment-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(prefers-reduced-motion:reduce){.assignment-skeleton{animation:none}}
