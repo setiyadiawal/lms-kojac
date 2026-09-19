@@ -90,3 +90,13 @@
 @media(prefers-reduced-motion:reduce){
   .recording-upload-progress-track>span{transition:none}
 }
+
+/* Manual add recording is now consolidated into Upload Video */
+.recording-manual-add-panel{
+  margin-top:16px;
+}
+.recording-manual-add-panel .recording-upload-section-heading h2{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}

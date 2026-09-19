@@ -8,7 +8,6 @@ import {
   Maximize2,
   Minimize2,
   Play,
-  Plus,
   RefreshCw,
   Save,
   School,
@@ -106,6 +105,10 @@ function extractDriveFileId(value: string) {
 
 function drivePreviewUrl(fileId: string) {
   return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview`;
+}
+
+function driveThumbnailUrl(fileId: string) {
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w960`;
 }
 
 function driveViewUrl(fileId: string) {
@@ -285,6 +288,8 @@ export function ClassRecordingsPage() {
   const [teachingClasses, setTeachingClasses] = useState<TeachingClassRow[]>([]);
   const [selectedClassId, setSelectedClassId] = useState('');
   const [studentClassFilter, setStudentClassFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [viewer, setViewer] = useState<StudentRecordingRow | null>(null);
 
   const [form, setForm] = useState<RecordingForm>(emptyForm);
@@ -517,6 +522,26 @@ export function ClassRecordingsPage() {
     ? visibleStudentRows
     : teacherRows;
 
+  const normalizedSearch = searchQuery.trim().toLocaleLowerCase('id-ID');
+  const displayRows = [...activeRows]
+    .filter((row) => {
+      if (!normalizedSearch) return true;
+
+      return [
+        row.title,
+        row.class_name,
+        row.description,
+      ].some((value) => value.toLocaleLowerCase('id-ID').includes(normalizedSearch));
+    })
+    .sort((a, b) => {
+      const aTime = new Date(a.recorded_at).getTime();
+      const bTime = new Date(b.recorded_at).getTime();
+
+      return sortOrder === 'newest'
+        ? bTime - aTime
+        : aTime - bTime;
+    });
+
   return (
     <div className="page class-recordings-page">
       <header className="class-recordings-header">
@@ -566,18 +591,16 @@ export function ClassRecordingsPage() {
             </select>
           </section>
 
-          {selectedClassId && (
-            <section className="class-recording-form panel">
+          {editingId && (
+            <section className="class-recording-form panel class-recording-edit-form">
               <div className="class-recording-section-heading">
                 <div>
-                  <p className="eyebrow">{editingId ? 'EDIT REKAMAN' : 'REKAMAN BARU'}</p>
-                  <h2>{editingId ? 'Perbarui Rekaman' : 'Tambahkan Rekaman Google Drive'}</h2>
+                  <p className="eyebrow">EDIT REKAMAN</p>
+                  <h2>Perbarui Rekaman</h2>
                 </div>
-                {editingId && (
-                  <button className="class-recording-secondary" type="button" onClick={resetForm}>
-                    Batal Edit
-                  </button>
-                )}
+                <button className="class-recording-secondary" type="button" onClick={resetForm}>
+                  Batal Edit
+                </button>
               </div>
 
               <form onSubmit={saveRecording}>
@@ -678,12 +701,8 @@ export function ClassRecordingsPage() {
 
                 <div className="class-recording-form-actions">
                   <button className="class-recording-primary" type="submit" disabled={saving}>
-                    {editingId ? <Save size={16}/> : <Plus size={16}/>}
-                    {saving
-                      ? 'Menyimpan…'
-                      : editingId
-                        ? 'Simpan Perubahan'
-                        : 'Tambah Rekaman'}
+                    <Save size={16}/>
+                    {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
                   </button>
                 </div>
               </form>
@@ -691,6 +710,29 @@ export function ClassRecordingsPage() {
           )}
         </>
       )}
+
+      <section className="class-recording-library-toolbar panel">
+        <label className="class-recording-search-field">
+          <span>Cari Rekaman</span>
+          <input
+            type="search"
+            value={searchQuery}
+            placeholder="Cari judul, kelas, atau materi…"
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+        </label>
+
+        <label>
+          <span>Urutkan</span>
+          <select
+            value={sortOrder}
+            onChange={(event) => setSortOrder(event.target.value as 'newest' | 'oldest')}
+          >
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+        </label>
+      </section>
 
       {loading || recordingsLoading ? (
         <div className="class-recording-loading-grid" aria-label="Memuat rekaman">
@@ -718,14 +760,16 @@ export function ClassRecordingsPage() {
           <h2>Belum ada kelas mengajar.</h2>
           <p>Rekaman dapat ditambahkan setelah akun Anda terhubung ke kelas.</p>
         </section>
-      ) : activeRows.length === 0 ? (
+      ) : displayRows.length === 0 ? (
         <section className="class-recording-state">
           <Film size={30}/>
           <h2>Belum ada rekaman kelas.</h2>
           <p>
-            {role === 'siswa'
-              ? 'Rekaman yang dipublikasikan pengajar akan muncul di sini.'
-              : 'Tambahkan link video Google Drive menggunakan form di atas.'}
+            {activeRows.length === 0
+              ? (role === 'siswa'
+                  ? 'Rekaman yang dipublikasikan pengajar akan muncul di sini.'
+                  : 'Belum ada rekaman pada kelas ini.')
+              : 'Tidak ada rekaman yang sesuai dengan filter atau pencarian.'}
           </p>
         </section>
       ) : (
@@ -735,18 +779,27 @@ export function ClassRecordingsPage() {
               <p className="eyebrow">DAFTAR REKAMAN</p>
               <h2>{role === 'siswa' ? 'Rekaman Tersedia' : 'Rekaman pada Kelas Ini'}</h2>
             </div>
-            <span>{activeRows.length} rekaman</span>
+            <span>{displayRows.length} rekaman</span>
           </div>
 
           <div className="class-recording-grid">
-            {activeRows.map((row) => {
+            {displayRows.map((row) => {
               const teacherRow = role === 'siswa' ? null : row as TeacherRecordingRow;
 
               return (
                 <article className="class-recording-card" key={row.recording_id}>
                   <div className="class-recording-cover">
+                    <img
+                      className="class-recording-thumbnail"
+                      src={driveThumbnailUrl(row.drive_file_id)}
+                      alt=""
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.style.display = 'none';
+                      }}
+                    />
                     <div className="class-recording-cover-icon"><Play size={28}/></div>
-                    <span>GOOGLE DRIVE</span>
+                    <span>REKAMAN KELAS</span>
                   </div>
 
                   <div className="class-recording-card-body">

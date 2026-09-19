@@ -6,7 +6,9 @@ import {
   FileVideo2,
   HardDrive,
   History,
+  Link2,
   LogIn,
+  Plus,
   School,
   Square,
   Upload,
@@ -41,6 +43,15 @@ type UploadForm = {
   isPublished: boolean;
 };
 
+type ManualRecordingForm = {
+  title: string;
+  description: string;
+  driveLink: string;
+  recordedAt: string;
+  duration: string;
+  isPublished: boolean;
+};
+
 const TEACHING_ROLES = new Set<AppRole>([
   'pengajar',
   'administrator',
@@ -48,6 +59,29 @@ const TEACHING_ROLES = new Set<AppRole>([
   'co_founder',
   'founder',
 ]);
+
+const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{10,200}$/;
+
+function extractDriveFileId(value: string) {
+  const trimmed = value.trim();
+  if (DRIVE_ID_PATTERN.test(trimmed)) return trimmed;
+
+  try {
+    const url = new URL(trimmed);
+    const fromQuery = url.searchParams.get('id');
+    if (fromQuery && DRIVE_ID_PATTERN.test(fromQuery)) return fromQuery;
+
+    const fileMatch = url.pathname.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+    if (fileMatch?.[1] && DRIVE_ID_PATTERN.test(fileMatch[1])) return fileMatch[1];
+
+    const dMatch = url.pathname.match(/\/d\/([A-Za-z0-9_-]+)/);
+    if (dMatch?.[1] && DRIVE_ID_PATTERN.test(dMatch[1])) return dMatch[1];
+  } catch {
+    return null;
+  }
+
+  return null;
+}
 
 function localDateTimeInput(value = new Date()) {
   const adjusted = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
@@ -58,6 +92,17 @@ function initialForm(): UploadForm {
   return {
     title: '',
     description: '',
+    recordedAt: localDateTimeInput(),
+    duration: '',
+    isPublished: true,
+  };
+}
+
+function initialManualForm(): ManualRecordingForm {
+  return {
+    title: '',
+    description: '',
+    driveLink: '',
     recordedAt: localDateTimeInput(),
     duration: '',
     isPublished: true,
@@ -135,6 +180,9 @@ export function UploadClassRecordingPage() {
   const [loadingClasses, setLoadingClasses] = useState(true);
   const [pageError, setPageError] = useState('');
   const [pageMessage, setPageMessage] = useState('');
+  const [manualForm, setManualForm] = useState<ManualRecordingForm>(initialManualForm);
+  const [manualSaving, setManualSaving] = useState(false);
+  const [manualMessage, setManualMessage] = useState('');
   const handledSuccessId = useRef<string | null>(null);
 
   const selectedClass = useMemo(
@@ -304,6 +352,67 @@ export function UploadClassRecordingPage() {
           : 'Upload video gagal.',
       );
     }
+  };
+
+  const addManualRecording = async () => {
+    setManualMessage('');
+
+    if (!selectedClass) {
+      setManualMessage('Pilih kelas terlebih dahulu.');
+      return;
+    }
+
+    if (!manualForm.title.trim()) {
+      setManualMessage('Judul rekaman wajib diisi.');
+      return;
+    }
+
+    const fileId = extractDriveFileId(manualForm.driveLink);
+    if (!fileId) {
+      setManualMessage('Link Google Drive atau File ID tidak valid.');
+      return;
+    }
+
+    const recordedAt = new Date(manualForm.recordedAt);
+    if (!Number.isFinite(recordedAt.getTime())) {
+      setManualMessage('Tanggal rekaman tidak valid.');
+      return;
+    }
+
+    const duration = manualForm.duration.trim()
+      ? Number(manualForm.duration)
+      : null;
+
+    if (
+      duration !== null
+      && (!Number.isInteger(duration) || duration < 1 || duration > 1440)
+    ) {
+      setManualMessage('Durasi harus 1–1440 menit.');
+      return;
+    }
+
+    setManualSaving(true);
+
+    const { error } = await supabase.rpc('create_class_recording', {
+      p_class_id: selectedClass.class_id,
+      p_title: manualForm.title.trim(),
+      p_description: manualForm.description,
+      p_drive_file_id: fileId,
+      p_recorded_at: recordedAt.toISOString(),
+      p_duration_minutes: duration,
+      p_is_published: manualForm.isPublished,
+    });
+
+    setManualSaving(false);
+
+    if (error) {
+      console.error('KOJAC manual recording create failed', error);
+      setManualMessage('Rekaman belum dapat ditambahkan. Periksa data lalu coba lagi.');
+      return;
+    }
+
+    setManualForm(initialManualForm());
+    setManualMessage('Rekaman berhasil ditambahkan ke Rekaman Kelas.');
   };
 
   if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
@@ -578,6 +687,140 @@ export function UploadClassRecordingPage() {
               {uploading
                 ? `Uploading ${uploadState.job?.progress ?? 0}%`
                 : 'Upload Video'}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {classes.length > 0 && (
+        <section className="recording-upload-panel panel recording-manual-add-panel">
+          <div className="recording-upload-section-heading">
+            <div>
+              <p className="eyebrow">TAMBAH REKAMAN</p>
+              <h2><Link2 size={19}/> Tambahkan dari Google Drive</h2>
+            </div>
+            <span>Gunakan untuk video yang sudah tersedia sebelumnya.</span>
+          </div>
+
+          <div className="recording-upload-form-grid">
+            <label>
+              Kelas
+              <select
+                value={selectedClassId}
+                disabled={manualSaving || uploading}
+                onChange={(event) => setSelectedClassId(event.target.value)}
+              >
+                {classes.map((row) => (
+                  <option key={row.class_id} value={row.class_id}>
+                    {row.program_name || 'Program KOJAC'} — {row.class_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              Tanggal & Jam Kelas
+              <input
+                type="datetime-local"
+                value={manualForm.recordedAt}
+                disabled={manualSaving}
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  recordedAt: event.target.value,
+                }))}
+              />
+            </label>
+
+            <label className="is-wide">
+              Judul Rekaman
+              <input
+                maxLength={160}
+                value={manualForm.title}
+                disabled={manualSaving}
+                placeholder="Contoh: Bab 12 — Bentuk て"
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  title: event.target.value,
+                }))}
+              />
+            </label>
+
+            <label className="is-wide">
+              Link Google Drive / File ID
+              <input
+                value={manualForm.driveLink}
+                disabled={manualSaving}
+                placeholder="Tempel link video Google Drive atau File ID"
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  driveLink: event.target.value,
+                }))}
+              />
+            </label>
+
+            <label>
+              Durasi (menit)
+              <input
+                type="number"
+                min={1}
+                max={1440}
+                value={manualForm.duration}
+                disabled={manualSaving}
+                placeholder="120"
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  duration: event.target.value,
+                }))}
+              />
+            </label>
+
+            <label className="recording-upload-toggle">
+              <input
+                type="checkbox"
+                checked={manualForm.isPublished}
+                disabled={manualSaving}
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  isPublished: event.target.checked,
+                }))}
+              />
+              <span>
+                <strong>Publikasikan ke Rekaman Kelas</strong>
+                <small>Matikan jika rekaman belum siap ditonton siswa.</small>
+              </span>
+            </label>
+
+            <label className="is-wide">
+              Deskripsi
+              <textarea
+                rows={4}
+                maxLength={5000}
+                value={manualForm.description}
+                disabled={manualSaving}
+                placeholder="Ringkasan materi pada pertemuan ini…"
+                onChange={(event) => setManualForm((current) => ({
+                  ...current,
+                  description: event.target.value,
+                }))}
+              />
+            </label>
+          </div>
+
+          {manualMessage && (
+            <div className="recording-upload-message is-success" role="status">
+              <CheckCircle2 size={17}/><span>{manualMessage}</span>
+            </div>
+          )}
+
+          <div className="recording-upload-actions">
+            <button
+              type="button"
+              className="recording-upload-primary"
+              disabled={manualSaving || !manualForm.title.trim() || !manualForm.driveLink.trim()}
+              onClick={() => void addManualRecording()}
+            >
+              <Plus size={17}/>
+              {manualSaving ? 'Menambahkan…' : 'Tambah Rekaman'}
             </button>
           </div>
         </section>
