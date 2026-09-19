@@ -1,0 +1,92 @@
+/* KOJAC LMS v1.2 — Class Recordings */
+.class-recordings-page{padding-bottom:60px}
+.class-recordings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.class-recordings-header h1{margin:4px 0 8px;font-size:31px;letter-spacing:-.035em}
+.class-recordings-header p:not(.eyebrow){margin:0;max-width:760px;color:var(--muted);line-height:1.55}
+.class-recording-filter{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:10px;margin-bottom:14px;padding:15px}
+.class-recording-filter label{font-size:10.5px;font-weight:850;color:#54484a}
+.class-recording-filter select{width:100%;min-height:41px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.class-recording-form{margin-bottom:25px;padding:20px}
+.class-recording-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:15px}
+.class-recording-section-heading h2{margin:4px 0 0;font-size:21px}
+.class-recording-section-heading>span{color:var(--muted);font-size:10.5px;font-weight:750}
+.class-recording-form form{margin:0}
+.class-recording-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.class-recording-form-grid label{display:block;margin:0;color:#514547;font-size:10.5px;font-weight:800}
+.class-recording-form-grid label.is-wide{grid-column:1/-1}
+.class-recording-form-grid input:not([type="checkbox"]),.class-recording-form-grid textarea{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.class-recording-form-grid input:not([type="checkbox"]){min-height:41px;padding:8px 10px}
+.class-recording-form-grid textarea{padding:10px 11px;resize:vertical;line-height:1.5}
+.class-recording-publish-toggle{display:flex!important;align-items:center;gap:9px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fcfafb}
+.class-recording-publish-toggle input{width:17px;height:17px;margin:0;flex:0 0 auto}
+.class-recording-publish-toggle strong,.class-recording-publish-toggle small{display:block}
+.class-recording-publish-toggle strong{font-size:10.5px}
+.class-recording-publish-toggle small{margin-top:2px;color:var(--muted);font-size:8.5px;font-weight:600}
+.class-recording-form-message{margin-top:10px;padding:9px 11px;border-radius:9px;background:#fff8f9;color:#70424a;font-size:10.5px}
+.class-recording-form-actions{display:flex;justify-content:flex-end;margin-top:13px}
+.class-recording-primary,.class-recording-secondary,.class-recording-danger{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 11px;border-radius:9px;font-size:10px;font-weight:850}
+.class-recording-primary{border:1px solid var(--maroon);background:var(--maroon);color:#fff}
+.class-recording-primary:hover{background:var(--maroon-dark)}
+.class-recording-secondary{border:1px solid var(--line);background:#fff;color:var(--maroon)}
+.class-recording-secondary:hover{background:#fff8f9}
+.class-recording-danger{border:1px solid #efd1d4;background:#fff8f8;color:#9a303b}
+.class-recording-danger:hover{background:#fff0f1}
+.class-recording-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.class-recording-card{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(57,27,32,.03)}
+.class-recording-cover{position:relative;aspect-ratio:16/8.3;display:grid;place-items:center;background:linear-gradient(145deg,#4d121a,#7a1f2b 60%,#a04956);color:#fff}
+.class-recording-cover::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 75% 20%,rgba(255,255,255,.15),transparent 38%)}
+.class-recording-cover-icon{position:relative;z-index:1;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(6px)}
+.class-recording-cover>span{position:absolute;left:12px;bottom:10px;z-index:1;font-size:8px;font-weight:900;letter-spacing:.13em;opacity:.9}
+.class-recording-card-body{padding:15px}
+.class-recording-card-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--maroon);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.class-recording-status{padding:4px 7px;border-radius:999px;letter-spacing:0;text-transform:none}
+.class-recording-status.is-published{background:#e8f6ed;color:#25683c}
+.class-recording-status.is-hidden{background:#eee9ea;color:#695c5e}
+.class-recording-card h3{margin:7px 0 8px;font-size:16px;line-height:1.3}
+.class-recording-meta{display:flex;flex-wrap:wrap;gap:7px 12px;color:var(--muted);font-size:9.5px}
+.class-recording-meta span{display:inline-flex;align-items:center;gap:5px}
+.class-recording-card-body>p{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;margin:11px 0 0;color:#625557;font-size:10.5px;line-height:1.55}
+.class-recording-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.class-recording-loading-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.class-recording-skeleton{height:285px;border-radius:16px;background:linear-gradient(90deg,#f0e9ea,#faf7f7,#f0e9ea);background-size:200% 100%;animation:dashboard-shimmer 1.2s infinite}
+.class-recording-state{display:grid;place-items:center;gap:7px;padding:42px 22px;border:1px solid var(--line);border-radius:16px;background:#fff;text-align:center;color:var(--muted)}
+.class-recording-state svg{color:var(--maroon)}
+.class-recording-state h2{margin:2px 0 0;color:var(--ink);font-size:18px}
+.class-recording-state p{margin:0;max-width:520px;font-size:10.5px;line-height:1.5}
+
+/* Viewer */
+.class-recording-viewer-backdrop{position:fixed;inset:0;z-index:1300;display:grid;place-items:center;padding:20px;background:rgba(18,12,13,.80);backdrop-filter:blur(4px)}
+.class-recording-viewer{width:min(1120px,100%);max-height:calc(100dvh - 40px);overflow:hidden;border-radius:18px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.42)}
+.class-recording-viewer>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.class-recording-viewer>header span,.class-recording-viewer>header strong{display:block}
+.class-recording-viewer>header span{color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase}
+.class-recording-viewer>header strong{margin-top:3px;font-size:14px}
+.class-recording-viewer>header button{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.class-recording-video-shell{position:relative;width:100%;aspect-ratio:16/9;background:#100d0e}
+.class-recording-video-shell iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.class-recording-viewer>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-top:1px solid var(--line)}
+.class-recording-viewer>footer>div{display:flex;flex-wrap:wrap;gap:8px 13px;color:var(--muted);font-size:9.5px}
+.class-recording-viewer>footer span,.class-recording-viewer>footer a{display:inline-flex;align-items:center;gap:5px}
+.class-recording-viewer>footer a{padding:8px 10px;border:1px solid var(--line);border-radius:8px;color:var(--maroon);font-size:9.5px;font-weight:850;text-decoration:none}
+.class-recording-drive-note{margin:0;padding:0 15px 13px;color:var(--muted);font-size:8.5px;line-height:1.45}
+
+@media(max-width:1100px){
+  .class-recording-grid,.class-recording-loading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .class-recording-filter{grid-template-columns:1fr}
+  .class-recording-form-grid{grid-template-columns:1fr}
+  .class-recording-form-grid label.is-wide{grid-column:auto}
+  .class-recording-grid,.class-recording-loading-grid{grid-template-columns:1fr}
+  .class-recording-section-heading{flex-direction:column}
+  .class-recording-viewer-backdrop{padding:0}
+  .class-recording-viewer{width:100%;max-height:100dvh;height:100dvh;border-radius:0;display:flex;flex-direction:column}
+  .class-recording-video-shell{margin:auto 0}
+  .class-recording-viewer>footer{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:480px){
+  .class-recordings-header h1{font-size:27px}
+  .class-recording-actions{display:grid;grid-template-columns:1fr}
+  .class-recording-actions button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.class-recording-skeleton{animation:none}}

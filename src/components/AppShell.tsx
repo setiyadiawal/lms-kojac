@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+﻿import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   BarChart3,
   Bell,
@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Trophy,
   UsersRound,
+  Video,
   X,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -89,7 +90,7 @@ function AppNavigationContent({
 
   return <>
     <div className="brand">
-      <div className="brand-mark">空</div>
+      <div className="brand-mark">遨ｺ</div>
       <div><strong>KOJAC</strong><span>Japanese LMS</span></div>
     </div>
 
@@ -106,6 +107,7 @@ function AppNavigationContent({
           <span className="app-nav-section-label">SISWA</span>
           <NavigationLink to="/kelas-saya" label="Kelas Saya" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/tugas-saya" label="Tugas Saya" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
         </div>
       )}
 
@@ -115,6 +117,7 @@ function AppNavigationContent({
           <NavigationLink to="/pengajar/dashboard" label="Dashboard Pengajar" icon={LayoutDashboard} onNavigate={onNavigate}/>
           <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/pengajar/tugas" label="Tugas Kelas" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
         </div>
       )}
 
@@ -284,7 +287,7 @@ export function AppShell() {
           <Menu size={22}/>
         </button>
         <div className="mobile-nav-brand" aria-label="KOJAC">
-          <div className="brand-mark">空</div>
+          <div className="brand-mark">遨ｺ</div>
           <strong>KOJAC</strong>
         </div>
       </header>
@@ -316,3 +319,4 @@ export function AppShell() {
     </div>
   );
 }
+

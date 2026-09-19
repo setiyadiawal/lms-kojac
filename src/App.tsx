@@ -1,4 +1,4 @@
-import { lazy, Suspense, type ReactNode } from 'react';
+﻿import { lazy, Suspense, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { ProtectedRoute, RoleRoute } from './components/RouteGuards';
@@ -9,6 +9,7 @@ import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
 import { MyClassesPage } from './pages/MyClassesPage';
+import { ClassRecordingsPage } from './pages/ClassRecordingsPage';
 import { NotificationCenterPage } from './pages/NotificationCenterPage';
 import { StudentAssignmentsPage } from './pages/StudentAssignmentsPage';
 import { TeacherAssignmentsPage } from './pages/TeacherAssignmentsPage';
@@ -32,7 +33,7 @@ const ListeningPage = lazy(() => import('./pages/ListeningPage').then((module) =
 
 function LazyModule({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div className="full-center">Memuat modul KOJAC…</div>}>
+    <Suspense fallback={<div className="full-center">Memuat modul KOJAC窶ｦ</div>}>
       {children}
     </Suspense>
   );
@@ -48,6 +49,7 @@ export default function App() {
       <Route path="notifikasi" element={<NotificationCenterPage />} />
       <Route path="kelas-saya" element={<MyClassesPage />} />
       <Route path="tugas-saya" element={<StudentAssignmentsPage />} />
+      <Route path="rekaman-kelas" element={<ClassRecordingsPage />} />
       <Route path="pengajar/dashboard" element={<TeacherDashboardPage />} />
       <Route path="pengajar/tugas" element={<TeacherAssignmentsPage />} />
       <Route path="kelas-mengajar" element={<TeachingClassesPage />} />
@@ -77,3 +79,4 @@ export default function App() {
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>;
 }
+
