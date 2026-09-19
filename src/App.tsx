@@ -9,6 +9,8 @@ import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { ExamPage, FeedbackPage, LearningPage, PracticePage, ProgressPage } from './pages/ModulePages';
 import { AdminPage } from './pages/AdminPage';
 import { MyClassesPage } from './pages/MyClassesPage';
+import { StudentAssignmentsPage } from './pages/StudentAssignmentsPage';
+import { TeacherAssignmentsPage } from './pages/TeacherAssignmentsPage';
 import { TeacherDashboardPage } from './pages/TeacherDashboardPage';
 import { TeachingClassesPage } from './pages/TeachingClassesPage';
 import { TeachingReportsPage } from './pages/TeachingReportsPage';
@@ -43,7 +45,9 @@ export default function App() {
     <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
       <Route index element={<DashboardPage />} />
       <Route path="kelas-saya" element={<MyClassesPage />} />
+      <Route path="tugas-saya" element={<StudentAssignmentsPage />} />
       <Route path="pengajar/dashboard" element={<TeacherDashboardPage />} />
+      <Route path="pengajar/tugas" element={<TeacherAssignmentsPage />} />
       <Route path="kelas-mengajar" element={<TeachingClassesPage />} />
       <Route path="kelas-mengajar/:classId/laporan" element={<TeachingReportsPage />} />
       <Route path="rekap-kelas" element={<ManagementClassRecapPage />} />

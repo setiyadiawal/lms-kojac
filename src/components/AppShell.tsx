@@ -87,6 +87,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
         <div className="app-nav-section">
           <span className="app-nav-section-label">SISWA</span>
           <NavigationLink to="/kelas-saya" label="Kelas Saya" icon={School} onNavigate={onNavigate}/>
+          <NavigationLink to="/tugas-saya" label="Tugas Saya" icon={FileText} onNavigate={onNavigate}/>
         </div>
       )}
 
@@ -95,6 +96,7 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
           <span className="app-nav-section-label">PENGAJAR</span>
           <NavigationLink to="/pengajar/dashboard" label="Dashboard Pengajar" icon={LayoutDashboard} onNavigate={onNavigate}/>
           <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
+          <NavigationLink to="/pengajar/tugas" label="Tugas Kelas" icon={FileText} onNavigate={onNavigate}/>
         </div>
       )}
 
