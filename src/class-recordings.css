@@ -164,6 +164,17 @@
   border:0;
   background:#000;
 }
+.class-recording-drive-popout-mask{
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:3;
+  width:72px;
+  height:84px;
+  background:#000;
+  pointer-events:auto;
+  user-select:none;
+}
 .class-recording-viewer-footer{
   flex:0 0 auto;
   display:flex;
@@ -356,4 +367,11 @@
   .class-recording-viewer{max-height:calc(100dvh - 20px)}
   .class-recording-video-shell{max-height:calc(100dvh - 150px)}
   .class-recording-viewer-description{display:none}
+}
+
+@media(max-width:760px){
+  .class-recording-drive-popout-mask{
+    width:58px;
+    height:72px;
+  }
 }

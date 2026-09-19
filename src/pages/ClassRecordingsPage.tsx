@@ -244,6 +244,10 @@ function RecordingViewer({
               allow="autoplay; encrypted-media; fullscreen"
               allowFullScreen
             />
+            <div
+              className="class-recording-drive-popout-mask"
+              aria-hidden="true"
+            />
           </div>
         </div>
 
