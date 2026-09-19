@@ -4,7 +4,6 @@ import {
   CalendarDays,
   Clock3,
   Edit3,
-  ExternalLink,
   Film,
   Play,
   Plus,
@@ -188,17 +187,10 @@ function RecordingViewer({
               <span><Clock3 size={14}/>{row.duration_minutes} menit</span>
             )}
           </div>
-          <a
-            href={driveViewUrl(row.drive_file_id)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <ExternalLink size={15}/>Buka di Google Drive
-          </a>
         </footer>
 
         <p className="class-recording-drive-note">
-          Jika Google Drive meminta izin, akses file Drive perlu dibagikan ke akun Google yang digunakan siswa.
+          Rekaman diputar langsung di KOJAC LMS.
         </p>
       </div>
     </div>
