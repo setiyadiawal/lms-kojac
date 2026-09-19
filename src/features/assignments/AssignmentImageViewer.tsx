@@ -37,6 +37,14 @@ type AssignmentImageViewerProps = {
   onClose: () => void;
 };
 
+type PanDrag = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  originX: number;
+  originY: number;
+};
+
 const BRUSH_COLORS = ['#dc2626', '#2563eb', '#111827'];
 const BRUSH_SIZES = [3, 6, 10];
 
@@ -65,12 +73,16 @@ export function AssignmentImageViewer({
   const [brushSize, setBrushSize] = useState(BRUSH_SIZES[1]);
   const [strokesByPath, setStrokesByPath] = useState<Record<string, Stroke[]>>({});
   const [zoom, setZoom] = useState(MIN_ZOOM);
+  const [pan, setPan] = useState<Point>({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const drawingRef = useRef(false);
   const activeStrokeRef = useRef<Stroke | null>(null);
   const swipeStartXRef = useRef<number | null>(null);
+  const panRef = useRef<Point>({ x: 0, y: 0 });
+  const panDragRef = useRef<PanDrag | null>(null);
 
   const currentPhoto = photos[currentIndex] ?? null;
   const currentStrokes = useMemo(
@@ -78,35 +90,60 @@ export function AssignmentImageViewer({
     [currentPhoto, strokesByPath],
   );
 
+  const updatePan = useCallback((next: Point) => {
+    panRef.current = next;
+    setPan(next);
+  }, []);
+
+  const clampPan = useCallback((next: Point, zoomLevel = zoom): Point => {
+    const stage = stageRef.current;
+    if (!stage || zoomLevel <= MIN_ZOOM) return { x: 0, y: 0 };
+
+    const rect = stage.getBoundingClientRect();
+    const maxX = Math.max(0, (rect.width * (zoomLevel - 1)) / 2);
+    const maxY = Math.max(0, (rect.height * (zoomLevel - 1)) / 2);
+
+    return {
+      x: Math.max(-maxX, Math.min(maxX, next.x)),
+      y: Math.max(-maxY, Math.min(maxY, next.y)),
+    };
+  }, [zoom]);
+
+  const resetPan = useCallback(() => {
+    updatePan({ x: 0, y: 0 });
+    panDragRef.current = null;
+    setIsPanning(false);
+  }, [updatePan]);
+
   const setPhotoIndex = useCallback((nextIndex: number) => {
     setCurrentIndex(clampIndex(nextIndex, photos.length));
     setZoom(MIN_ZOOM);
     setDrawEnabled(false);
-  }, [photos.length]);
+    resetPan();
+  }, [photos.length, resetPan]);
 
   const goPrevious = useCallback(() => {
     if (photos.length <= 1) return;
-    setCurrentIndex((current) => {
-      const next = clampIndex(current - 1, photos.length);
-      return next;
-    });
+    setCurrentIndex((current) => clampIndex(current - 1, photos.length));
     setZoom(MIN_ZOOM);
     setDrawEnabled(false);
-  }, [photos.length]);
+    resetPan();
+  }, [photos.length, resetPan]);
 
   const goNext = useCallback(() => {
     if (photos.length <= 1) return;
-    setCurrentIndex((current) => {
-      const next = clampIndex(current + 1, photos.length);
-      return next;
-    });
+    setCurrentIndex((current) => clampIndex(current + 1, photos.length));
     setZoom(MIN_ZOOM);
     setDrawEnabled(false);
-  }, [photos.length]);
+    resetPan();
+  }, [photos.length, resetPan]);
 
   const zoomIn = () => setZoom((current) => clampZoom(current + ZOOM_STEP));
   const zoomOut = () => setZoom((current) => clampZoom(current - ZOOM_STEP));
-  const resetZoom = () => setZoom(MIN_ZOOM);
+  const resetZoom = () => {
+    setZoom(MIN_ZOOM);
+    resetPan();
+  };
 
   const drawStroke = useCallback((
     context: CanvasRenderingContext2D,
@@ -164,13 +201,28 @@ export function AssignmentImageViewer({
   }, [currentIndex, zoom, redrawCanvas]);
 
   useEffect(() => {
+    if (zoom <= MIN_ZOOM) {
+      resetPan();
+      return;
+    }
+
+    updatePan(clampPan(panRef.current, zoom));
+  }, [zoom, clampPan, resetPan, updatePan]);
+
+  useEffect(() => {
     const stage = stageRef.current;
     if (!stage) return undefined;
 
-    const observer = new ResizeObserver(() => redrawCanvas());
+    const observer = new ResizeObserver(() => {
+      redrawCanvas();
+      if (zoom > MIN_ZOOM) {
+        updatePan(clampPan(panRef.current, zoom));
+      }
+    });
+
     observer.observe(stage);
     return () => observer.disconnect();
-  }, [redrawCanvas]);
+  }, [clampPan, redrawCanvas, updatePan, zoom]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -178,8 +230,8 @@ export function AssignmentImageViewer({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
-      if (event.key === 'ArrowLeft') goPrevious();
-      if (event.key === 'ArrowRight') goNext();
+      if (event.key === 'ArrowLeft' && zoom === MIN_ZOOM) goPrevious();
+      if (event.key === 'ArrowRight' && zoom === MIN_ZOOM) goNext();
 
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault();
@@ -212,7 +264,7 @@ export function AssignmentImageViewer({
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentPhoto, goNext, goPrevious, onClose]);
+  }, [currentPhoto, goNext, goPrevious, onClose, zoom]);
 
   const pointFromEvent = (event: ReactPointerEvent<HTMLCanvasElement>): Point => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -296,12 +348,54 @@ export function AssignmentImageViewer({
   };
 
   const handleStagePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (drawEnabled || zoom > MIN_ZOOM) return;
+    if (drawEnabled) return;
+
+    if (zoom > MIN_ZOOM) {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+      event.currentTarget.setPointerCapture(event.pointerId);
+      panDragRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: panRef.current.x,
+        originY: panRef.current.y,
+      };
+      setIsPanning(true);
+      return;
+    }
+
     swipeStartXRef.current = event.clientX;
   };
 
-  const handleStagePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (drawEnabled || zoom > MIN_ZOOM || swipeStartXRef.current === null) return;
+  const handleStagePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = panDragRef.current;
+    if (drawEnabled || zoom <= MIN_ZOOM || !drag || drag.pointerId !== event.pointerId) return;
+
+    event.preventDefault();
+
+    const next = clampPan({
+      x: drag.originX + (event.clientX - drag.startX),
+      y: drag.originY + (event.clientY - drag.startY),
+    });
+
+    updatePan(next);
+  };
+
+  const finishStagePointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (zoom > MIN_ZOOM) {
+      const drag = panDragRef.current;
+      if (drag?.pointerId === event.pointerId) {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+        panDragRef.current = null;
+        setIsPanning(false);
+      }
+      return;
+    }
+
+    if (drawEnabled || swipeStartXRef.current === null) return;
 
     const distance = event.clientX - swipeStartXRef.current;
     swipeStartXRef.current = null;
@@ -309,6 +403,15 @@ export function AssignmentImageViewer({
     if (Math.abs(distance) < 55) return;
     if (distance > 0) goPrevious();
     else goNext();
+  };
+
+  const cancelStagePointer = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    panDragRef.current = null;
+    swipeStartXRef.current = null;
+    setIsPanning(false);
   };
 
   if (!currentPhoto) return null;
@@ -433,35 +536,45 @@ export function AssignmentImageViewer({
           </div>
 
           <span className="assignment-image-viewer-note">
-            Undo: Ctrl/Cmd+Z · Zoom: + / − · Coretan hilang saat viewer ditutup.
+            Undo: Ctrl/Cmd+Z · Zoom: + / − · Zoom &gt;100%: klik tahan lalu geser.
           </span>
         </div>
 
         <div
           ref={stageRef}
-          className={`assignment-image-viewer-stage ${drawEnabled ? 'is-drawing' : ''} ${zoom > MIN_ZOOM ? 'is-zoomed' : ''}`}
+          className={`assignment-image-viewer-stage ${drawEnabled ? 'is-drawing' : ''} ${zoom > MIN_ZOOM ? 'is-zoomed' : ''} ${isPanning ? 'is-panning' : ''}`}
           onPointerDown={handleStagePointerDown}
-          onPointerUp={handleStagePointerUp}
+          onPointerMove={handleStagePointerMove}
+          onPointerUp={finishStagePointer}
+          onPointerCancel={cancelStagePointer}
         >
           <div
-            className="assignment-image-viewer-zoom-layer"
-            style={{ '--assignment-zoom': zoom } as CSSProperties}
+            className="assignment-image-viewer-pan-layer"
+            style={{
+              '--assignment-pan-x': `${pan.x}px`,
+              '--assignment-pan-y': `${pan.y}px`,
+            } as CSSProperties}
           >
-            <img
-              src={currentPhoto.signedUrl}
-              alt={`Foto jawaban ${currentIndex + 1} dari ${studentName}`}
-              draggable={false}
-              onLoad={redrawCanvas}
-            />
+            <div
+              className="assignment-image-viewer-zoom-layer"
+              style={{ '--assignment-zoom': zoom } as CSSProperties}
+            >
+              <img
+                src={currentPhoto.signedUrl}
+                alt={`Foto jawaban ${currentIndex + 1} dari ${studentName}`}
+                draggable={false}
+                onLoad={redrawCanvas}
+              />
 
-            <canvas
-              ref={canvasRef}
-              className="assignment-image-viewer-canvas"
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={finishStroke}
-              onPointerCancel={finishStroke}
-            />
+              <canvas
+                ref={canvasRef}
+                className="assignment-image-viewer-canvas"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={finishStroke}
+                onPointerCancel={finishStroke}
+              />
+            </div>
           </div>
 
           {photos.length > 1 && !drawEnabled && zoom === MIN_ZOOM && (
