@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   BarChart3,
+  Bell,
   LayoutDashboard,
   BookOpen,
   Dumbbell,
@@ -18,9 +19,11 @@ import {
   X,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import { APP_ROLE_LABEL, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
 import '../classroom.css';
+import '../notification-center.css';
 
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 
@@ -36,6 +39,7 @@ type AppNavigationContentProps = {
   canAdmin: boolean;
   fullName?: string | null;
   role?: AppRole | null;
+  notificationUnread: number;
   onNavigate?: () => void;
   onSignOut: () => void;
 };
@@ -45,12 +49,14 @@ function NavigationLink({
   label,
   icon: Icon,
   end,
+  badge,
   onNavigate,
 }: {
   to: string;
   label: string;
   icon: typeof Home;
   end?: boolean;
+  badge?: number;
   onNavigate?: () => void;
 }) {
   return (
@@ -62,11 +68,23 @@ function NavigationLink({
     >
       <Icon size={18}/>
       <span className="nav-item-label">{label}</span>
+      {Boolean(badge && badge > 0) && (
+        <span className="nav-item-notification-badge">
+          {badge && badge > 99 ? '99+' : badge}
+        </span>
+      )}
     </NavLink>
   );
 }
 
-function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut }: AppNavigationContentProps) {
+function AppNavigationContent({
+  canAdmin,
+  fullName,
+  role,
+  notificationUnread,
+  onNavigate,
+  onSignOut,
+}: AppNavigationContentProps) {
   const canTeach = Boolean(role && TEACHING_ROLES.has(role));
 
   return <>
@@ -115,6 +133,13 @@ function AppNavigationContent({ canAdmin, fullName, role, onNavigate, onSignOut 
 
       <div className="app-nav-section">
         <span className="app-nav-section-label">LAINNYA</span>
+        <NavigationLink
+          to="/notifikasi"
+          label="Notifikasi"
+          icon={Bell}
+          badge={notificationUnread}
+          onNavigate={onNavigate}
+        />
         <NavigationLink to="/kritik-saran" label="Kritik & Saran" icon={MessageSquareText} onNavigate={onNavigate}/>
       </div>
     </nav>
@@ -130,9 +155,45 @@ export function AppShell() {
   const { profile, role, signOut } = useAuth();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [notificationUnread, setNotificationUnread] = useState(0);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const canAdmin = role ? USER_MANAGEMENT_ROLES.includes(role) : false;
+
+  const refreshNotificationUnread = useCallback(async () => {
+    const { data, error } = await supabase.rpc('get_my_unread_notification_count');
+
+    if (error) {
+      console.error('KOJAC unread notification count failed', error);
+      return;
+    }
+
+    setNotificationUnread(typeof data === 'number' ? data : Number(data ?? 0));
+  }, []);
+
+  useEffect(() => {
+    void refreshNotificationUnread();
+
+    const interval = window.setInterval(() => {
+      void refreshNotificationUnread();
+    }, 30_000);
+
+    const onFocus = () => void refreshNotificationUnread();
+    const onChanged = () => void refreshNotificationUnread();
+
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('kojac:notifications-changed', onChanged);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('kojac:notifications-changed', onChanged);
+    };
+  }, [refreshNotificationUnread, role]);
+
+  useEffect(() => {
+    void refreshNotificationUnread();
+  }, [location.pathname, refreshNotificationUnread]);
 
   useEffect(() => {
     setDrawerOpen(false);
@@ -205,6 +266,7 @@ export function AppShell() {
           canAdmin={canAdmin}
           fullName={profile?.full_name}
           role={role}
+          notificationUnread={notificationUnread}
           onSignOut={handleSignOut}
         />
       </aside>
@@ -243,6 +305,7 @@ export function AppShell() {
             canAdmin={canAdmin}
             fullName={profile?.full_name}
             role={role}
+            notificationUnread={notificationUnread}
             onNavigate={closeDrawer}
             onSignOut={handleSignOut}
           />
