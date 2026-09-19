@@ -25,6 +25,7 @@ import {
   type DashboardModuleKey,
   type DashboardModuleSummary,
 } from '../features/dashboard/useStudentDashboardProgress';
+import { useStudentStudyStreak } from '../features/dashboard/useStudentStudyStreak';
 import { useAuth } from '../state/AuthContext';
 
 const ROADMAP_STAGES = [
@@ -205,6 +206,28 @@ function AchievementCard({ achievement, loading }: { achievement: Achievement; l
   );
 }
 
+function StreakCard({
+  icon,
+  value,
+  label,
+  active = false,
+}: {
+  icon: React.ReactNode;
+  value: string;
+  label: string;
+  active?: boolean;
+}) {
+  return (
+    <div className={`dashboard-streak-card ${active ? 'active' : ''}`}>
+      <div className="dashboard-streak-icon" aria-hidden="true">{icon}</div>
+      <div>
+        <strong>{value}</strong>
+        <span>{label}</span>
+      </div>
+    </div>
+  );
+}
+
 export function DashboardPage() {
   const { profile } = useAuth();
   const {
@@ -213,6 +236,11 @@ export function DashboardPage() {
     loading,
     hasPartialError,
   } = useStudentDashboardProgress();
+  const {
+    streak,
+    loading: streakLoading,
+    hasError: streakHasError,
+  } = useStudentStudyStreak();
 
   const continueTarget = latestActivity ?? {
     module: 'hiragana' as const,
@@ -228,6 +256,12 @@ export function DashboardPage() {
   const achievements = evaluateStudentAchievements(modules);
   const unlockedAchievementCount = achievements.filter((achievement) => achievement.unlocked).length;
   const achievementLoading = loading && modules.length === 0;
+  const streakFallback = streakLoading ? 'Memuat…' : streak.available ? '0' : '—';
+  const todayStatus = streakLoading
+    ? 'Memuat…'
+    : !streak.available
+      ? '—'
+      : streak.activeToday ? 'Sudah' : 'Belum';
 
   return (
     <div className="page student-dashboard-page">
@@ -276,6 +310,60 @@ export function DashboardPage() {
         <Link className="dashboard-continue-link" to={continueTarget.route}>
           {latestActivity ? 'Lanjutkan belajar' : 'Mulai belajar'} <ArrowRight size={17}/>
         </Link>
+      </section>
+
+      <section
+        className={`dashboard-streak-section panel ${streak.available && streak.activeToday ? 'active' : ''}`}
+        aria-labelledby="dashboard-streak-title"
+      >
+        <div className="dashboard-section-heading dashboard-streak-heading">
+          <div>
+            <p className="eyebrow">STREAK BELAJAR</p>
+            <h2 id="dashboard-streak-title">Konsistensi Belajar</h2>
+          </div>
+          <p>
+            {streakLoading
+              ? 'Memuat aktivitas harian…'
+              : !streak.available
+                ? 'Data streak belum dapat dimuat.'
+                : streak.activeToday
+                  ? 'Aktivitas belajar hari ini sudah tercatat.'
+                  : streak.totalActiveDays > 0
+                    ? 'Belum ada aktivitas belajar yang tercatat hari ini.'
+                    : 'Mulai belajar untuk membangun streak pertamamu.'}
+          </p>
+        </div>
+
+        <div className="dashboard-streak-grid">
+          <StreakCard
+            icon={<Gauge size={20}/>}
+            value={streak.available ? `${streak.currentStreak} hari` : streakFallback}
+            label="Streak Saat Ini"
+            active={streak.available && streak.currentStreak > 0}
+          />
+          <StreakCard
+            icon={<Award size={20}/>}
+            value={streak.available ? `${streak.longestStreak} hari` : streakFallback}
+            label="Streak Terpanjang"
+          />
+          <StreakCard
+            icon={<CalendarDays size={20}/>}
+            value={streak.available ? `${streak.totalActiveDays} hari` : streakFallback}
+            label="Total Hari Aktif"
+          />
+          <StreakCard
+            icon={<CheckCircle2 size={20}/>}
+            value={todayStatus}
+            label="Belajar Hari Ini"
+            active={streak.available && streak.activeToday}
+          />
+        </div>
+
+        {streakHasError && !streakLoading && (
+          <div className="dashboard-streak-notice" role="status">
+            Streak belum dapat dimuat. Progress belajar lainnya tetap aman dan dapat digunakan.
+          </div>
+        )}
       </section>
 
       {hasPartialError && !loading && (
@@ -328,7 +416,7 @@ export function DashboardPage() {
                   }}
                 />
               ))
-            : modules.map((module) => <ModuleCard key={module.key} module={module} loading={false}/>) }
+            : modules.map((module) => <ModuleCard key={module.key} module={module} loading={false}/>)}
         </div>
       </section>
 
