@@ -1,4 +1,5 @@
 import {
+  Award,
   ArrowRight,
   BookMarked,
   BookOpenCheck,
@@ -9,11 +10,16 @@ import {
   Gauge,
   Headphones,
   Languages,
+  LockKeyhole,
   PlaneTakeoff,
   SpellCheck,
   Target,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import {
+  evaluateStudentAchievements,
+  type Achievement,
+} from '../features/dashboard/studentAchievements';
 import {
   useStudentDashboardProgress,
   type DashboardModuleKey,
@@ -151,6 +157,54 @@ function ModuleCard({ module, loading }: { module: DashboardModuleSummary; loadi
   );
 }
 
+function AchievementIcon({ achievement }: { achievement: Achievement }) {
+  if (achievement.category === 'general') return <Award size={21}/>;
+  return <ModuleIcon module={achievement.category}/>;
+}
+
+function AchievementCard({ achievement, loading }: { achievement: Achievement; loading: boolean }) {
+  const status = loading ? 'Memuat' : achievement.unlocked ? 'Tercapai' : 'Terkunci';
+  const progressText = loading ? 'Memuat progress…' : achievement.progressText;
+  const progressValue = loading ? 0 : achievement.progressPercent;
+
+  return (
+    <article className={`student-achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'} ${loading ? 'loading' : ''}`}>
+      <div className="student-achievement-card-top">
+        <div className="achievement-icon" aria-hidden="true">
+          <AchievementIcon achievement={achievement}/>
+        </div>
+        <span className={`achievement-status ${achievement.unlocked ? 'unlocked' : 'locked'}`}>
+          {!loading && (
+            achievement.unlocked
+              ? <CheckCircle2 size={13} aria-hidden="true"/>
+              : <LockKeyhole size={13} aria-hidden="true"/>
+          )}
+          {status}
+        </span>
+      </div>
+
+      <h3>{achievement.title}</h3>
+      <p>{achievement.description}</p>
+
+      <div className="achievement-progress-row">
+        <span>Progress</span>
+        <strong>{progressText}</strong>
+      </div>
+      <div
+        className="achievement-progress-track"
+        role="progressbar"
+        aria-label={`Progress ${achievement.title}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressValue}
+        aria-valuetext={progressText}
+      >
+        <span style={{ width: `${progressValue}%` }}/>
+      </div>
+    </article>
+  );
+}
+
 export function DashboardPage() {
   const { profile } = useAuth();
   const {
@@ -171,6 +225,9 @@ export function DashboardPage() {
   const reading = modules.find((module) => module.key === 'reading');
   const listening = modules.find((module) => module.key === 'listening');
   const summaryFallback = loading ? 'Memuat…' : '—';
+  const achievements = evaluateStudentAchievements(modules);
+  const unlockedAchievementCount = achievements.filter((achievement) => achievement.unlocked).length;
+  const achievementLoading = loading && modules.length === 0;
 
   return (
     <div className="page student-dashboard-page">
@@ -272,6 +329,30 @@ export function DashboardPage() {
                 />
               ))
             : modules.map((module) => <ModuleCard key={module.key} module={module} loading={false}/>) }
+        </div>
+      </section>
+
+      <section className="dashboard-achievement-section" aria-labelledby="dashboard-achievement-title">
+        <div className="dashboard-section-heading dashboard-achievement-heading">
+          <div>
+            <p className="eyebrow">PENCAPAIAN</p>
+            <h2 id="dashboard-achievement-title">Achievement Kamu</h2>
+          </div>
+          <p>
+            {achievementLoading
+              ? 'Memuat pencapaian…'
+              : `${unlockedAchievementCount} / ${achievements.length} Achievement Terbuka`}
+          </p>
+        </div>
+
+        <div className="student-achievement-grid">
+          {achievements.map((achievement) => (
+            <AchievementCard
+              key={achievement.id}
+              achievement={achievement}
+              loading={achievementLoading}
+            />
+          ))}
         </div>
       </section>
 

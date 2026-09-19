@@ -11,6 +11,17 @@ export type DashboardModuleKey =
   | 'reading'
   | 'listening';
 
+export type DashboardModuleProgress = {
+  total: number;
+  started: number;
+  mastered: number;
+  averageMastery: number;
+  completed: number;
+  averageAccuracy: number;
+  progressPercent: number;
+  masteryPercent: number;
+};
+
 export type DashboardModuleSummary = {
   key: DashboardModuleKey;
   title: string;
@@ -21,6 +32,7 @@ export type DashboardModuleSummary = {
   percentLabel: string;
   percent: number;
   available: boolean;
+  progress?: DashboardModuleProgress;
 };
 
 export type DashboardLatestActivity = {
@@ -76,6 +88,24 @@ function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+function safeMetric(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, value);
+}
+
+function progressFromRow(row: DashboardSummaryRow): DashboardModuleProgress {
+  return {
+    total: safeMetric(row.total),
+    started: safeMetric(row.started),
+    mastered: safeMetric(row.mastered),
+    averageMastery: clampPercent(row.average_mastery),
+    completed: safeMetric(row.completed),
+    averageAccuracy: clampPercent(row.average_accuracy),
+    progressPercent: clampPercent(row.progress_percent),
+    masteryPercent: clampPercent(row.mastery_percent),
+  };
+}
+
 function isDashboardModuleKey(value: string): value is DashboardModuleKey {
   return MODULE_ORDER.includes(value as DashboardModuleKey);
 }
@@ -97,6 +127,7 @@ function unavailableSummary(key: DashboardModuleKey): DashboardModuleSummary {
 
 function summaryFromRow(key: DashboardModuleKey, row: DashboardSummaryRow): DashboardModuleSummary {
   const meta = MODULE_META[key];
+  const progress = progressFromRow(row);
 
   if (SRS_MODULES.has(key)) {
     return {
@@ -109,6 +140,7 @@ function summaryFromRow(key: DashboardModuleKey, row: DashboardSummaryRow): Dash
       percentLabel: 'Mastery',
       percent: clampPercent(row.average_mastery),
       available: true,
+      progress,
     };
   }
 
@@ -123,6 +155,7 @@ function summaryFromRow(key: DashboardModuleKey, row: DashboardSummaryRow): Dash
       percentLabel: 'Progress',
       percent: clampPercent(row.progress_percent),
       available: true,
+      progress,
     };
   }
 
@@ -136,6 +169,7 @@ function summaryFromRow(key: DashboardModuleKey, row: DashboardSummaryRow): Dash
     percentLabel: 'Progress',
     percent: clampPercent(row.progress_percent),
     available: true,
+    progress,
   };
 }
 
