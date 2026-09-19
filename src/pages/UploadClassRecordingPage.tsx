@@ -11,7 +11,6 @@ import {
   LogIn,
   RefreshCw,
   School,
-  ShieldCheck,
   Square,
   Upload,
 } from 'lucide-react';
@@ -42,7 +41,6 @@ type UploadForm = {
   recordedAt: string;
   duration: string;
   isPublished: boolean;
-  shareWithLink: boolean;
 };
 
 type CompletedUpload = {
@@ -74,7 +72,6 @@ function initialForm(): UploadForm {
     recordedAt: localDateTimeInput(),
     duration: '',
     isPublished: true,
-    shareWithLink: false,
   };
 }
 
@@ -242,6 +239,14 @@ export function UploadClassRecordingPage() {
   };
 
   const uploadVideo = async () => {
+    if (!GOOGLE_CLIENT_ID) {
+      setError(
+        'Google OAuth belum dikonfigurasi. Tambahkan VITE_GOOGLE_CLIENT_ID di Vercel '
+        + 'dan pastikan https://lms.kojac.id terdaftar sebagai Authorized JavaScript origin.',
+      );
+      return;
+    }
+
     if (!selectedClass) {
       setError('Pilih kelas terlebih dahulu.');
       return;
@@ -301,12 +306,29 @@ export function UploadClassRecordingPage() {
         },
       });
 
-      if (form.shareWithLink) {
+      const uploadedWebViewLink = uploaded.webViewLink || driveFileUrl(uploaded.id);
+
+      setCompleted({
+        fileId: uploaded.id,
+        fileName: uploaded.name,
+        webViewLink: uploadedWebViewLink,
+        folderId: uploaded.folderId,
+      });
+
+      try {
         await createAnyoneWithLinkReaderPermission(
           token,
           uploaded.id,
           controller.signal,
         );
+      } catch (permissionError) {
+        console.error('KOJAC Drive permission setup failed', permissionError);
+        setError(
+          'Video sudah berhasil diupload ke Google Drive, tetapi izin menonton otomatis gagal. '
+          + 'Buka video di Google Drive lalu ubah General access menjadi Anyone with the link, '
+          + 'kemudian tambahkan rekaman dari menu Rekaman Kelas.',
+        );
+        return;
       }
 
       const { error: recordingError } = await supabase.rpc('create_class_recording', {
@@ -337,14 +359,10 @@ export function UploadClassRecordingPage() {
         return;
       }
 
-      setCompleted({
-        fileId: uploaded.id,
-        fileName: uploaded.name,
-        webViewLink: uploaded.webViewLink || driveFileUrl(uploaded.id),
-        folderId: uploaded.folderId,
-      });
-
-      setMessage('Upload selesai. Video sudah tersimpan di Google Drive dan masuk ke Rekaman Kelas.');
+      setMessage(
+        'Upload selesai. Video sudah tersimpan di Google Drive, akses link sudah aktif, '
+        + 'dan rekaman sudah masuk ke Rekaman Kelas.',
+      );
       setFile(null);
       setForm(initialForm());
     } catch (uploadError) {
@@ -556,26 +574,6 @@ export function UploadClassRecordingPage() {
             )}
           </div>
 
-          <label className="recording-upload-share-option">
-            <input
-              type="checkbox"
-              checked={form.shareWithLink}
-              disabled={uploading}
-              onChange={(event) => setForm((current) => ({
-                ...current,
-                shareWithLink: event.target.checked,
-              }))}
-            />
-            <ShieldCheck size={18}/>
-            <span>
-              <strong>Izinkan siapa saja yang memiliki link untuk menonton</strong>
-              <small>
-                Opsional dan default OFF. Jika dimatikan, siswa hanya dapat menonton
-                bila akun Google mereka sudah diberi akses di Google Drive.
-              </small>
-            </span>
-          </label>
-
           {uploading && (
             <div className="recording-upload-progress-card">
               <div className="recording-upload-progress-top">
@@ -650,7 +648,6 @@ export function UploadClassRecordingPage() {
                 || !file
                 || !selectedClass
                 || !form.title.trim()
-                || !GOOGLE_CLIENT_ID
               }
               onClick={() => void uploadVideo()}
             >
@@ -667,8 +664,10 @@ export function UploadClassRecordingPage() {
           <strong>Penyimpanan Google Drive</strong>
           <p>
             KOJAC membuat folder <b>KOJAC LMS - Rekaman Kelas</b>, lalu subfolder
-            per kelas secara otomatis. Access token Google hanya disimpan di memori
-            browser selama sesi halaman ini dan tidak disimpan ke database KOJAC.
+            per kelas secara otomatis. File video otomatis diberi akses
+            <b> Anyone with the link — Viewer</b> agar dapat diputar di LMS.
+            Access token Google hanya disimpan di memori browser selama sesi halaman
+            ini dan tidak disimpan ke database KOJAC.
           </p>
         </div>
       </section>

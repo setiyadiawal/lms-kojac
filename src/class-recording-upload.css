@@ -40,10 +40,6 @@
 .recording-upload-selected-file strong{font-size:10.5px;overflow-wrap:anywhere}
 .recording-upload-selected-file span{margin-top:2px;color:var(--muted);font-size:9px}
 .recording-upload-no-file{margin:11px 0 0;color:var(--muted);font-size:9.5px}
-.recording-upload-share-option{display:flex;align-items:flex-start;gap:9px;margin-top:13px;padding:12px 13px;border:1px solid #e5dddf;border-radius:11px;background:#fff}
-.recording-upload-share-option>input{width:17px;height:17px;margin:1px 0 0;flex:0 0 auto}
-.recording-upload-share-option>svg{color:#446a50;flex:0 0 auto}
-.recording-upload-share-option strong,.recording-upload-share-option small{display:block}
 .recording-upload-share-option strong{font-size:10.5px}
 .recording-upload-share-option small{margin-top:3px;color:var(--muted);font-size:8.8px;line-height:1.45}
 .recording-upload-progress-card{margin-top:14px;padding:13px;border:1px solid #d9dfe9;border-radius:11px;background:#f8faff}

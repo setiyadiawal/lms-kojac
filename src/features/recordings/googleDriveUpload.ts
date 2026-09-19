@@ -140,7 +140,7 @@ export async function requestGoogleDriveAccessToken(clientId: string) {
       error_callback: () => reject(new Error('Login Google Drive dibatalkan atau gagal.')),
     });
 
-    tokenClient.requestAccessToken({ prompt: '' });
+    tokenClient.requestAccessToken({ prompt: 'consent' });
   });
 }
 
