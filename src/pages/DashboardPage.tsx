@@ -25,6 +25,7 @@ import {
   type DashboardModuleKey,
   type DashboardModuleSummary,
 } from '../features/dashboard/useStudentDashboardProgress';
+import { StudentProgressOverview } from '../features/dashboard/StudentProgressOverview';
 import { useStudentStudyStreak } from '../features/dashboard/useStudentStudyStreak';
 import { useAuth } from '../state/AuthContext';
 
@@ -296,6 +297,8 @@ export function DashboardPage() {
           label="Listening selesai"
         />
       </section>
+
+      <StudentProgressOverview modules={modules} loading={loading}/>
 
       <section className="dashboard-continue panel">
         <div className="dashboard-continue-copy">

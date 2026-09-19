@@ -1,0 +1,34 @@
+/* KOJAC LMS v1.1 — Student Progress Overview v2 */
+.student-progress-v2{margin-bottom:16px;padding:22px;background:linear-gradient(145deg,#fff 0%,#fdfafb 100%);border-color:#e1d0d3}
+.student-progress-v2-heading{margin-bottom:18px}
+.student-progress-v2-layout{display:grid;grid-template-columns:minmax(280px,.78fr) minmax(0,1.42fr);gap:22px;align-items:stretch}
+.student-progress-v2-summary{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:18px;border:1px solid #eadfe1;border-radius:16px;background:#fff}
+.student-progress-v2-ring{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;padding:9px;flex:0 0 auto}
+.student-progress-v2-ring>div{width:100%;height:100%;display:grid;place-content:center;text-align:center;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1px #eee5e7}
+.student-progress-v2-ring strong,.student-progress-v2-ring span{display:block}
+.student-progress-v2-ring strong{font-size:24px;color:var(--maroon);line-height:1.05}
+.student-progress-v2-ring span{margin-top:4px;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.student-progress-v2-stats{display:grid;gap:8px}
+.student-progress-v2-stats>div{display:grid;grid-template-columns:22px auto 1fr;align-items:center;gap:7px;min-width:0}
+.student-progress-v2-stats svg{color:var(--maroon)}
+.student-progress-v2-stats strong{font-size:15px;white-space:nowrap}
+.student-progress-v2-stats span{min-width:0;color:var(--muted);font-size:10.5px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.student-progress-v2-note{grid-column:1/-1;margin:0;padding-top:13px;border-top:1px solid #f0e7e8;color:var(--muted);font-size:10.5px;line-height:1.5}
+.student-progress-v2-breakdown{padding:17px 18px;border:1px solid #eadfe1;border-radius:16px;background:#fff}
+.student-progress-v2-breakdown-title{display:flex;align-items:center;gap:8px;margin-bottom:13px;color:#4d4042;font-size:13px}
+.student-progress-v2-breakdown-title svg{color:var(--maroon)}
+.student-progress-v2-module-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}
+.student-progress-v2-module{position:relative;min-width:0;padding:9px 29px 9px 10px;border:1px solid #f0e7e8;border-radius:10px;background:#fcfafb;color:inherit;text-decoration:none}
+.student-progress-v2-module:hover{border-color:#d6b7bc;background:#fff8f9}
+.student-progress-v2-module-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.student-progress-v2-module-top span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#514547;font-size:10.5px;font-weight:750}
+.student-progress-v2-module-top strong{flex:0 0 auto;color:var(--maroon);font-size:10.5px}
+.student-progress-v2-track{height:4px;margin-top:6px;overflow:hidden;border-radius:999px;background:#eee7e8}
+.student-progress-v2-track>span{display:block;height:100%;border-radius:inherit;background:var(--maroon)}
+.student-progress-v2-arrow{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:#9b8589}
+.student-progress-v2-loading{display:grid;grid-template-columns:.8fr 1.4fr;gap:18px}
+.student-progress-v2-loading span{display:block;min-height:154px;border-radius:16px;background:linear-gradient(90deg,#f0e9ea,#faf7f7,#f0e9ea);background-size:200% 100%;animation:dashboard-shimmer 1.2s infinite}
+.student-progress-v2-loading span:nth-child(3){display:none}
+@media(max-width:1000px){.student-progress-v2-layout{grid-template-columns:1fr}.student-progress-v2-module-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.student-progress-v2{padding:16px}.student-progress-v2-summary{grid-template-columns:1fr;text-align:center}.student-progress-v2-ring{margin:auto}.student-progress-v2-stats{text-align:left}.student-progress-v2-module-list{grid-template-columns:1fr}.student-progress-v2-loading{grid-template-columns:1fr}.student-progress-v2-loading span{min-height:130px}}
+@media(prefers-reduced-motion:reduce){.student-progress-v2-loading span{animation:none}}
