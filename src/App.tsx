@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense, type ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/AppShell';
 import { ProtectedRoute, RoleRoute } from './components/RouteGuards';
