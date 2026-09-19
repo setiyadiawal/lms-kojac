@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import {
   AlertCircle,
   CalendarDays,
   Clock3,
   Edit3,
   Film,
+  Maximize2,
+  Minimize2,
   Play,
   Plus,
   RefreshCw,
@@ -133,21 +135,59 @@ function RecordingViewer({
   row: StudentRecordingRow;
   onClose: () => void;
 }) {
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = useCallback(async () => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await viewer.requestFullscreen();
+      }
+    } catch (error) {
+      console.error('KOJAC recording fullscreen failed', error);
+    }
+  }, []);
+
   useEffect(() => {
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+    const onFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === viewerRef.current);
     };
 
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTyping =
+        target?.tagName === 'INPUT'
+        || target?.tagName === 'TEXTAREA'
+        || target?.tagName === 'SELECT';
+
+      if (event.key.toLowerCase() === 'f' && !isTyping) {
+        event.preventDefault();
+        void toggleFullscreen();
+        return;
+      }
+
+      if (event.key === 'Escape' && !document.fullscreenElement) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
     document.addEventListener('keydown', onKeyDown);
 
     return () => {
       document.body.style.overflow = oldOverflow;
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, toggleFullscreen]);
 
   return (
     <div
@@ -156,42 +196,77 @@ function RecordingViewer({
       aria-modal="true"
       aria-label={`Rekaman ${row.title}`}
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget && !document.fullscreenElement) {
+          onClose();
+        }
       }}
     >
-      <div className="class-recording-viewer">
-        <header>
-          <div>
+      <div
+        ref={viewerRef}
+        className={`class-recording-viewer ${isFullscreen ? 'is-fullscreen' : ''}`}
+      >
+        <header className="class-recording-viewer-header">
+          <div className="class-recording-viewer-heading">
             <span>{row.class_name}</span>
             <strong>{row.title}</strong>
           </div>
-          <button type="button" aria-label="Tutup rekaman" onClick={onClose}>
-            <X size={20}/>
-          </button>
+
+          <div className="class-recording-viewer-header-actions">
+            <button
+              type="button"
+              className="class-recording-viewer-action"
+              aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+              title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen (F)'}
+              onClick={() => void toggleFullscreen()}
+            >
+              {isFullscreen ? <Minimize2 size={19}/> : <Maximize2 size={19}/>}
+              <span>{isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen'}</span>
+            </button>
+
+            <button
+              type="button"
+              className="class-recording-viewer-close"
+              aria-label="Tutup rekaman"
+              title="Tutup (Esc)"
+              onClick={onClose}
+            >
+              <X size={20}/>
+            </button>
+          </div>
         </header>
 
-        <div className="class-recording-video-shell">
-          <iframe
-            src={drivePreviewUrl(row.drive_file_id)}
-            title={row.title}
-            loading="eager"
-            allow="autoplay; encrypted-media; fullscreen"
-            allowFullScreen
-          />
+        <div className="class-recording-viewer-stage">
+          <div className="class-recording-video-shell">
+            <iframe
+              src={drivePreviewUrl(row.drive_file_id)}
+              title={row.title}
+              loading="eager"
+              allow="autoplay; encrypted-media; fullscreen"
+              allowFullScreen
+            />
+          </div>
         </div>
 
-        <footer>
-          <div>
-            <span><CalendarDays size={14}/>{formatDateTime(row.recorded_at)}</span>
+        <footer className="class-recording-viewer-footer">
+          <div className="class-recording-viewer-meta">
+            <span><CalendarDays size={15}/>{formatDateTime(row.recorded_at)}</span>
             {row.duration_minutes && (
-              <span><Clock3 size={14}/>{row.duration_minutes} menit</span>
+              <span><Clock3 size={15}/>{row.duration_minutes} menit</span>
             )}
+          </div>
+
+          <div className="class-recording-viewer-shortcuts" aria-hidden="true">
+            <span><kbd>F</kbd> Fullscreen</span>
+            <span><kbd>Esc</kbd> Tutup</span>
           </div>
         </footer>
 
-        <p className="class-recording-drive-note">
-          Rekaman diputar langsung di KOJAC LMS.
-        </p>
+        {row.description && (
+          <div className="class-recording-viewer-description">
+            <strong>Materi</strong>
+            <p>{row.description}</p>
+          </div>
+        )}
       </div>
     </div>
   );

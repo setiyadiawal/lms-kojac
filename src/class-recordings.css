@@ -55,20 +55,201 @@
 .class-recording-state p{margin:0;max-width:520px;font-size:10.5px;line-height:1.5}
 
 /* Viewer */
-.class-recording-viewer-backdrop{position:fixed;inset:0;z-index:1300;display:grid;place-items:center;padding:20px;background:rgba(18,12,13,.80);backdrop-filter:blur(4px)}
-.class-recording-viewer{width:min(1120px,100%);max-height:calc(100dvh - 40px);overflow:hidden;border-radius:18px;background:#fff;box-shadow:0 28px 80px rgba(0,0,0,.42)}
-.class-recording-viewer>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}
-.class-recording-viewer>header span,.class-recording-viewer>header strong{display:block}
-.class-recording-viewer>header span{color:var(--muted);font-size:9px;font-weight:800;text-transform:uppercase}
-.class-recording-viewer>header strong{margin-top:3px;font-size:14px}
-.class-recording-viewer>header button{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
-.class-recording-video-shell{position:relative;width:100%;aspect-ratio:16/9;background:#100d0e}
-.class-recording-video-shell iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.class-recording-viewer>footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-top:1px solid var(--line)}
-.class-recording-viewer>footer>div{display:flex;flex-wrap:wrap;gap:8px 13px;color:var(--muted);font-size:9.5px}
-.class-recording-viewer>footer span,.class-recording-viewer>footer a{display:inline-flex;align-items:center;gap:5px}
-.class-recording-viewer>footer a{padding:8px 10px;border:1px solid var(--line);border-radius:8px;color:var(--maroon);font-size:9.5px;font-weight:850;text-decoration:none}
-.class-recording-drive-note{margin:0;padding:0 15px 13px;color:var(--muted);font-size:8.5px;line-height:1.45}
+.class-recording-viewer-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:1300;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(13,9,10,.88);
+  backdrop-filter:blur(8px);
+}
+.class-recording-viewer{
+  width:min(1280px,100%);
+  max-height:calc(100dvh - 48px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;
+  background:#171314;
+  color:#fff;
+  box-shadow:0 32px 100px rgba(0,0,0,.58);
+}
+.class-recording-viewer-header{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:64px;
+  padding:12px 14px 12px 18px;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  background:#1d1819;
+}
+.class-recording-viewer-heading{
+  min-width:0;
+}
+.class-recording-viewer-heading span,
+.class-recording-viewer-heading strong{
+  display:block;
+}
+.class-recording-viewer-heading span{
+  color:#cbbfc1;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.class-recording-viewer-heading strong{
+  margin-top:4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:15px;
+  line-height:1.25;
+}
+.class-recording-viewer-header-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.class-recording-viewer-action,
+.class-recording-viewer-close{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  height:38px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+}
+.class-recording-viewer-action{
+  padding:0 11px;
+  font-size:9.5px;
+  font-weight:800;
+}
+.class-recording-viewer-close{
+  width:38px;
+  padding:0;
+}
+.class-recording-viewer-action:hover,
+.class-recording-viewer-close:hover{
+  background:rgba(255,255,255,.13);
+}
+.class-recording-viewer-stage{
+  flex:1 1 auto;
+  min-height:0;
+  display:grid;
+  place-items:center;
+  padding:0;
+  background:#080707;
+}
+.class-recording-video-shell{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  max-height:calc(100dvh - 190px);
+  background:#000;
+}
+.class-recording-video-shell iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#000;
+}
+.class-recording-viewer-footer{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:48px;
+  padding:10px 16px;
+  border-top:1px solid rgba(255,255,255,.09);
+  background:#1d1819;
+}
+.class-recording-viewer-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 14px;
+  color:#d1c5c7;
+  font-size:9.5px;
+}
+.class-recording-viewer-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.class-recording-viewer-shortcuts{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#a99c9e;
+  font-size:8.5px;
+}
+.class-recording-viewer-shortcuts span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.class-recording-viewer-shortcuts kbd{
+  min-width:23px;
+  padding:3px 5px;
+  border:1px solid rgba(255,255,255,.15);
+  border-bottom-width:2px;
+  border-radius:5px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+  font:inherit;
+  font-weight:850;
+  text-align:center;
+}
+.class-recording-viewer-description{
+  flex:0 0 auto;
+  max-height:96px;
+  overflow:auto;
+  padding:10px 16px 13px;
+  border-top:1px solid rgba(255,255,255,.07);
+  background:#191516;
+}
+.class-recording-viewer-description strong{
+  display:block;
+  color:#d8cdd0;
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.class-recording-viewer-description p{
+  margin:5px 0 0;
+  color:#bfb2b4;
+  font-size:9.5px;
+  line-height:1.55;
+}
+.class-recording-viewer:fullscreen{
+  width:100vw;
+  max-width:none;
+  height:100vh;
+  max-height:none;
+  border:0;
+  border-radius:0;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-stage{
+  min-height:0;
+}
+.class-recording-viewer:fullscreen .class-recording-video-shell{
+  width:min(100%,calc((100vh - 122px) * 16 / 9));
+  max-height:calc(100vh - 122px);
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-description{
+  display:none;
+}
 
 @media(max-width:1100px){
   .class-recording-grid,.class-recording-loading-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -90,3 +271,89 @@
   .class-recording-actions button{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.class-recording-skeleton{animation:none}}
+
+/* Viewer responsive refinement */
+@media(max-width:900px){
+  .class-recording-viewer-backdrop{padding:12px}
+  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:16px}
+  .class-recording-video-shell{max-height:calc(100dvh - 172px)}
+  .class-recording-viewer-shortcuts{display:none}
+}
+@media(max-width:760px){
+  .class-recording-viewer-backdrop{
+    padding:0;
+    background:#0b0909;
+  }
+  .class-recording-viewer{
+    width:100%;
+    height:100dvh;
+    max-height:100dvh;
+    border:0;
+    border-radius:0;
+  }
+  .class-recording-viewer-header{
+    min-height:58px;
+    padding:9px 10px 9px 13px;
+  }
+  .class-recording-viewer-heading strong{
+    max-width:calc(100vw - 145px);
+    font-size:13px;
+  }
+  .class-recording-viewer-heading span{font-size:8px}
+  .class-recording-viewer-action{
+    width:38px;
+    padding:0;
+  }
+  .class-recording-viewer-action span{display:none}
+  .class-recording-viewer-stage{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:0;
+    background:#000;
+  }
+  .class-recording-video-shell{
+    width:100%;
+    max-height:none;
+    aspect-ratio:16/9;
+    margin:0;
+  }
+  .class-recording-viewer-footer{
+    min-height:48px;
+    padding:9px 12px;
+  }
+  .class-recording-viewer-meta{
+    width:100%;
+    justify-content:space-between;
+    gap:7px 10px;
+    font-size:9px;
+  }
+  .class-recording-viewer-description{
+    max-height:112px;
+    padding:9px 12px 12px;
+  }
+}
+@media(max-width:480px){
+  .class-recording-viewer-header-actions{gap:6px}
+  .class-recording-viewer-action,
+  .class-recording-viewer-close{
+    width:36px;
+    height:36px;
+  }
+  .class-recording-viewer-heading strong{
+    max-width:calc(100vw - 120px);
+  }
+  .class-recording-viewer-meta{
+    justify-content:flex-start;
+  }
+  .class-recording-viewer-meta span{
+    width:100%;
+  }
+}
+@media(max-height:650px) and (min-width:761px){
+  .class-recording-viewer-backdrop{padding:10px}
+  .class-recording-viewer{max-height:calc(100dvh - 20px)}
+  .class-recording-video-shell{max-height:calc(100dvh - 150px)}
+  .class-recording-viewer-description{display:none}
+}
