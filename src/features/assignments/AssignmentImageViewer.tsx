@@ -1,9 +1,12 @@
 import {
   ChevronLeft,
   ChevronRight,
-  Eraser,
   Pencil,
+  RotateCcw,
+  Undo2,
   X,
+  ZoomIn,
+  ZoomOut,
 } from 'lucide-react';
 import {
   useCallback,
@@ -37,9 +40,17 @@ type AssignmentImageViewerProps = {
 const BRUSH_COLORS = ['#dc2626', '#2563eb', '#111827'];
 const BRUSH_SIZES = [3, 6, 10];
 
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 3;
+const ZOOM_STEP = 0.25;
+
 function clampIndex(index: number, length: number) {
   if (length <= 0) return 0;
   return ((index % length) + length) % length;
+}
+
+function clampZoom(value: number) {
+  return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, value));
 }
 
 export function AssignmentImageViewer({
@@ -53,6 +64,7 @@ export function AssignmentImageViewer({
   const [brushColor, setBrushColor] = useState(BRUSH_COLORS[0]);
   const [brushSize, setBrushSize] = useState(BRUSH_SIZES[1]);
   const [strokesByPath, setStrokesByPath] = useState<Record<string, Stroke[]>>({});
+  const [zoom, setZoom] = useState(MIN_ZOOM);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -66,15 +78,35 @@ export function AssignmentImageViewer({
     [currentPhoto, strokesByPath],
   );
 
+  const setPhotoIndex = useCallback((nextIndex: number) => {
+    setCurrentIndex(clampIndex(nextIndex, photos.length));
+    setZoom(MIN_ZOOM);
+    setDrawEnabled(false);
+  }, [photos.length]);
+
   const goPrevious = useCallback(() => {
     if (photos.length <= 1) return;
-    setCurrentIndex((current) => clampIndex(current - 1, photos.length));
+    setCurrentIndex((current) => {
+      const next = clampIndex(current - 1, photos.length);
+      return next;
+    });
+    setZoom(MIN_ZOOM);
+    setDrawEnabled(false);
   }, [photos.length]);
 
   const goNext = useCallback(() => {
     if (photos.length <= 1) return;
-    setCurrentIndex((current) => clampIndex(current + 1, photos.length));
+    setCurrentIndex((current) => {
+      const next = clampIndex(current + 1, photos.length);
+      return next;
+    });
+    setZoom(MIN_ZOOM);
+    setDrawEnabled(false);
   }, [photos.length]);
+
+  const zoomIn = () => setZoom((current) => clampZoom(current + ZOOM_STEP));
+  const zoomOut = () => setZoom((current) => clampZoom(current - ZOOM_STEP));
+  const resetZoom = () => setZoom(MIN_ZOOM);
 
   const drawStroke = useCallback((
     context: CanvasRenderingContext2D,
@@ -129,7 +161,7 @@ export function AssignmentImageViewer({
 
   useEffect(() => {
     redrawCanvas();
-  }, [currentIndex, redrawCanvas]);
+  }, [currentIndex, zoom, redrawCanvas]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -148,6 +180,30 @@ export function AssignmentImageViewer({
       if (event.key === 'Escape') onClose();
       if (event.key === 'ArrowLeft') goPrevious();
       if (event.key === 'ArrowRight') goNext();
+
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (!currentPhoto) return;
+        setStrokesByPath((current) => {
+          const existing = current[currentPhoto.path] ?? [];
+          if (existing.length === 0) return current;
+
+          return {
+            ...current,
+            [currentPhoto.path]: existing.slice(0, -1),
+          };
+        });
+      }
+
+      if (event.key === '+' || event.key === '=') {
+        event.preventDefault();
+        zoomIn();
+      }
+
+      if (event.key === '-') {
+        event.preventDefault();
+        zoomOut();
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -156,7 +212,7 @@ export function AssignmentImageViewer({
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [goNext, goPrevious, onClose]);
+  }, [currentPhoto, goNext, goPrevious, onClose]);
 
   const pointFromEvent = (event: ReactPointerEvent<HTMLCanvasElement>): Point => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -225,21 +281,27 @@ export function AssignmentImageViewer({
     }));
   };
 
-  const clearCurrent = () => {
+  const undoCurrent = () => {
     if (!currentPhoto) return;
-    setStrokesByPath((current) => ({
-      ...current,
-      [currentPhoto.path]: [],
-    }));
+
+    setStrokesByPath((current) => {
+      const existing = current[currentPhoto.path] ?? [];
+      if (existing.length === 0) return current;
+
+      return {
+        ...current,
+        [currentPhoto.path]: existing.slice(0, -1),
+      };
+    });
   };
 
   const handleStagePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (drawEnabled) return;
+    if (drawEnabled || zoom > MIN_ZOOM) return;
     swipeStartXRef.current = event.clientX;
   };
 
   const handleStagePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (drawEnabled || swipeStartXRef.current === null) return;
+    if (drawEnabled || zoom > MIN_ZOOM || swipeStartXRef.current === null) return;
 
     const distance = event.clientX - swipeStartXRef.current;
     swipeStartXRef.current = null;
@@ -250,6 +312,8 @@ export function AssignmentImageViewer({
   };
 
   if (!currentPhoto) return null;
+
+  const zoomPercent = Math.round(zoom * 100);
 
   return (
     <div
@@ -323,39 +387,84 @@ export function AssignmentImageViewer({
           <button
             type="button"
             disabled={currentStrokes.length === 0}
-            onClick={clearCurrent}
+            title="Undo coretan terakhir (Ctrl/Cmd + Z)"
+            onClick={undoCurrent}
           >
-            <Eraser size={15}/> Hapus Coretan
+            <Undo2 size={15}/> Undo
           </button>
 
+          <div className="assignment-image-viewer-zoom" aria-label="Kontrol zoom">
+            <button
+              type="button"
+              aria-label="Zoom out"
+              disabled={zoom <= MIN_ZOOM}
+              onClick={zoomOut}
+            >
+              <ZoomOut size={15}/>
+            </button>
+
+            <button
+              type="button"
+              className="assignment-image-viewer-zoom-value"
+              title="Reset zoom ke 100%"
+              disabled={zoom === MIN_ZOOM}
+              onClick={resetZoom}
+            >
+              {zoomPercent}%
+            </button>
+
+            <button
+              type="button"
+              aria-label="Zoom in"
+              disabled={zoom >= MAX_ZOOM}
+              onClick={zoomIn}
+            >
+              <ZoomIn size={15}/>
+            </button>
+
+            <button
+              type="button"
+              aria-label="Reset zoom ke 100%"
+              disabled={zoom === MIN_ZOOM}
+              onClick={resetZoom}
+            >
+              <RotateCcw size={14}/>
+            </button>
+          </div>
+
           <span className="assignment-image-viewer-note">
-            Coretan tersimpan selama jendela ini masih terbuka.
+            Undo: Ctrl/Cmd+Z · Zoom: + / − · Coretan hilang saat viewer ditutup.
           </span>
         </div>
 
         <div
           ref={stageRef}
-          className={`assignment-image-viewer-stage ${drawEnabled ? 'is-drawing' : ''}`}
+          className={`assignment-image-viewer-stage ${drawEnabled ? 'is-drawing' : ''} ${zoom > MIN_ZOOM ? 'is-zoomed' : ''}`}
           onPointerDown={handleStagePointerDown}
           onPointerUp={handleStagePointerUp}
         >
-          <img
-            src={currentPhoto.signedUrl}
-            alt={`Foto jawaban ${currentIndex + 1} dari ${studentName}`}
-            draggable={false}
-            onLoad={redrawCanvas}
-          />
+          <div
+            className="assignment-image-viewer-zoom-layer"
+            style={{ '--assignment-zoom': zoom } as CSSProperties}
+          >
+            <img
+              src={currentPhoto.signedUrl}
+              alt={`Foto jawaban ${currentIndex + 1} dari ${studentName}`}
+              draggable={false}
+              onLoad={redrawCanvas}
+            />
 
-          <canvas
-            ref={canvasRef}
-            className="assignment-image-viewer-canvas"
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={finishStroke}
-            onPointerCancel={finishStroke}
-          />
+            <canvas
+              ref={canvasRef}
+              className="assignment-image-viewer-canvas"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={finishStroke}
+              onPointerCancel={finishStroke}
+            />
+          </div>
 
-          {photos.length > 1 && (
+          {photos.length > 1 && !drawEnabled && zoom === MIN_ZOOM && (
             <>
               <button
                 type="button"
@@ -386,7 +495,7 @@ export function AssignmentImageViewer({
                 type="button"
                 className={currentIndex === index ? 'is-active' : ''}
                 aria-label={`Buka foto ${index + 1}`}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => setPhotoIndex(index)}
               >
                 <img src={photo.signedUrl} alt=""/>
                 <span>{index + 1}</span>

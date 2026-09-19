@@ -192,3 +192,22 @@
   .assignment-image-viewer-toolbar>button{font-size:8.5px}
 }
 @media(prefers-reduced-motion:reduce){.assignment-skeleton{animation:none}}
+
+/* KOJAC Assignment viewer — Zoom + Undo */
+.assignment-image-viewer-zoom{display:flex;align-items:center;gap:4px;padding-left:2px}
+.assignment-image-viewer-zoom button{min-width:32px;height:32px;display:grid;place-items:center;padding:0 7px;border:1px solid #d9cacc;border-radius:8px;background:#fff;color:#5a4448;font-size:9px;font-weight:850}
+.assignment-image-viewer-zoom button:disabled{opacity:.4;cursor:not-allowed}
+.assignment-image-viewer-zoom-value{min-width:54px!important}
+.assignment-image-viewer-stage{overflow:auto}
+.assignment-image-viewer-zoom-layer{position:relative;width:100%;height:100%;min-height:inherit;display:flex;align-items:center;justify-content:center;transform:scale(var(--assignment-zoom,1));transform-origin:center center;transition:transform .16s ease}
+.assignment-image-viewer-zoom-layer>img{display:block;max-width:100%;max-height:calc(100vh - 255px);object-fit:contain;pointer-events:none}
+.assignment-image-viewer-zoom-layer .assignment-image-viewer-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;touch-action:none}
+.assignment-image-viewer-stage.is-drawing .assignment-image-viewer-zoom-layer .assignment-image-viewer-canvas{pointer-events:auto;cursor:crosshair}
+.assignment-image-viewer-stage.is-zoomed{cursor:zoom-out}
+@media(max-width:760px){
+  .assignment-image-viewer-zoom-layer>img{max-height:calc(100vh - 250px)}
+  .assignment-image-viewer-zoom{order:3}
+}
+@media(prefers-reduced-motion:reduce){
+  .assignment-image-viewer-zoom-layer{transition:none}
+}
