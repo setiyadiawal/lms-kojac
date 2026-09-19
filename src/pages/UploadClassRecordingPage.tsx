@@ -3,26 +3,24 @@ import {
   AlertCircle,
   CheckCircle2,
   CloudUpload,
-  ExternalLink,
   FileVideo2,
-  FolderOpen,
   HardDrive,
-  Link2,
+  History,
   LogIn,
-  RefreshCw,
   School,
   Square,
   Upload,
 } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import '../class-recording-upload.css';
+import '../recording-upload-background.css';
 import {
-  createAnyoneWithLinkReaderPermission,
-  driveFileUrl,
-  driveFolderUrl,
-  requestGoogleDriveAccessToken,
-  uploadClassVideoToGoogleDrive,
-} from '../features/recordings/googleDriveUpload';
+  cancelBackgroundUpload,
+  clearFinishedBackgroundUpload,
+  connectBackgroundGoogleDrive,
+  startBackgroundRecordingUpload,
+  useBackgroundRecordingUpload,
+} from '../features/recordings/backgroundRecordingUpload';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -43,13 +41,6 @@ type UploadForm = {
   isPublished: boolean;
 };
 
-type CompletedUpload = {
-  fileId: string;
-  fileName: string;
-  webViewLink: string;
-  folderId: string;
-};
-
 const TEACHING_ROLES = new Set<AppRole>([
   'pengajar',
   'administrator',
@@ -57,8 +48,6 @@ const TEACHING_ROLES = new Set<AppRole>([
   'co_founder',
   'founder',
 ]);
-
-const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim();
 
 function localDateTimeInput(value = new Date()) {
   const adjusted = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
@@ -88,6 +77,16 @@ function bytesLabel(bytes: number) {
   }
 
   return `${value.toFixed(index >= 2 ? 1 : 0)} ${units[index]}`;
+}
+
+function formatDateTime(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '—';
+
+  return new Intl.DateTimeFormat('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
 }
 
 async function detectVideoDurationMinutes(file: File) {
@@ -124,24 +123,19 @@ async function detectVideoDurationMinutes(file: File) {
 }
 
 export function UploadClassRecordingPage() {
-  const { role, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
+  const { user, role, loading: authLoading } = useAuth();
   const canTeach = Boolean(role && TEACHING_ROLES.has(role));
+
+  const uploadState = useBackgroundRecordingUpload(user?.id);
 
   const [classes, setClasses] = useState<TeachingClassRow[]>([]);
   const [selectedClassId, setSelectedClassId] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState<UploadForm>(initialForm);
-  const [driveAccessToken, setDriveAccessToken] = useState('');
   const [loadingClasses, setLoadingClasses] = useState(true);
-  const [connectingDrive, setConnectingDrive] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [uploadedBytes, setUploadedBytes] = useState(0);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [completed, setCompleted] = useState<CompletedUpload | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const [pageError, setPageError] = useState('');
+  const [pageMessage, setPageMessage] = useState('');
+  const handledSuccessId = useRef<string | null>(null);
 
   const selectedClass = useMemo(
     () => classes.find((row) => row.class_id === selectedClassId) ?? null,
@@ -152,26 +146,29 @@ export function UploadClassRecordingPage() {
     if (!canTeach) return;
 
     setLoadingClasses(true);
-    setError('');
+    setPageError('');
 
-    const { data, error: loadError } = await supabase.rpc('get_my_teaching_classes');
+    const { data, error } = await supabase.rpc('get_my_teaching_classes');
 
-    if (loadError) {
-      console.error('KOJAC upload recording classes failed', loadError);
+    if (error) {
+      console.error('KOJAC upload recording classes failed', error);
       setClasses([]);
-      setError('Kelas mengajar belum dapat dimuat.');
+      setPageError('Kelas mengajar belum dapat dimuat.');
       setLoadingClasses(false);
       return;
     }
 
     const rows = (data ?? []) as TeachingClassRow[];
     setClasses(rows);
+
     setSelectedClassId((current) => {
       if (current && rows.some((row) => row.class_id === current)) return current;
+
       return rows.find((row) => row.class_status === 'active')?.class_id
         ?? rows[0]?.class_id
         ?? '';
     });
+
     setLoadingClasses(false);
   }, [canTeach]);
 
@@ -180,34 +177,40 @@ export function UploadClassRecordingPage() {
   }, [authLoading, canTeach, loadClasses]);
 
   useEffect(() => {
-    return () => abortRef.current?.abort();
-  }, []);
+    if (
+      uploadState.job?.status === 'success'
+      && handledSuccessId.current !== uploadState.job.id
+    ) {
+      handledSuccessId.current = uploadState.job.id;
+      setFile(null);
+      setForm(initialForm());
+      setPageError('');
+      setPageMessage('Video berhasil diupload dan sudah masuk Rekaman Kelas.');
+    }
+  }, [uploadState.job]);
 
   const connectDrive = async () => {
-    setConnectingDrive(true);
-    setError('');
-    setMessage('');
+    setPageError('');
+    setPageMessage('');
 
     try {
-      const token = await requestGoogleDriveAccessToken(GOOGLE_CLIENT_ID);
-      setDriveAccessToken(token);
-      setMessage('Google Drive terhubung untuk sesi ini.');
-    } catch (connectError) {
-      console.error('KOJAC Google Drive auth failed', connectError);
-      setError(
-        connectError instanceof Error
-          ? connectError.message
+      await connectBackgroundGoogleDrive();
+      setPageMessage(
+        'Google Drive terhubung. Koneksi tetap aktif setelah refresh selama sesi Google masih berlaku.',
+      );
+    } catch (error) {
+      setPageError(
+        error instanceof Error
+          ? error.message
           : 'Google Drive belum dapat dihubungkan.',
       );
-    } finally {
-      setConnectingDrive(false);
     }
   };
 
-  const onChooseFile = async (nextFile: File | null) => {
-    setError('');
-    setMessage('');
-    setCompleted(null);
+  const chooseFile = async (nextFile: File | null) => {
+    setPageError('');
+    setPageMessage('');
+    clearFinishedBackgroundUpload();
 
     if (!nextFile) {
       setFile(null);
@@ -216,174 +219,97 @@ export function UploadClassRecordingPage() {
 
     if (!nextFile.type.startsWith('video/')) {
       setFile(null);
-      setError('Pilih file video yang valid.');
+      setPageError('Pilih file video yang valid.');
       return;
     }
 
     setFile(nextFile);
 
     if (!form.title.trim()) {
-      const nameWithoutExt = nextFile.name.replace(/\.[^.]+$/, '');
-      setForm((current) => ({ ...current, title: nameWithoutExt.slice(0, 160) }));
+      setForm((current) => ({
+        ...current,
+        title: nextFile.name.replace(/\.[^.]+$/, '').slice(0, 160),
+      }));
     }
 
     const duration = await detectVideoDurationMinutes(nextFile);
     if (duration) {
-      setForm((current) => ({ ...current, duration: String(duration) }));
+      setForm((current) => ({
+        ...current,
+        duration: String(duration),
+      }));
     }
   };
 
-  const cancelUpload = () => {
-    abortRef.current?.abort();
-    abortRef.current = null;
-  };
-
   const uploadVideo = async () => {
-    if (!GOOGLE_CLIENT_ID) {
-      setError(
-        'Google OAuth belum dikonfigurasi. Tambahkan VITE_GOOGLE_CLIENT_ID di Vercel '
-        + 'dan pastikan https://lms.kojac.id terdaftar sebagai Authorized JavaScript origin.',
-      );
+    setPageError('');
+    setPageMessage('');
+
+    if (!uploadState.driveConnected) {
+      setPageError('Hubungkan Google Drive terlebih dahulu.');
       return;
     }
 
     if (!selectedClass) {
-      setError('Pilih kelas terlebih dahulu.');
+      setPageError('Pilih kelas terlebih dahulu.');
       return;
     }
 
     if (!file) {
-      setError('Pilih video yang akan diupload.');
+      setPageError('Pilih video yang akan diupload.');
       return;
     }
 
     if (!form.title.trim()) {
-      setError('Judul rekaman wajib diisi.');
+      setPageError('Judul rekaman wajib diisi.');
       return;
     }
 
     const recordedAt = new Date(form.recordedAt);
     if (!Number.isFinite(recordedAt.getTime())) {
-      setError('Tanggal rekaman tidak valid.');
+      setPageError('Tanggal rekaman tidak valid.');
       return;
     }
 
     const duration = form.duration.trim() ? Number(form.duration) : null;
-    if (duration !== null && (!Number.isInteger(duration) || duration < 1 || duration > 1440)) {
-      setError('Durasi harus 1–1440 menit.');
+
+    if (
+      duration !== null
+      && (!Number.isInteger(duration) || duration < 1 || duration > 1440)
+    ) {
+      setPageError('Durasi harus 1–1440 menit.');
       return;
     }
 
-    setUploading(true);
-    setProgress(0);
-    setUploadedBytes(0);
-    setError('');
-    setMessage('');
-    setCompleted(null);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     try {
-      let token = driveAccessToken;
-
-      if (!token) {
-        token = await requestGoogleDriveAccessToken(GOOGLE_CLIENT_ID);
-        setDriveAccessToken(token);
-      }
-
-      const uploaded = await uploadClassVideoToGoogleDrive({
-        accessToken: token,
+      await startBackgroundRecordingUpload({
         file,
         classId: selectedClass.class_id,
         className: selectedClass.class_name,
         title: form.title.trim(),
+        description: form.description,
         recordedAt,
-        signal: controller.signal,
-        onProgress: (percent, bytes) => {
-          setProgress(percent);
-          setUploadedBytes(bytes);
-        },
+        durationMinutes: duration,
+        isPublished: form.isPublished,
       });
-
-      const uploadedWebViewLink = uploaded.webViewLink || driveFileUrl(uploaded.id);
-
-      setCompleted({
-        fileId: uploaded.id,
-        fileName: uploaded.name,
-        webViewLink: uploadedWebViewLink,
-        folderId: uploaded.folderId,
-      });
-
-      try {
-        await createAnyoneWithLinkReaderPermission(
-          token,
-          uploaded.id,
-          controller.signal,
-        );
-      } catch (permissionError) {
-        console.error('KOJAC Drive permission setup failed', permissionError);
-        setError(
-          'Video sudah berhasil diupload ke Google Drive, tetapi izin menonton otomatis gagal. '
-          + 'Buka video di Google Drive lalu ubah General access menjadi Anyone with the link, '
-          + 'kemudian tambahkan rekaman dari menu Rekaman Kelas.',
-        );
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        setPageMessage('Upload dibatalkan.');
         return;
       }
 
-      const { error: recordingError } = await supabase.rpc('create_class_recording', {
-        p_class_id: selectedClass.class_id,
-        p_title: form.title.trim(),
-        p_description: form.description,
-        p_drive_file_id: uploaded.id,
-        p_recorded_at: recordedAt.toISOString(),
-        p_duration_minutes: duration,
-        p_is_published: form.isPublished,
-      });
-
-      if (recordingError) {
-        console.error('KOJAC recording metadata save failed after Drive upload', recordingError);
-
-        const fallbackUrl = uploaded.webViewLink || driveFileUrl(uploaded.id);
-        setCompleted({
-          fileId: uploaded.id,
-          fileName: uploaded.name,
-          webViewLink: fallbackUrl,
-          folderId: uploaded.folderId,
-        });
-
-        setError(
-          'Video sudah berhasil masuk Google Drive, tetapi metadata rekaman belum tersimpan di LMS. '
-          + 'Gunakan link Drive yang tampil di bawah untuk menambahkannya melalui menu Rekaman Kelas.',
-        );
-        return;
-      }
-
-      setMessage(
-        'Upload selesai. Video sudah tersimpan di Google Drive, akses link sudah aktif, '
-        + 'dan rekaman sudah masuk ke Rekaman Kelas.',
+      setPageError(
+        error instanceof Error
+          ? error.message
+          : 'Upload video gagal.',
       );
-      setFile(null);
-      setForm(initialForm());
-    } catch (uploadError) {
-      if (uploadError instanceof DOMException && uploadError.name === 'AbortError') {
-        setError('Upload dibatalkan.');
-      } else {
-        console.error('KOJAC Google Drive video upload failed', uploadError);
-        setError(
-          uploadError instanceof Error
-            ? uploadError.message
-            : 'Upload video ke Google Drive gagal.',
-        );
-      }
-    } finally {
-      abortRef.current = null;
-      setUploading(false);
     }
   };
 
   if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
   if (!canTeach) return <Navigate to="/" replace />;
+
+  const uploading = uploadState.job?.status === 'uploading';
 
   return (
     <div className="page recording-upload-page">
@@ -392,34 +318,40 @@ export function UploadClassRecordingPage() {
           <p className="eyebrow">PENGAJAR KOJAC</p>
           <h1 className="title-icon"><CloudUpload/>Upload Video</h1>
           <p>
-            Upload rekaman kelas langsung ke Google Drive. Setelah selesai,
-            rekaman otomatis masuk ke daftar Rekaman Kelas.
+            Upload rekaman kelas ke penyimpanan video KOJAC.
+            Anda boleh membuka menu LMS lain selama proses upload berjalan.
           </p>
         </div>
 
         <button
-          className={`recording-drive-connect ${driveAccessToken ? 'is-connected' : ''}`}
+          className={`recording-drive-connect ${uploadState.driveConnected ? 'is-connected' : ''}`}
           type="button"
-          disabled={connectingDrive || uploading || !GOOGLE_CLIENT_ID}
+          disabled={
+            uploadState.connectingDrive
+            || uploading
+            || uploadState.driveConnected
+            || !uploadState.googleClientConfigured
+          }
           onClick={() => void connectDrive()}
         >
-          {driveAccessToken ? <CheckCircle2 size={17}/> : <LogIn size={17}/>}
-          {driveAccessToken
+          {uploadState.driveConnected
+            ? <CheckCircle2 size={17}/>
+            : <LogIn size={17}/>}
+          {uploadState.driveConnected
             ? 'Google Drive Terhubung'
-            : connectingDrive
+            : uploadState.connectingDrive
               ? 'Menghubungkan…'
               : 'Hubungkan Google Drive'}
         </button>
       </header>
 
-      {!GOOGLE_CLIENT_ID && (
+      {!uploadState.googleClientConfigured && (
         <section className="recording-upload-config-warning" role="alert">
           <AlertCircle size={22}/>
           <div>
             <strong>Google OAuth belum dikonfigurasi.</strong>
             <p>
-              Tambahkan <code>VITE_GOOGLE_CLIENT_ID</code> pada environment Vercel
-              sebelum fitur upload dapat dipakai.
+              Tambahkan <code>VITE_GOOGLE_CLIENT_ID</code> pada environment Vercel.
             </p>
           </div>
         </section>
@@ -438,7 +370,7 @@ export function UploadClassRecordingPage() {
           <div className="recording-upload-section-heading">
             <div>
               <p className="eyebrow">VIDEO BARU</p>
-              <h2>Upload Rekaman ke Google Drive</h2>
+              <h2>Upload Rekaman Kelas</h2>
             </div>
             <span>Video tidak disimpan di Supabase.</span>
           </div>
@@ -540,7 +472,7 @@ export function UploadClassRecordingPage() {
                 <FileVideo2 size={19}/>
                 <div>
                   <strong>File Video</strong>
-                  <span>Video akan dikirim langsung dari browser ke Google Drive.</span>
+                  <span>Video dikirim langsung dari browser tanpa melalui Supabase.</span>
                 </div>
               </div>
 
@@ -552,7 +484,7 @@ export function UploadClassRecordingPage() {
                   accept="video/*"
                   disabled={uploading}
                   onChange={(event) => {
-                    void onChooseFile(event.target.files?.[0] ?? null);
+                    void chooseFile(event.target.files?.[0] ?? null);
                     event.currentTarget.value = '';
                   }}
                 />
@@ -569,73 +501,63 @@ export function UploadClassRecordingPage() {
               </div>
             ) : (
               <p className="recording-upload-no-file">
-                Belum ada video dipilih.
+                {uploading
+                  ? 'Upload sedang berjalan di background.'
+                  : 'Belum ada video dipilih.'}
               </p>
             )}
           </div>
 
-          {uploading && (
-            <div className="recording-upload-progress-card">
+          {uploadState.job && (
+            <div className={`recording-upload-job-card is-${uploadState.job.status}`}>
               <div className="recording-upload-progress-top">
                 <div>
-                  <HardDrive size={17}/>
-                  <span>Uploading ke Google Drive…</span>
+                  {uploadState.job.status === 'success'
+                    ? <CheckCircle2 size={17}/>
+                    : uploadState.job.status === 'error'
+                      ? <AlertCircle size={17}/>
+                      : <HardDrive size={17}/>}
+                  <span>{uploadState.job.message}</span>
                 </div>
-                <strong>{progress}%</strong>
+                {uploading && <strong>{uploadState.job.progress}%</strong>}
               </div>
 
-              <div
-                className="recording-upload-progress-track"
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={progress}
-              >
-                <span style={{ width: `${progress}%` }}/>
-              </div>
+              {uploading && (
+                <>
+                  <div
+                    className="recording-upload-progress-track"
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={uploadState.job.progress}
+                  >
+                    <span style={{ width: `${uploadState.job.progress}%` }}/>
+                  </div>
 
-              <div className="recording-upload-progress-meta">
-                <span>{bytesLabel(uploadedBytes)} / {bytesLabel(file?.size ?? 0)}</span>
-                <button type="button" onClick={cancelUpload}>
-                  <Square size={12}/> Batalkan
-                </button>
-              </div>
+                  <div className="recording-upload-progress-meta">
+                    <span>
+                      {bytesLabel(uploadState.job.uploadedBytes)}
+                      {' / '}
+                      {bytesLabel(uploadState.job.totalBytes)}
+                    </span>
+                    <button type="button" onClick={cancelBackgroundUpload}>
+                      <Square size={12}/> Batalkan
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
-          {error && (
+          {pageError && (
             <div className="recording-upload-message is-error" role="alert">
-              <AlertCircle size={17}/><span>{error}</span>
+              <AlertCircle size={17}/><span>{pageError}</span>
             </div>
           )}
 
-          {message && (
+          {pageMessage && (
             <div className="recording-upload-message is-success" role="status">
-              <CheckCircle2 size={17}/><span>{message}</span>
-            </div>
-          )}
-
-          {completed && (
-            <div className="recording-upload-completed">
-              <div>
-                <CheckCircle2 size={20}/>
-                <div>
-                  <strong>{completed.fileName}</strong>
-                  <span>Google Drive file ID: {completed.fileId}</span>
-                </div>
-              </div>
-
-              <div className="recording-upload-completed-actions">
-                <a href={completed.webViewLink} target="_blank" rel="noreferrer">
-                  <ExternalLink size={14}/>Buka Video
-                </a>
-                <a href={driveFolderUrl(completed.folderId)} target="_blank" rel="noreferrer">
-                  <FolderOpen size={14}/>Buka Folder
-                </a>
-                <button type="button" onClick={() => navigate('/rekaman-kelas')}>
-                  <Link2 size={14}/>Rekaman Kelas
-                </button>
-              </div>
+              <CheckCircle2 size={17}/><span>{pageMessage}</span>
             </div>
           )}
 
@@ -648,12 +570,45 @@ export function UploadClassRecordingPage() {
                 || !file
                 || !selectedClass
                 || !form.title.trim()
+                || !uploadState.driveConnected
               }
               onClick={() => void uploadVideo()}
             >
               <CloudUpload size={17}/>
-              {uploading ? `Uploading ${progress}%` : 'Upload ke Google Drive'}
+              {uploading
+                ? `Uploading ${uploadState.job?.progress ?? 0}%`
+                : 'Upload Video'}
             </button>
+          </div>
+        </section>
+      )}
+
+      {uploadState.history.length > 0 && (
+        <section className="recording-upload-recent panel">
+          <div className="recording-upload-recent-heading">
+            <History size={18}/>
+            <div>
+              <strong>Upload Terakhir</strong>
+              <span>Tetap tersedia setelah halaman di-refresh.</span>
+            </div>
+          </div>
+
+          <div className="recording-upload-recent-list">
+            {uploadState.history.map((row) => (
+              <div
+                className={`recording-upload-recent-item is-${row.status}`}
+                key={row.id}
+              >
+                <div>
+                  <strong>{row.title}</strong>
+                  <span>{row.className} · {row.fileName}</span>
+                  <small>{row.message}</small>
+                </div>
+                <time dateTime={row.finishedAt}>
+                  {formatDateTime(row.finishedAt)}
+                </time>
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -661,13 +616,11 @@ export function UploadClassRecordingPage() {
       <section className="recording-upload-info">
         <HardDrive size={20}/>
         <div>
-          <strong>Penyimpanan Google Drive</strong>
+          <strong>Upload tetap berjalan saat pindah menu</strong>
           <p>
-            KOJAC membuat folder <b>KOJAC LMS - Rekaman Kelas</b>, lalu subfolder
-            per kelas secara otomatis. File video otomatis diberi akses
-            <b> Anyone with the link — Viewer</b> agar dapat diputar di LMS.
-            Access token Google hanya disimpan di memori browser selama sesi halaman
-            ini dan tidak disimpan ke database KOJAC.
+            Anda dapat membuka menu lain selama upload berlangsung.
+            Jangan me-refresh atau menutup browser ketika upload masih aktif;
+            browser akan memberikan peringatan agar proses tidak terputus.
           </p>
         </div>
       </section>

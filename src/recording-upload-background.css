@@ -1,0 +1,191 @@
+/* KOJAC LMS v1.2 — background/persistent video upload */
+.kojac-upload-floating{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:1600;
+  width:min(380px,calc(100vw - 36px));
+  padding:13px;
+  border:1px solid #dbc8cb;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 18px 50px rgba(58,25,31,.2);
+}
+.kojac-upload-floating-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.kojac-upload-floating-title strong{font-size:10.5px}
+.kojac-upload-floating-title span{
+  max-width:170px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--muted);
+  font-size:8.5px
+}
+.kojac-upload-floating-track{
+  height:7px;
+  margin-top:9px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#eee6e8
+}
+.kojac-upload-floating-track>span{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:var(--maroon);
+  transition:width .18s ease
+}
+.kojac-upload-floating-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:8.5px
+}
+.kojac-upload-floating-meta button{
+  padding:6px 8px;
+  border:1px solid #ead0d3;
+  border-radius:8px;
+  background:#fff;
+  color:#92313b;
+  font-size:8.5px;
+  font-weight:850
+}
+
+.kojac-upload-toast{
+  position:fixed;
+  right:18px;
+  top:18px;
+  z-index:1700;
+  width:min(390px,calc(100vw - 36px));
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 30px;
+  gap:10px;
+  padding:14px;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 20px 60px rgba(52,20,26,.23);
+  animation:kojac-upload-toast-in .2s ease-out
+}
+.kojac-upload-toast.is-success{border:1px solid #c8e0cf}
+.kojac-upload-toast.is-error{border:1px solid #ecc9cd}
+.kojac-upload-toast strong,.kojac-upload-toast span{display:block}
+.kojac-upload-toast strong{font-size:11.5px}
+.kojac-upload-toast span{
+  margin-top:4px;
+  color:#66575a;
+  font-size:9.5px;
+  line-height:1.45
+}
+.kojac-upload-toast button{
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#77686b;
+  font-size:19px
+}
+
+.recording-upload-job-card{
+  margin-top:14px;
+  padding:13px;
+  border:1px solid #d9dfe9;
+  border-radius:11px;
+  background:#f8faff
+}
+.recording-upload-job-card.is-success{border-color:#cae1d0;background:#f5fbf7}
+.recording-upload-job-card.is-error{border-color:#edc9cd;background:#fff7f7}
+.recording-upload-job-card.is-cancelled{border-color:#e2dcde;background:#faf8f8}
+
+.recording-upload-recent{
+  margin-top:14px;
+  padding:15px
+}
+.recording-upload-recent-heading{
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+.recording-upload-recent-heading>svg{color:var(--maroon)}
+.recording-upload-recent-heading strong,
+.recording-upload-recent-heading span{display:block}
+.recording-upload-recent-heading strong{font-size:11px}
+.recording-upload-recent-heading span{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8.8px
+}
+.recording-upload-recent-list{
+  display:grid;
+  gap:7px;
+  margin-top:11px
+}
+.recording-upload-recent-item{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 11px;
+  border:1px solid #ebe2e3;
+  border-radius:10px;
+  background:#fcfafb
+}
+.recording-upload-recent-item.is-success{border-left:3px solid #3d8553}
+.recording-upload-recent-item.is-error{border-left:3px solid #a6424c}
+.recording-upload-recent-item.is-cancelled,
+.recording-upload-recent-item.is-interrupted{border-left:3px solid #998c8e}
+.recording-upload-recent-item strong,
+.recording-upload-recent-item span,
+.recording-upload-recent-item small{display:block}
+.recording-upload-recent-item strong{font-size:9.8px}
+.recording-upload-recent-item span{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8.5px
+}
+.recording-upload-recent-item small{
+  margin-top:3px;
+  color:#756669;
+  font-size:8.2px
+}
+.recording-upload-recent-item time{
+  flex:0 0 auto;
+  color:var(--muted);
+  font-size:8.2px
+}
+
+@keyframes kojac-upload-toast-in{
+  from{opacity:0;transform:translateY(-7px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:640px){
+  .kojac-upload-floating{
+    left:12px;
+    right:12px;
+    bottom:12px;
+    width:auto
+  }
+  .kojac-upload-toast{
+    left:12px;
+    right:12px;
+    top:12px;
+    width:auto
+  }
+  .recording-upload-recent-item{
+    flex-direction:column
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .kojac-upload-floating-track>span{transition:none}
+  .kojac-upload-toast{animation:none}
+}
