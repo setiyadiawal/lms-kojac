@@ -33,7 +33,7 @@ const ListeningPage = lazy(() => import('./pages/ListeningPage').then((module) =
 
 function LazyModule({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div className="full-center">Memuat modul KOJAC窶ｦ</div>}>
+    <Suspense fallback={<div className="full-center">Memuat modul KOJAC…</div>}>
       {children}
     </Suspense>
   );
