@@ -2,7 +2,7 @@
   position:fixed;
   right:18px;
   bottom:18px;
-  z-index:1450;
+  z-index:55;
   width:min(410px,calc(100vw - 36px));
   display:grid;
   grid-template-columns:48px minmax(0,1fr) auto;

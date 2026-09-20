@@ -246,7 +246,7 @@ export function VerifyEmailPage() {
 
   return <div className="auth-screen">
     <section className="auth-copy">
-      <div className="brand hero-brand"><div className="brand-mark">空</div><div><strong>KOJAC</strong><span>Kuuhaku Online Japanese Class</span></div></div>
+      <div className="brand hero-brand"><img className="hero-brand-logo" src="/brand/kojac-wordmark.png" alt="KOJAC — Kuuhaku Online Japanese Class" /></div>
       <h1>From Zero<br/>to <em>Japan.</em></h1>
       <p>Verifikasi email terlebih dahulu. Setelah itu akunmu tetap menunggu persetujuan tim KOJAC sebelum materi belajar terbuka.</p>
       <div className="pill-row"><span>Email Verification</span><span>Admin Approval</span><span>Secure Learning</span></div>
