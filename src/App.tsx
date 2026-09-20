@@ -6,8 +6,9 @@ import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { PendingPage } from './pages/PendingPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
-import { ExamPage, FeedbackPage, LearningPage, PracticePage } from './pages/ModulePages';
+import { FeedbackPage, LearningPage, PracticePage } from './pages/ModulePages';
 import { ProgressPage } from './pages/ProgressPage';
+import { JlptSimulationPage } from './pages/JlptSimulationPage';
 import { AdminPage } from './pages/AdminPage';
 import { MyClassesPage } from './pages/MyClassesPage';
 import { ClassRecordingsPage } from './pages/ClassRecordingsPage';
@@ -74,7 +75,7 @@ export default function App() {
       <Route path="belajar/reading" element={<LazyModule><ReadingPage /></LazyModule>} />
       <Route path="belajar/listening" element={<LazyModule><ListeningPage /></LazyModule>} />
       <Route path="latihan" element={<PracticePage />} />
-      <Route path="jlpt" element={<ExamPage />} />
+      <Route path="jlpt" element={<JlptSimulationPage />} />
       <Route path="progress" element={<ProgressPage />} />
       <Route path="kritik-saran" element={<FeedbackPage />} />
       <Route path="admin" element={<RoleRoute minimum="administrator"><AdminPage /></RoleRoute>} />

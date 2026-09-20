@@ -63,16 +63,28 @@ function buildOptions(correct: string, pool: string[]) {
 
 type ReadingPassage = (typeof READING_ITEMS)[number]['passage'];
 
-function textOfReadingPassage(passage: ReadingPassage) {
-  return passage
-    .map((paragraph) =>
-      paragraph
-        .map((segment) => segment.text)
-        .join('')
-        .trim(),
-    )
-    .filter(Boolean)
-    .join('\n\n');
+function textOfReadingPassage(passage: unknown): string {
+  const readText = (value: unknown): string => {
+    if (Array.isArray(value)) {
+      const containsNestedArray = value.some((item) => Array.isArray(item));
+      const parts = value
+        .map((item) => readText(item))
+        .filter((item) => item.length > 0);
+
+      return parts.join(containsNestedArray ? '\n' : '');
+    }
+
+    if (typeof value === 'string') return value;
+
+    if (value && typeof value === 'object' && 'text' in value) {
+      const text = (value as { text?: unknown }).text;
+      return typeof text === 'string' ? text : '';
+    }
+
+    return '';
+  };
+
+  return readText(passage).trim();
 }
 
 function buildVocabularyQuestions(
