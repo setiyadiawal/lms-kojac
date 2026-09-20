@@ -144,14 +144,56 @@ function getReadingList(item: KanjiItem, type: 'onyomi' | 'kunyomi') {
   return type === 'onyomi' ? item.onyomi : item.kunyomi;
 }
 
+type KanjiEligibilityIndex = {
+  meaningCounts: Map<string, number>;
+  onyomiCounts: Map<string, number>;
+  kunyomiCounts: Map<string, number>;
+};
+
+const kanjiEligibilityIndexCache = new WeakMap<KanjiItem[], KanjiEligibilityIndex>();
+
+function incrementCount(map: Map<string, number>, key: string) {
+  if (!key) return;
+  map.set(key, (map.get(key) ?? 0) + 1);
+}
+
+function getKanjiEligibilityIndex(pool: KanjiItem[]): KanjiEligibilityIndex {
+  const cached = kanjiEligibilityIndexCache.get(pool);
+  if (cached) return cached;
+
+  const meaningCounts = new Map<string, number>();
+  const onyomiCounts = new Map<string, number>();
+  const kunyomiCounts = new Map<string, number>();
+
+  for (const item of pool) {
+    incrementCount(meaningCounts, meaningKey(item));
+
+    const uniqueOnyomi = new Set(
+      item.onyomi.map(normalizeReading).filter(Boolean),
+    );
+    const uniqueKunyomi = new Set(
+      item.kunyomi.map(normalizeReading).filter(Boolean),
+    );
+
+    for (const key of uniqueOnyomi) incrementCount(onyomiCounts, key);
+    for (const key of uniqueKunyomi) incrementCount(kunyomiCounts, key);
+  }
+
+  const index = { meaningCounts, onyomiCounts, kunyomiCounts };
+  kanjiEligibilityIndexCache.set(pool, index);
+  return index;
+}
+
 function getUniqueReverseReading(item: KanjiItem, pool: KanjiItem[], type: 'onyomi' | 'kunyomi') {
   const readings = getReadingList(item, type);
+  const index = getKanjiEligibilityIndex(pool);
+  const counts = type === 'onyomi' ? index.onyomiCounts : index.kunyomiCounts;
+
   for (const reading of readings) {
     const key = normalizeReading(reading);
-    if (!key) continue;
-    const matchingItems = pool.filter((candidate) => getReadingList(candidate, type).some((entry) => normalizeReading(entry) === key));
-    if (matchingItems.length === 1) return reading;
+    if (key && counts.get(key) === 1) return reading;
   }
+
   return null;
 }
 
@@ -193,8 +235,9 @@ function buildReadingOptions(correct: KanjiItem, pool: KanjiItem[], type: 'onyom
 function fixedEligible(kind: FixedChoiceKind, item: KanjiItem, pool: KanjiItem[]) {
   if (kind === 'kanji-meaning') return Boolean(item.prompt.trim() && item.meaning.trim());
   if (kind === 'meaning-kanji') {
-    const sameMeaning = pool.filter((candidate) => meaningKey(candidate) === meaningKey(item));
-    return Boolean(item.meaning.trim() && item.prompt.trim() && sameMeaning.length === 1);
+    const key = meaningKey(item);
+    const sameMeaningCount = getKanjiEligibilityIndex(pool).meaningCounts.get(key) ?? 0;
+    return Boolean(item.meaning.trim() && item.prompt.trim() && sameMeaningCount === 1);
   }
   if (kind === 'kanji-onyomi') return item.onyomi.length > 0;
   if (kind === 'kanji-kunyomi') return item.kunyomi.length > 0;
@@ -327,23 +370,52 @@ function buildTypingQuestion(item: KanjiItem, forcedKind?: TypingKind): QuizQues
   };
 }
 
+const vocabularyCandidatesCache = new WeakMap<KanjiItem[], VocabularyCandidate[]>();
+const vocabularyReadingCountCache = new WeakMap<VocabularyCandidate[], Map<string, number>>();
+
 function vocabularyCandidates(items: KanjiItem[]) {
+  const cached = vocabularyCandidatesCache.get(items);
+  if (cached) return cached;
+
   const candidates = items.flatMap((item) => item.examples.map((example, exampleIndex) => ({
     id: `${item.id}-example-${exampleIndex}-${example.word}-${example.reading}`,
     item,
     example,
   })));
 
-  return uniqueBy(candidates, ({ example }) => `${example.word}|${example.reading}|${example.meaning_id}`);
+  const result = uniqueBy(
+    candidates,
+    ({ example }) => `${example.word}|${example.reading}|${example.meaning_id}`,
+  );
+
+  vocabularyCandidatesCache.set(items, result);
+  return result;
+}
+
+function vocabularyReadingCounts(pool: VocabularyCandidate[]) {
+  const cached = vocabularyReadingCountCache.get(pool);
+  if (cached) return cached;
+
+  const counts = new Map<string, number>();
+  for (const candidate of pool) {
+    const key = normalizeReading(candidate.example.reading);
+    if (key) counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  vocabularyReadingCountCache.set(pool, counts);
+  return counts;
 }
 
 function vocabularySubKinds(candidate: VocabularyCandidate, pool: VocabularyCandidate[]): VocabularyKind[] {
   const kinds: VocabularyKind[] = [];
   const { word, reading, meaning_id: meaning } = candidate.example;
+  const readingKey = normalizeReading(reading);
+  const readingCount = readingKey
+    ? (vocabularyReadingCounts(pool).get(readingKey) ?? 0)
+    : 0;
 
-  const readingUnique = pool.filter((entry) => normalizeReading(entry.example.reading) === normalizeReading(reading));
   if (word.trim() && reading.trim()) kinds.push('vocab-word-reading');
-  if (reading.trim() && word.trim() && readingUnique.length === 1) kinds.push('vocab-reading-word');
+  if (reading.trim() && word.trim() && readingCount === 1) kinds.push('vocab-reading-word');
   if (word.trim() && meaning.trim()) kinds.push('vocab-word-meaning');
   return kinds;
 }
@@ -509,23 +581,76 @@ function buildMixedQuestion(item: KanjiItem, items: KanjiItem[], vocabPool: Voca
 }
 
 function eligibleItemsForFixedMode(mode: FixedChoiceKind, items: KanjiItem[]) {
-  return items.filter((item) => Boolean(buildFixedQuestion(mode, item, items)));
+  return items.filter((item) => fixedEligible(mode, item, items));
 }
 
 function eligibleVocabularyCandidates(items: KanjiItem[]) {
   const pool = vocabularyCandidates(items);
-  return pool.filter((candidate) => Boolean(buildVocabularyQuestion(candidate, pool)));
+  return pool.filter((candidate) => vocabularySubKinds(candidate, pool).length > 0);
+}
+
+type EligibleModeEntries = KanjiItem[] | VocabularyCandidate[];
+
+function buildEligibleItemsByMode(items: KanjiItem[]) {
+  const result = new Map<QuizMode, EligibleModeEntries>();
+  const fixedKinds: FixedChoiceKind[] = [
+    'kanji-meaning',
+    'meaning-kanji',
+    'kanji-onyomi',
+    'kanji-kunyomi',
+    'onyomi-kanji',
+    'kunyomi-kanji',
+  ];
+
+  // Prime normalized indexes once.
+  getKanjiEligibilityIndex(items);
+
+  for (const mode of fixedKinds) {
+    result.set(mode, eligibleItemsForFixedMode(mode, items));
+  }
+
+  result.set(
+    'typing',
+    items.filter((item) => typingKindsForItem(item).length > 0),
+  );
+
+  result.set('matching', uniqueMeaningItems(items));
+
+  const eligibleVocabulary = eligibleVocabularyCandidates(items);
+  result.set('vocabulary', eligibleVocabulary);
+
+  const vocabularyItemIds = new Set(
+    eligibleVocabulary.map((candidate) => candidate.item.id),
+  );
+
+  result.set(
+    'mixed',
+    items.filter((item) => (
+      fixedKinds.some((mode) => fixedEligible(mode, item, items))
+      || typingKindsForItem(item).length > 0
+      || vocabularyItemIds.has(item.id)
+    )),
+  );
+
+  return result;
+}
+
+const eligibleItemsByModeCache = new WeakMap<
+  KanjiItem[],
+  Map<QuizMode, EligibleModeEntries>
+>();
+
+function getEligibleItemsByMode(items: KanjiItem[]) {
+  const cached = eligibleItemsByModeCache.get(items);
+  if (cached) return cached;
+
+  const result = buildEligibleItemsByMode(items);
+  eligibleItemsByModeCache.set(items, result);
+  return result;
 }
 
 function eligibleItemsForMode(mode: QuizMode, items: KanjiItem[]) {
-  if (mode === 'typing') return items.filter((item) => typingKindsForItem(item).length > 0);
-  if (mode === 'matching') return uniqueMeaningItems(items);
-  if (mode === 'mixed') {
-    const vocabPool = vocabularyCandidates(items);
-    return items.filter((item) => mixedBuildersForItem(item, items, vocabPool).length > 0);
-  }
-  if (mode === 'vocabulary') return eligibleVocabularyCandidates(items);
-  return eligibleItemsForFixedMode(mode, items);
+  return getEligibleItemsByMode(items).get(mode) ?? [];
 }
 
 function quizModeLabel(mode: QuizMode) {
@@ -615,10 +740,24 @@ export function KanjiQuiz({
     });
   };
 
-  const availableForMode = useMemo(
-    () => mode ? eligibleItemsForMode(mode, items).length : items.length,
-    [items, mode],
+  const eligibleByMode = useMemo(
+    () => getEligibleItemsByMode(items),
+    [items],
   );
+
+  const modeAvailability = useMemo(() => {
+    const result = {} as Record<QuizMode, number>;
+
+    for (const option of QUIZ_MODES) {
+      result[option.mode] = eligibleByMode.get(option.mode)?.length ?? 0;
+    }
+
+    return result;
+  }, [eligibleByMode]);
+
+  const availableForMode = mode
+    ? modeAvailability[mode]
+    : items.length;
 
   useEffect(() => {
     if (count === 'all' || count <= availableForMode) return;
@@ -652,7 +791,7 @@ export function KanjiQuiz({
 
   function startQuiz() {
     if (!mode) return;
-    const eligible = eligibleItemsForMode(mode, items);
+    const eligible = eligibleByMode.get(mode) ?? [];
     if (!eligible.length) return;
     const targetSize = sessionSize(count, eligible.length);
     if (!targetSize) return;
@@ -723,6 +862,7 @@ export function KanjiQuiz({
       setupTitle={setupTitle}
       setupDescription={setupDescription}
       availabilityLabel={availabilityLabel}
+      modeAvailability={modeAvailability}
     />;
   }
 
@@ -989,6 +1129,7 @@ function QuizSetup({
   setupTitle,
   setupDescription,
   availabilityLabel,
+  modeAvailability,
 }: {
   items: KanjiItem[];
   level: KanjiLevel;
@@ -1001,6 +1142,7 @@ function QuizSetup({
   setupTitle?: string;
   setupDescription?: string;
   availabilityLabel?: string;
+  modeAvailability: Record<QuizMode, number>;
 }) {
   const canStart = Boolean(mode) && availableForMode > 0 && (mode !== 'matching' || availableForMode >= 4);
   const validCountOptions: QuizCount[] = [...QUIZ_COUNTS.filter((option) => option <= availableForMode), 'all'];
@@ -1015,7 +1157,7 @@ function QuizSetup({
 
       <div className="kanji-quiz-mode-grid">
         {QUIZ_MODES.map((option, position) => {
-          const eligible = eligibleItemsForMode(option.mode, items).length;
+          const eligible = modeAvailability[option.mode] ?? 0;
           const disabled = eligible === 0 || (option.mode === 'matching' && eligible < 4);
           return <button
             type="button"
@@ -1023,6 +1165,7 @@ function QuizSetup({
             disabled={disabled}
             className={mode === option.mode ? 'active' : ''}
             onClick={() => onMode(option.mode)}
+            style={{ touchAction: 'manipulation' }}
           >
             <span className="kanji-quiz-mode-number">{position + 1}</span>
             <span>
