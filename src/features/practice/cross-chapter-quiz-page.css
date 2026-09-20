@@ -1,0 +1,602 @@
+.cross-reuse-page{
+  width:100%;
+  max-width:1400px;
+  margin:0 auto;
+}
+.cross-reuse-back{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:18px;
+  padding:9px 11px;
+  border:1px solid #dccdd0;
+  border-radius:10px;
+  background:#fff;
+  color:var(--maroon);
+  font-size:12px;
+  font-weight:850;
+}
+.cross-reuse-back:hover{
+  background:#fff6f7;
+  border-color:#c79ca3;
+}
+.cross-reuse-header{
+  margin-bottom:20px;
+}
+.cross-reuse-header h1{
+  margin:5px 0 7px;
+  font-size:30px;
+}
+.cross-reuse-header>p:not(.eyebrow){
+  max-width:860px;
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+.cross-reuse-header>span{
+  display:inline-block;
+  margin-top:9px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#f5edef;
+  color:#74545a;
+  font-size:10px;
+  font-weight:850;
+}
+.cross-reuse-state{
+  padding:24px;
+  border:1px solid #e1d4d6;
+  border-radius:14px;
+  background:#fff;
+}
+.cross-reuse-state strong,
+.cross-reuse-state span{
+  display:block;
+}
+.cross-reuse-state span{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:11px;
+}
+.cross-reuse-state.error{
+  border-color:#dcaeb5;
+  background:#fff5f6;
+  color:#873b46;
+}
+.cross-reuse-safety{
+  margin:16px 0 0;
+  color:#806d71;
+  font-size:10px;
+  line-height:1.5;
+}
+@media(max-width:760px){
+  .cross-reuse-header h1{font-size:24px}
+}
+
+
+/* KOJAC CROSS REUSE RESPONSIVE COMFORT PATCH */
+
+.cross-reuse-page{
+  max-width:1500px;
+}
+.cross-reuse-back{
+  min-height:44px;
+  padding:10px 13px;
+  font-size:13px;
+}
+.cross-reuse-header h1{
+  font-size:34px;
+}
+.cross-reuse-header>p:not(.eyebrow){
+  font-size:14px;
+}
+.cross-reuse-header>span{
+  font-size:11px;
+}
+
+/* KANJI QUIZ — scoped hanya di Latihan */
+.cross-reuse-page .kanji-quiz-shell{
+  width:min(100%,1120px);
+}
+.cross-reuse-page .kanji-quiz-setup-card{
+  padding:28px;
+}
+.cross-reuse-page .kanji-quiz-setup-heading h2{
+  font-size:30px;
+}
+.cross-reuse-page .kanji-quiz-setup-heading p:last-child{
+  font-size:14px;
+}
+.cross-reuse-page .kanji-quiz-mode-grid{
+  gap:12px;
+}
+.cross-reuse-page .kanji-quiz-mode-grid>button{
+  min-height:94px;
+  padding:16px;
+}
+.cross-reuse-page .kanji-quiz-mode-grid strong{
+  font-size:15px;
+}
+.cross-reuse-page .kanji-quiz-mode-grid small{
+  font-size:12px;
+  line-height:1.5;
+}
+.cross-reuse-page .kanji-quiz-mode-number{
+  width:32px;
+  height:32px;
+  font-size:12px;
+}
+.cross-reuse-page .kanji-quiz-count-block>div:first-child strong{
+  font-size:14px;
+}
+.cross-reuse-page .kanji-quiz-count-block>div:first-child span{
+  font-size:12px;
+}
+.cross-reuse-page .kanji-quiz-count-row button{
+  min-width:62px;
+  min-height:42px;
+  font-size:13px;
+}
+.cross-reuse-page .kanji-quiz-start{
+  min-height:50px;
+  font-size:13px;
+}
+.cross-reuse-page .kanji-quiz-question-card{
+  padding:28px;
+}
+.cross-reuse-page .kanji-quiz-question-heading>span{
+  font-size:11px;
+}
+.cross-reuse-page .kanji-quiz-question-heading>p{
+  font-size:14px;
+}
+.cross-reuse-page .kanji-quiz-options button{
+  min-height:66px;
+  padding:15px 16px;
+  font-size:15px;
+}
+.cross-reuse-page .kanji-quiz-options.tone-kanji button{
+  min-height:82px;
+  font-size:32px;
+}
+.cross-reuse-page .kanji-quiz-options.tone-reading button,
+.cross-reuse-page .kanji-quiz-options.tone-vocabulary button{
+  font-size:20px;
+}
+.cross-reuse-page .kanji-quiz-typing-form input{
+  min-height:50px;
+  font-size:16px;
+}
+.cross-reuse-page .kanji-quiz-feedback>div span{
+  font-size:12px;
+}
+.cross-reuse-page .kanji-quiz-result{
+  width:min(100%,860px);
+}
+.cross-reuse-page .kanji-quiz-wrong-item{
+  padding:18px;
+}
+.cross-reuse-page .kanji-quiz-review-answer-grid span{
+  font-size:10px;
+}
+.cross-reuse-page .kanji-quiz-review-answer-grid strong{
+  font-size:14px;
+}
+
+/* GRAMMAR QUIZ — scoped hanya di Latihan */
+.cross-reuse-page .grammar-quiz-intro,
+.cross-reuse-page .grammar-quiz-session-head,
+.cross-reuse-page .grammar-quiz-result,
+.cross-reuse-page .grammar-quiz-review-heading{
+  padding:22px 24px;
+}
+.cross-reuse-page .grammar-quiz-intro h2,
+.cross-reuse-page .grammar-quiz-session-head h2,
+.cross-reuse-page .grammar-quiz-result h2,
+.cross-reuse-page .grammar-quiz-review-heading h2{
+  font-size:28px;
+}
+.cross-reuse-page .grammar-quiz-intro>p:last-child,
+.cross-reuse-page .grammar-quiz-session-head>div>p:last-child,
+.cross-reuse-page .grammar-quiz-review-heading>p:last-child{
+  font-size:14px;
+}
+.cross-reuse-page .grammar-quiz-pattern-card,
+.cross-reuse-page .grammar-quiz-chapter-card{
+  padding:18px;
+  gap:9px;
+}
+.cross-reuse-page .grammar-quiz-pattern-card h3,
+.cross-reuse-page .grammar-quiz-chapter-card h3{
+  font-size:20px;
+}
+.cross-reuse-page .grammar-quiz-pattern-card p{
+  font-size:12px;
+}
+.cross-reuse-page .grammar-quiz-meta{
+  font-size:10px;
+}
+.cross-reuse-page .grammar-quiz-card-stats span{
+  font-size:11px;
+}
+.cross-reuse-page .grammar-quiz-card-stats strong{
+  font-size:15px;
+}
+.cross-reuse-page .grammar-quiz-count>span{
+  font-size:10px;
+}
+.cross-reuse-page .grammar-quiz-count button{
+  min-width:50px;
+  min-height:40px;
+  font-size:12px;
+}
+.cross-reuse-page .grammar-quiz-start,
+.cross-reuse-page .grammar-quiz-primary,
+.cross-reuse-page .grammar-quiz-submit{
+  min-height:46px;
+  font-size:12px;
+}
+.cross-reuse-page .grammar-quiz-question-card,
+.cross-reuse-page .grammar-quiz-review-card{
+  padding:24px;
+}
+.cross-reuse-page .grammar-quiz-question-meta span,
+.cross-reuse-page .grammar-quiz-review-meta span,
+.cross-reuse-page .grammar-quiz-question-meta small{
+  font-size:10px;
+}
+.cross-reuse-page .grammar-quiz-instruction,
+.cross-reuse-page .grammar-quiz-review-instruction{
+  font-size:13px;
+}
+.cross-reuse-page .grammar-quiz-question,
+.cross-reuse-page .grammar-quiz-review-question{
+  font-size:28px;
+  padding:18px;
+}
+.cross-reuse-page .grammar-quiz-context,
+.cross-reuse-page .grammar-quiz-review-context{
+  font-size:13px;
+}
+.cross-reuse-page .grammar-quiz-options button{
+  min-height:62px;
+  padding:14px 15px;
+  font-size:14px;
+}
+.cross-reuse-page .grammar-quiz-typing input{
+  min-height:50px;
+  font-size:15px;
+}
+.cross-reuse-page .grammar-quiz-order-answer button,
+.cross-reuse-page .grammar-quiz-order-pieces button{
+  min-height:44px;
+  padding:10px 12px;
+  font-size:14px;
+}
+.cross-reuse-page .grammar-quiz-feedback strong{
+  font-size:14px;
+}
+.cross-reuse-page .grammar-quiz-feedback span{
+  font-size:12px;
+}
+.cross-reuse-page .grammar-quiz-review-answer-grid span{
+  font-size:10px;
+}
+.cross-reuse-page .grammar-quiz-review-answer-grid strong{
+  font-size:14px;
+}
+.cross-reuse-page .grammar-quiz-review-explanation p{
+  font-size:12px;
+}
+
+@media(max-width:900px){
+  .cross-reuse-page .kanji-quiz-mode-grid,
+  .cross-reuse-page .grammar-quiz-pattern-grid,
+  .cross-reuse-page .grammar-quiz-chapter-grid{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:760px){
+  .cross-reuse-header h1{
+    font-size:27px;
+  }
+  .cross-reuse-page .kanji-quiz-setup-card,
+  .cross-reuse-page .kanji-quiz-question-card,
+  .cross-reuse-page .grammar-quiz-question-card,
+  .cross-reuse-page .grammar-quiz-review-card{
+    padding:16px;
+  }
+  .cross-reuse-page .kanji-quiz-options,
+  .cross-reuse-page .grammar-quiz-options{
+    grid-template-columns:1fr;
+  }
+  .cross-reuse-page .kanji-quiz-count-block{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .cross-reuse-page .kanji-quiz-count-row{
+    justify-content:flex-start;
+  }
+}
+
+
+
+/* KOJAC PRACTICE UX NORMALIZATION FINAL — REUSE */
+
+.cross-reuse-page{
+  width:min(100%,1180px);
+  max-width:none;
+  margin:0 auto;
+  padding:8px 16px 40px;
+}
+
+.cross-reuse-header{
+  display:none;
+}
+
+.cross-reuse-page .cross-route-toolbar{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  margin:0 0 18px;
+}
+
+.cross-reuse-page .cross-route-context>span,
+.cross-reuse-page .cross-route-context>strong{
+  display:block;
+}
+
+.cross-reuse-page .cross-route-context>span{
+  color:var(--maroon);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.11em;
+}
+
+.cross-reuse-page .cross-route-context>strong{
+  margin-top:3px;
+  color:var(--ink);
+  font-size:15px;
+}
+
+.cross-reuse-page .cross-route-count{
+  padding:7px 10px;
+  border-radius:999px;
+  background:#f6edef;
+  color:#75434b;
+  font-size:11px;
+  font-weight:850;
+  white-space:nowrap;
+}
+
+.cross-reuse-back{
+  margin:0;
+  min-height:44px;
+}
+
+/* KANJI */
+.cross-reuse-page .kanji-quiz-shell{
+  width:100%;
+  max-width:none;
+  margin:0;
+}
+
+.cross-reuse-page .kanji-quiz-setup-card,
+.cross-reuse-page .kanji-quiz-question-card{
+  width:100%;
+}
+
+.cross-reuse-page .kanji-quiz-setup-card{
+  padding:clamp(20px,2.2vw,30px);
+}
+
+.cross-reuse-page .kanji-quiz-setup-heading h2{
+  font-size:clamp(25px,2.2vw,31px);
+}
+
+.cross-reuse-page .kanji-quiz-setup-heading p:last-child{
+  max-width:850px;
+  font-size:14px;
+  line-height:1.65;
+}
+
+.cross-reuse-page .kanji-quiz-mode-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.cross-reuse-page .kanji-quiz-mode-grid>button{
+  min-height:96px;
+  padding:16px 17px;
+}
+
+.cross-reuse-page .kanji-quiz-mode-grid strong{
+  font-size:15px;
+}
+
+.cross-reuse-page .kanji-quiz-mode-grid small{
+  font-size:12px;
+  line-height:1.55;
+}
+
+.cross-reuse-page .kanji-quiz-count-row{
+  gap:8px;
+}
+
+.cross-reuse-page .kanji-quiz-count-row button{
+  min-width:60px;
+  min-height:42px;
+  font-size:13px;
+}
+
+.cross-reuse-page .kanji-quiz-question-card{
+  padding:clamp(18px,2vw,28px);
+}
+
+.cross-reuse-page .kanji-quiz-options{
+  gap:11px;
+}
+
+.cross-reuse-page .kanji-quiz-options button{
+  min-height:64px;
+  padding:14px 16px;
+  font-size:15px;
+  line-height:1.5;
+}
+
+.cross-reuse-page .kanji-quiz-result,
+.cross-reuse-page .kanji-quiz-review-shell{
+  width:100%;
+  max-width:980px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* GRAMMAR */
+.cross-reuse-page .grammar-quiz-shell,
+.cross-reuse-page .grammar-quiz-result{
+  width:100%;
+  max-width:none;
+}
+
+.cross-reuse-page .grammar-quiz-intro,
+.cross-reuse-page .grammar-quiz-session-head,
+.cross-reuse-page .grammar-quiz-result,
+.cross-reuse-page .grammar-quiz-review-heading{
+  padding:clamp(18px,2vw,26px);
+}
+
+.cross-reuse-page .grammar-quiz-intro h2,
+.cross-reuse-page .grammar-quiz-session-head h2,
+.cross-reuse-page .grammar-quiz-result h2,
+.cross-reuse-page .grammar-quiz-review-heading h2{
+  font-size:clamp(24px,2vw,29px);
+}
+
+.cross-reuse-page .grammar-quiz-chapter-grid,
+.cross-reuse-page .grammar-quiz-pattern-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.cross-reuse-page .grammar-quiz-chapter-card,
+.cross-reuse-page .grammar-quiz-pattern-card{
+  padding:18px;
+}
+
+.cross-reuse-page .grammar-quiz-question-card,
+.cross-reuse-page .grammar-quiz-review-card{
+  padding:clamp(17px,2vw,25px);
+}
+
+.cross-reuse-page .grammar-quiz-question,
+.cross-reuse-page .grammar-quiz-review-question{
+  font-size:clamp(23px,2.2vw,29px);
+}
+
+.cross-reuse-page .grammar-quiz-options{
+  gap:10px;
+}
+
+.cross-reuse-page .grammar-quiz-options button{
+  min-height:62px;
+  padding:14px 15px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+@media(max-width:900px){
+  .cross-reuse-page{
+    padding-inline:12px;
+  }
+
+  .cross-reuse-page .cross-route-toolbar{
+    grid-template-columns:auto 1fr;
+  }
+
+  .cross-reuse-page .cross-route-count{
+    grid-column:2;
+    width:max-content;
+  }
+
+  .cross-reuse-page .kanji-quiz-mode-grid,
+  .cross-reuse-page .grammar-quiz-chapter-grid,
+  .cross-reuse-page .grammar-quiz-pattern-grid{
+    grid-template-columns:1fr;
+  }
+
+  .cross-reuse-page .kanji-quiz-count-block{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .cross-reuse-page .kanji-quiz-count-row{
+    justify-content:flex-start;
+  }
+}
+
+@media(max-width:600px){
+  .cross-reuse-page{
+    padding:6px 8px 28px;
+  }
+
+  .cross-reuse-page .cross-route-toolbar{
+    grid-template-columns:1fr;
+    gap:9px;
+    margin-bottom:14px;
+  }
+
+  .cross-reuse-page .cross-route-context{
+    order:2;
+  }
+
+  .cross-reuse-page .cross-route-count{
+    grid-column:auto;
+    order:3;
+  }
+
+  .cross-reuse-back{
+    order:1;
+    width:max-content;
+    max-width:100%;
+  }
+
+  .cross-reuse-page .kanji-quiz-setup-card,
+  .cross-reuse-page .kanji-quiz-question-card{
+    border-radius:14px;
+  }
+
+  .cross-reuse-page .kanji-quiz-mode-grid>button{
+    min-height:82px;
+    padding:14px;
+  }
+
+  .cross-reuse-page .kanji-quiz-count-row{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    width:100%;
+  }
+
+  .cross-reuse-page .kanji-quiz-count-row button{
+    width:100%;
+    min-width:0;
+  }
+
+  .cross-reuse-page .kanji-quiz-options,
+  .cross-reuse-page .grammar-quiz-options{
+    grid-template-columns:1fr;
+  }
+
+  .cross-reuse-page .grammar-quiz-result-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .cross-reuse-page .grammar-quiz-result-actions button{
+    width:100%;
+  }
+}
+

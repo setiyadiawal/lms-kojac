@@ -267,8 +267,10 @@ function ExitQuizDialog({ onCancel, onConfirm }: { onCancel: () => void; onConfi
 
 export function GrammarQuiz({
   recordGrammarReview,
+  chapterRange,
 }: {
   recordGrammarReview?: (patternId: string, rating: GrammarReviewRating) => Promise<unknown>;
+  chapterRange?: { start: number; end: number };
 }) {
   const [scope, setScope] = useState<GrammarQuizScope>('pattern');
   const [patternCounts, setPatternCounts] = useState<Record<string, GrammarQuizCount>>({});
@@ -311,12 +313,22 @@ export function GrammarQuiz({
   }, []);
   const availablePatterns = useMemo(
     () => GRAMMAR_PATTERNS
-      .filter((pattern) => (exercisesByPattern.get(pattern.id) ?? []).some(eligibleForPatternQuiz))
+      .filter((pattern) => (
+        (exercisesByPattern.get(pattern.id) ?? []).some(eligibleForPatternQuiz)
+        && (!chapterRange || (
+          pattern.chapter >= chapterRange.start
+          && pattern.chapter <= chapterRange.end
+        ))
+      ))
       .slice()
       .sort((a, b) => a.chapter - b.chapter || a.order - b.order),
-    [exercisesByPattern],
+    [chapterRange, exercisesByPattern],
   );
   const chapterSummaries = useMemo<GrammarQuizChapterSummary[]>(() => GRAMMAR_CHAPTERS
+    .filter((chapter) => !chapterRange || (
+      chapter.chapter >= chapterRange.start
+      && chapter.chapter <= chapterRange.end
+    ))
     .map((chapter) => {
       const patterns = GRAMMAR_PATTERNS
         .filter((pattern) => pattern.chapter === chapter.chapter && exercisePatternIds.has(pattern.id))
@@ -332,7 +344,7 @@ export function GrammarQuiz({
       };
     })
     .filter((summary): summary is GrammarQuizChapterSummary => Boolean(summary)),
-  [exercisePatternIds, exercisesByPattern]);
+  [chapterRange, exercisePatternIds, exercisesByPattern]);
 
   const currentQuestion = questions[currentIndex];
   const currentAttempt = currentQuestion
@@ -504,6 +516,67 @@ export function GrammarQuiz({
     setReviewMode(null);
     setReviewIndex(0);
     window.requestAnimationFrame(() => scrollNearest(resultRef.current));
+  }
+
+  if (!config && chapterRange) {
+    const rangePatterns = availablePatterns;
+    const patternIds = rangePatterns.map((pattern) => pattern.id);
+    const totalExercises = patternIds.reduce(
+      (total, patternId) => total + (exercisesByPattern.get(patternId)?.length ?? 0),
+      0,
+    );
+    const rangeKey = chapterRange.start * 100 + chapterRange.end;
+    const selectedCount = chapterCounts[rangeKey] ?? getDefaultCount(totalExercises);
+    const syntheticChapter: GrammarChapter = {
+      chapter: chapterRange.start,
+      title: `Bab ${chapterRange.start}–${chapterRange.end}`,
+      description: 'Latihan Tata Bahasa lintas bab.',
+    };
+
+    return <section className="grammar-quiz-shell grammar-quiz-menu">
+      <div className="grammar-quiz-intro">
+        <p className="grammar-section-kicker">文法クイズ · LINTAS BAB</p>
+        <h2>Quiz Bab {chapterRange.start}–{chapterRange.end}</h2>
+        <p>
+          Semua tipe soal Grammar existing digabung dari rentang Bab ini:
+          pilih jawaban/partikel, pilih pola, fill blank, konjugasi,
+          susun kalimat, dan koreksi kalimat.
+        </p>
+      </div>
+
+      <article className="grammar-quiz-chapter-card">
+        <span className="grammar-quiz-meta">
+          BAB {chapterRange.start}–{chapterRange.end}
+        </span>
+        <h3>{rangePatterns.length} Pola Tata Bahasa</h3>
+        <div className="grammar-quiz-card-stats">
+          <span><strong>{rangePatterns.length}</strong> Pola</span>
+          <span><strong>{totalExercises}</strong> Soal tersedia</span>
+        </div>
+        <QuizCountSelector
+          total={totalExercises}
+          selected={selectedCount}
+          ariaLabel={`Pilih jumlah soal Quiz Bab ${chapterRange.start}–${chapterRange.end}`}
+          onChange={(count) => setChapterCounts((current) => ({
+            ...current,
+            [rangeKey]: count,
+          }))}
+        />
+        <button
+          type="button"
+          className="grammar-quiz-start"
+          disabled={totalExercises === 0}
+          onClick={() => launchQuiz({
+            scope: 'chapter',
+            chapter: syntheticChapter,
+            patterns: rangePatterns,
+            count: selectedCount,
+          })}
+        >
+          Mulai Quiz <ArrowRight size={16}/>
+        </button>
+      </article>
+    </section>;
   }
 
   if (!config) {

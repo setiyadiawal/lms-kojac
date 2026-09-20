@@ -8,6 +8,10 @@ import { PendingPage } from './pages/PendingPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
 import { FeedbackPage, LearningPage } from './pages/ModulePages';
 import { PracticePage } from './pages/PracticePage';
+import { CrossChapterPractice } from './features/practice/CrossChapterPractice';
+import { CrossChapterVocabularyQuizPage } from './features/practice/CrossChapterVocabularyQuizPage';
+import { CrossChapterKanjiQuizPage } from './features/practice/CrossChapterKanjiQuizPage';
+import { CrossChapterGrammarQuizPage } from './features/practice/CrossChapterGrammarQuizPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { JlptSimulationPage } from './pages/JlptSimulationPage';
 import { AdminPage } from './pages/AdminPage';
@@ -76,6 +80,11 @@ export default function App() {
       <Route path="belajar/reading" element={<LazyModule><ReadingPage /></LazyModule>} />
       <Route path="belajar/listening" element={<LazyModule><ListeningPage /></LazyModule>} />
       <Route path="latihan" element={<PracticePage />} />
+      <Route path="latihan/flashcard" element={<CrossChapterPractice />} />
+      <Route path="latihan/vocabulary" element={<CrossChapterVocabularyQuizPage />} />
+      <Route path="latihan/kanji" element={<CrossChapterKanjiQuizPage />} />
+      <Route path="latihan/grammar" element={<CrossChapterGrammarQuizPage />} />
+      <Route path="latihan/sesi" element={<CrossChapterPractice />} />
       <Route path="jlpt" element={<JlptSimulationPage />} />
       <Route path="progress" element={<ProgressPage />} />
       <Route path="kritik-saran" element={<FeedbackPage />} />

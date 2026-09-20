@@ -420,7 +420,21 @@ function promptSummary(question: QuizQuestion) {
   return question.promptTone === 'audio' ? `🔊 ${kanaOf(question.item)}` : question.prompt;
 }
 
-export function VocabularyQuiz({ items, onRecordReview }: { items: VocabularyWithProgress[]; onRecordReview: VocabularyRecordReview }) {
+export function VocabularyQuiz({
+  items,
+  onRecordReview,
+  persistProgress = true,
+  setupTitle = 'Quiz Vocabulary',
+  setupDescription = 'Pilih tipe latihan dan jumlah soal. Semua soal menggunakan kosakata Bab ini.',
+  emptyDescription = 'Quiz akan menggunakan kosakata dari Bab ini.',
+}: {
+  items: VocabularyWithProgress[];
+  onRecordReview: VocabularyRecordReview;
+  persistProgress?: boolean;
+  setupTitle?: string;
+  setupDescription?: string;
+  emptyDescription?: string;
+}) {
   const [mode, setMode] = useState<QuizMode | null>(null);
   const [count, setCount] = useState<QuizCount>(items.length >= 10 ? 10 : 'all');
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -454,6 +468,7 @@ export function VocabularyQuiz({ items, onRecordReview }: { items: VocabularyWit
 
 
   const recordQuizReviewOnce = async (reviewKey: string, itemId: string, correct: boolean) => {
+    if (!persistProgress) return;
     if (recordedReviewKeysRef.current.has(reviewKey)) return;
     recordedReviewKeysRef.current.add(reviewKey);
     setProgressSavingCount((current) => current + 1);
@@ -476,7 +491,7 @@ export function VocabularyQuiz({ items, onRecordReview }: { items: VocabularyWit
   }, [availableForMode, count]);
 
   if (items.length === 0) {
-    return <div className="vocab-inline-empty"><strong>Belum ada kosakata untuk Quiz</strong><span>Quiz akan menggunakan kosakata dari Bab ini.</span></div>;
+    return <div className="vocab-inline-empty"><strong>Belum ada kosakata untuk Quiz</strong><span>{emptyDescription}</span></div>;
   }
 
   function resetSessionState() {
@@ -551,6 +566,8 @@ export function VocabularyQuiz({ items, onRecordReview }: { items: VocabularyWit
       onMode={setMode}
       onCount={setCount}
       onStart={startQuiz}
+      setupTitle={setupTitle}
+      setupDescription={setupDescription}
     />;
   }
 
@@ -815,6 +832,8 @@ function QuizSetup({
   onMode,
   onCount,
   onStart,
+  setupTitle,
+  setupDescription,
 }: {
   items: VocabularyWithProgress[];
   mode: QuizMode | null;
@@ -824,6 +843,8 @@ function QuizSetup({
   onMode: (mode: QuizMode) => void;
   onCount: (count: QuizCount) => void;
   onStart: () => void;
+  setupTitle: string;
+  setupDescription: string;
 }) {
   const canStart = Boolean(mode) && availableForMode > 0 && (mode !== 'matching' || availableForMode >= 4) && (mode !== 'audio' || audioSupported);
   const validCountOptions: QuizCount[] = [
@@ -835,8 +856,8 @@ function QuizSetup({
     <section className="vocab-quiz-setup-card">
       <div className="vocab-quiz-setup-heading">
         <p className="eyebrow">PILIH JENIS QUIZ</p>
-        <h2>Quiz Vocabulary</h2>
-        <p>Pilih tipe latihan dan jumlah soal. Semua soal menggunakan kosakata Bab ini.</p>
+        <h2>{setupTitle}</h2>
+        <p>{setupDescription}</p>
       </div>
 
       <div className="vocab-quiz-mode-grid">

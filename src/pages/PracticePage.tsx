@@ -23,6 +23,7 @@ import {
   type DashboardModuleSummary,
 } from '../features/dashboard/useStudentDashboardProgress';
 import { useStudentProgressDetail } from '../features/progress/useStudentProgressDetail';
+import { CrossChapterPractice } from '../features/practice/CrossChapterPractice';
 import './practice-page.css';
 
 type PracticeModule = {
@@ -285,6 +286,8 @@ export function PracticePage() {
           </Link>
         </section>
       )}
+
+      <CrossChapterPractice />
 
       <section className="practice-center-section" aria-labelledby="practice-review-queue-title">
         <div className="dashboard-section-heading">

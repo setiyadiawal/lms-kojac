@@ -70,3 +70,141 @@
 @media(max-width:650px){.practice-center-summary{grid-template-columns:1fr}.practice-review-grid,.practice-center-grid{grid-template-columns:1fr}.practice-center-page{padding-bottom:36px}.practice-center-card-description{min-height:0}.practice-center-recommendation{padding:18px}.practice-center-recommendation h2{font-size:21px}.practice-filter-row{flex-wrap:nowrap;overflow:auto;padding-bottom:3px}.practice-filter-row button{flex:0 0 auto;white-space:nowrap}}
 @media(max-width:390px){.practice-center-card{padding:16px}.practice-center-card-top{grid-template-columns:auto minmax(0,1fr)}.practice-center-due-badge{grid-column:2;width:max-content}}
 @media(prefers-reduced-motion:reduce){.practice-review-loading{animation:none}}
+
+
+/* KOJAC PRACTICE RESPONSIVE COMFORT PATCH */
+
+.practice-center-page{
+  font-size:15px;
+}
+.practice-center-header>div:first-child{
+  max-width:860px;
+}
+.practice-center-warning{
+  font-size:13px;
+}
+.practice-center-summary{
+  gap:14px;
+}
+.practice-center-summary>article{
+  padding:18px;
+}
+.practice-center-summary strong{
+  font-size:20px;
+}
+.practice-center-summary span{
+  font-size:12px;
+}
+.practice-center-recommendation{
+  padding:22px;
+}
+.practice-center-recommendation h2{
+  font-size:27px;
+}
+.practice-center-recommendation p:not(.eyebrow){
+  font-size:14px;
+}
+.practice-center-primary-link{
+  min-height:46px;
+  padding:12px 17px;
+  font-size:13px;
+}
+.practice-center-section{
+  margin-top:34px;
+}
+.practice-review-card{
+  padding:17px;
+}
+.practice-review-card-top span{
+  font-size:11px;
+}
+.practice-review-card-top strong{
+  font-size:13px;
+}
+.practice-review-card h3{
+  font-size:19px;
+}
+.practice-review-card>p{
+  font-size:12px;
+}
+.practice-review-footer{
+  font-size:11px;
+}
+.practice-filter-row button{
+  min-height:38px;
+  padding:8px 12px;
+  font-size:12px;
+}
+.practice-center-card{
+  padding:20px;
+}
+.practice-center-card-top>div:nth-child(2)>span{
+  font-size:10px;
+}
+.practice-center-card-top h3{
+  font-size:19px;
+}
+.practice-center-card-description{
+  font-size:13px;
+}
+.practice-center-mode-list span,
+.practice-center-health span{
+  font-size:11px;
+}
+.practice-center-progress-row{
+  font-size:12px;
+}
+.practice-center-progress-row strong{
+  font-size:12px;
+}
+.practice-center-module-link{
+  min-height:42px;
+  padding:10px 13px;
+  font-size:12px;
+}
+
+@media(max-width:1150px){
+  .practice-center-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:760px){
+  .practice-center-page{
+    font-size:14px;
+  }
+  .practice-center-summary,
+  .practice-review-grid,
+  .practice-center-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+/* KOJAC PRACTICE UX NORMALIZATION FINAL — CENTER */
+
+.practice-center-page{
+  width:100%;
+  max-width:1500px;
+  margin:0 auto;
+}
+
+@media(max-width:1180px){
+  .practice-center-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .practice-review-grid,
+  .practice-center-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:680px){
+  .practice-center-summary,
+  .practice-review-grid,
+  .practice-center-grid{
+    grid-template-columns:1fr;
+  }
+}
+

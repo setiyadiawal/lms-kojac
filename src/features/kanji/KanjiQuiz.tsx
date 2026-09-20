@@ -564,10 +564,18 @@ export function KanjiQuiz({
   items,
   level,
   onRecordReview,
+  persistProgress = true,
+  setupTitle,
+  setupDescription,
+  availabilityLabel,
 }: {
   items: KanjiItem[];
   level: KanjiLevel;
   onRecordReview: KanjiRecordReview;
+  persistProgress?: boolean;
+  setupTitle?: string;
+  setupDescription?: string;
+  availabilityLabel?: string;
 }) {
   const [mode, setMode] = useState<QuizMode | null>(null);
   const [count, setCount] = useState<QuizCount>(items.length >= 10 ? 10 : 'all');
@@ -595,6 +603,7 @@ export function KanjiQuiz({
   const matchingMistakeIdsRef = useRef<Set<string>>(new Set());
 
   const recordQuizReview = (question: QuizQuestion, correct: boolean) => {
+    if (!persistProgress) return;
     const reviewKey = question.id;
     if (recordedReviewKeysRef.current.has(reviewKey)) return;
 
@@ -711,6 +720,9 @@ export function KanjiQuiz({
       onMode={setMode}
       onCount={setCount}
       onStart={startQuiz}
+      setupTitle={setupTitle}
+      setupDescription={setupDescription}
+      availabilityLabel={availabilityLabel}
     />;
   }
 
@@ -974,6 +986,9 @@ function QuizSetup({
   onMode,
   onCount,
   onStart,
+  setupTitle,
+  setupDescription,
+  availabilityLabel,
 }: {
   items: KanjiItem[];
   level: KanjiLevel;
@@ -983,6 +998,9 @@ function QuizSetup({
   onMode: (mode: QuizMode) => void;
   onCount: (count: QuizCount) => void;
   onStart: () => void;
+  setupTitle?: string;
+  setupDescription?: string;
+  availabilityLabel?: string;
 }) {
   const canStart = Boolean(mode) && availableForMode > 0 && (mode !== 'matching' || availableForMode >= 4);
   const validCountOptions: QuizCount[] = [...QUIZ_COUNTS.filter((option) => option <= availableForMode), 'all'];
@@ -991,8 +1009,8 @@ function QuizSetup({
     <section className="kanji-quiz-setup-card">
       <div className="kanji-quiz-setup-heading">
         <p className="eyebrow">PILIH JENIS QUIZ</p>
-        <h2>Quiz Kanji · {level}</h2>
-        <p>Pilih tipe latihan dan jumlah soal. Semua soal menggunakan data Kanji {level} yang sudah ada.</p>
+        <h2>{setupTitle ?? `Quiz Kanji · ${level}`}</h2>
+        <p>{setupDescription ?? `Pilih tipe latihan dan jumlah soal. Semua soal menggunakan data Kanji ${level} yang sudah ada.`}</p>
       </div>
 
       <div className="kanji-quiz-mode-grid">
@@ -1018,7 +1036,7 @@ function QuizSetup({
       <div className="kanji-quiz-count-block">
         <div>
           <strong>Jumlah soal</strong>
-          <span>{mode ? `${availableForMode} kandidat valid untuk mode ini.` : `${items.length} Kanji tersedia di ${level}.`}</span>
+          <span>{mode ? `${availableForMode} kandidat valid untuk mode ini.` : (availabilityLabel ?? `${items.length} Kanji tersedia di ${level}.`)}</span>
         </div>
         <div className="kanji-quiz-count-row">
           {validCountOptions.map((option) => <button

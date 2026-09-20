@@ -654,7 +654,24 @@ function FlashcardSideFields({
   const kanaLong = Array.from(values.kana).length > 10;
   const showMeta = preferences.jenis || preferences.kategori;
 
-  return <span className={`vocab-flashcard-fields is-${side}`}>
+  const visibleFieldCount = [
+    preferences.kanji && Boolean(values.kanji),
+    useKanaFallback,
+    preferences.kana && Boolean(values.kana),
+    preferences.romaji && Boolean(values.romaji),
+    preferences.arti,
+    showMeta,
+  ].filter(Boolean).length;
+
+  const densityClass = visibleFieldCount <= 1
+    ? 'is-single-field'
+    : visibleFieldCount === 2
+      ? 'is-two-fields'
+      : visibleFieldCount === 3
+        ? 'is-three-fields'
+        : 'is-many-fields';
+
+  return <span className={`vocab-flashcard-fields is-${side} ${densityClass}`}>
     {preferences.kanji && values.kanji && (
       <span className={`vocab-flashcard-field vocab-flashcard-field-kanji${kanjiLong ? ' is-long' : ''}`}>{values.kanji}</span>
     )}
