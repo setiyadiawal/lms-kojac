@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { BookOpen, ChartNoAxesCombined, ClipboardCheck, GraduationCap, MessageSquareText, Send, Trophy } from 'lucide-react';
+import { BookOpen, ClipboardCheck, MessageSquareText, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
@@ -8,7 +8,7 @@ const cards = [
   { title: 'Hiragana', desc: '104 karakter: dasar, dakuten, handakuten, dan yōon.', href: '/belajar/hiragana', active: true },
   { title: 'Katakana', desc: '104 karakter: dasar, dakuten, handakuten, dan yōon.', href: '/belajar/katakana', active: true },
   { title: 'Kosakata', desc: 'Kosakata per bab dengan pencarian dan fondasi untuk Flashcard, Quiz, serta SRS.', href: '/belajar/kosakata', active: true },
-  { title: 'Kanji', desc: 'Kanji JLPT N5–N1 dengan arti, Onyomi, Kunyomi, contoh kosakata, dan latihan bertahap.', href: '/belajar/kanji', active: true },
+  { title: 'Kanji', desc: 'Kanji JLPT N5–N3 aktif dengan arti, Onyomi, Kunyomi, contoh kosakata, dan latihan bertahap.', href: '/belajar/kanji', active: true },
   { title: 'Tata Bahasa', desc: '文法 berbasis Bab KOJAC dengan rumus, penjelasan, contoh kalimat, dan audio.', href: '/belajar/tata-bahasa', active: true },
   { title: 'Reading / 読解', desc: 'Dokkai berbasis Bab KOJAC untuk menggabungkan Vocabulary, Kanji, dan Grammar dalam bacaan nyata.', href: '/belajar/reading', active: true },
   { title: 'Listening / 聴解', desc: 'Choukai berbasis Bab KOJAC untuk melatih pemahaman melalui dialog, pengumuman, dan situasi lisan.', href: '/belajar/listening', active: true },
@@ -38,7 +38,7 @@ const FEEDBACK_MESSAGE_MAX = 4000;
 
 export function LearningPage() {
   return (
-    <Simple title="Belajar" icon={<BookOpen />} intro="Pusat materi KOJAC dari dasar hingga JLPT N1.">
+    <Simple title="Belajar" icon={<BookOpen />} intro="Pusat materi KOJAC dari dasar hingga target JLPT N4 / JFT Basic A2.">
       <div className="module-grid">
         {cards.map((card) => (
           <div className={`module-card ${card.active ? 'module-active' : ''}`} key={card.title}>
@@ -50,18 +50,6 @@ export function LearningPage() {
       </div>
     </Simple>
   );
-}
-
-export function PracticePage() {
-  return <UpcomingPage title="Latihan" icon={<GraduationCap />} description="Pusat latihan lintas materi KOJAC akan tersedia di halaman ini." />;
-}
-
-export function ExamPage() {
-  return <UpcomingPage title="Simulasi JLPT" icon={<Trophy />} description="Simulasi ujian JLPT KOJAC sedang dipersiapkan agar dapat digunakan langsung dari LMS." />;
-}
-
-export function ProgressPage() {
-  return <UpcomingPage title="Progres" icon={<ChartNoAxesCombined />} description="Halaman progres terpusat sedang dikembangkan. Progress yang sudah tersedia tetap tersimpan pada masing-masing modul dan Student Dashboard." />;
 }
 
 export function FeedbackPage() {
@@ -226,18 +214,6 @@ export function FeedbackPage() {
           </button>
         </form>
       </section>
-    </Simple>
-  );
-}
-
-function UpcomingPage({ title, icon, description }: { title: string; icon: ReactNode; description: string }) {
-  return (
-    <Simple title={title} icon={icon} intro={description}>
-      <div className="empty-state">
-        <ClipboardCheck size={34} />
-        <h2>Fitur sedang dalam pengembangan</h2>
-        <p>Nantikan pembaruan berikutnya di KOJAC LMS.</p>
-      </div>
     </Simple>
   );
 }

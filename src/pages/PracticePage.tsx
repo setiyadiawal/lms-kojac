@@ -447,10 +447,10 @@ export function PracticePage() {
       <section className="practice-center-section practice-center-exam-teaser" aria-labelledby="practice-center-exam-title">
         <div className="practice-center-exam-icon"><Trophy size={22}/></div>
         <div>
-          <p className="eyebrow">TAHAP BERIKUTNYA</p>
-          <h2 id="practice-center-exam-title">Simulasi JLPT tetap terpisah</h2>
+          <p className="eyebrow">UJIAN JLPT</p>
+          <h2 id="practice-center-exam-title">Simulasi JLPT N5/N4 sudah tersedia</h2>
           <p>
-            Latihan Center fokus pada latihan harian dan review. Simulasi JLPT akan menggunakan flow ujian tersendiri.
+            Latihan Center fokus pada latihan harian dan review. Gunakan menu Ujian untuk menjalankan Simulasi JLPT N5 atau N4.
           </p>
         </div>
       </section>

@@ -58,7 +58,7 @@ function KanjiLevelIndex() {
       <div>
         <p className="eyebrow">KOJAC · KANJI</p>
         <h1><span className="kanji-heading-jp">漢字</span> <span>Kanji</span></h1>
-        <p>Pelajari Kanji secara bertahap dari JLPT N5 hingga N1, lengkap dengan arti, cara baca, kosakata, dan latihan.</p>
+        <p>Level aktif saat ini mencakup JLPT N5 hingga N3. N2 dan N1 akan ditambahkan bertahap setelah data siap.</p>
       </div>
     </div>
 
