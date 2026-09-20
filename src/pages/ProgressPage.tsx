@@ -6,6 +6,7 @@ import {
   Gauge,
   Layers3,
   RefreshCw,
+  RotateCcw,
   Target,
   TrendingUp,
 } from 'lucide-react';
@@ -13,9 +14,21 @@ import { Link } from 'react-router-dom';
 import { StudentProgressOverview } from '../features/dashboard/StudentProgressOverview';
 import {
   useStudentDashboardProgress,
+  type DashboardModuleKey,
   type DashboardModuleSummary,
 } from '../features/dashboard/useStudentDashboardProgress';
+import { useStudentProgressDetail } from '../features/progress/useStudentProgressDetail';
 import './progress-page.css';
+
+const MODULE_META: Record<DashboardModuleKey, { title: string; route: string }> = {
+  hiragana: { title: 'Hiragana', route: '/belajar/hiragana' },
+  katakana: { title: 'Katakana', route: '/belajar/katakana' },
+  vocabulary: { title: 'Kosakata', route: '/belajar/kosakata' },
+  kanji: { title: 'Kanji', route: '/belajar/kanji' },
+  grammar: { title: 'Tata Bahasa', route: '/belajar/tata-bahasa' },
+  reading: { title: 'Reading / 読解', route: '/belajar/reading' },
+  listening: { title: 'Listening / 聴解', route: '/belajar/listening' },
+};
 
 function clampPercent(value: number) {
   if (!Number.isFinite(value)) return 0;
@@ -35,6 +48,16 @@ function moduleStarted(module: DashboardModuleSummary) {
 function formatActivityTime(value: string) {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function formatDue(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return 'Review jatuh tempo';
 
   return new Intl.DateTimeFormat('id-ID', {
     dateStyle: 'medium',
@@ -102,6 +125,13 @@ export function ProgressPage() {
     reload,
   } = useStudentDashboardProgress();
 
+  const {
+    detail,
+    loading: detailLoading,
+    hasError: detailHasError,
+    reload: reloadDetail,
+  } = useStudentProgressDetail();
+
   const availableModules = modules.filter((module) => module.available);
   const activeModules = availableModules.filter(moduleStarted);
   const completedModules = availableModules.filter(
@@ -117,7 +147,7 @@ export function ProgressPage() {
       )
     : 0;
 
-  const reviewPriorities = activeModules
+  const moduleReviewPriorities = activeModules
     .filter((module) => clampPercent(module.percent) < 100)
     .sort((a, b) => clampPercent(a.percent) - clampPercent(b.percent))
     .slice(0, 3);
@@ -131,6 +161,12 @@ export function ProgressPage() {
     : null;
 
   const initialLoading = loading && modules.length === 0;
+  const anyLoading = loading || detailLoading;
+  const anyPartialError = hasPartialError || detailHasError;
+
+  const reloadAll = async () => {
+    await Promise.all([reload(), reloadDetail()]);
+  };
 
   return (
     <div className="page central-progress-page">
@@ -139,7 +175,7 @@ export function ProgressPage() {
           <p className="eyebrow">KOJAC LMS · READ ONLY</p>
           <h1>Progres Belajar</h1>
           <p>
-            Ringkasan progres tersimpan dari 7 modul utama KOJAC tanpa membuat
+            Ringkasan progres tersimpan dari modul utama KOJAC tanpa membuat
             atau mengubah data belajar baru.
           </p>
         </div>
@@ -147,20 +183,20 @@ export function ProgressPage() {
         <button
           type="button"
           className="ghost-btn central-progress-refresh"
-          onClick={() => void reload()}
-          disabled={loading}
+          onClick={() => void reloadAll()}
+          disabled={anyLoading}
         >
           <RefreshCw size={16} aria-hidden="true"/>
-          {loading ? 'Memuat…' : 'Muat ulang'}
+          {anyLoading ? 'Memuat…' : 'Muat ulang'}
         </button>
       </div>
 
-      {hasPartialError && !initialLoading && (
+      {anyPartialError && !initialLoading && (
         <div className="central-progress-warning" role="status">
           <AlertTriangle size={17} aria-hidden="true"/>
           <span>
-            Sebagian data progres belum dapat dimuat. Modul belajar tetap aman
-            dan dapat digunakan seperti biasa.
+            Sebagian detail progres belum dapat dimuat. Data utama dan modul
+            belajar tetap aman serta dapat digunakan seperti biasa.
           </span>
         </div>
       )}
@@ -181,13 +217,13 @@ export function ProgressPage() {
         />
         <SummaryStat
           icon={<CheckCircle2 size={20}/>}
-          value={initialLoading ? '…' : `${completedModules.length} / ${availableModules.length || 7}`}
-          label="Modul 100%"
+          value={detailLoading ? '…' : detail ? `${detail.srsOverall.averageMastery}%` : '—'}
+          label="Mastery SRS rata-rata"
         />
         <SummaryStat
-          icon={<Clock3 size={20}/>}
-          value={initialLoading ? '…' : latestActivity ? latestActivity.title : 'Belum ada'}
-          label="Aktivitas terbaru"
+          icon={<RotateCcw size={20}/>}
+          value={detailLoading ? '…' : detail ? String(detail.srsOverall.dueNow) : '—'}
+          label="Review jatuh tempo"
         />
       </section>
 
@@ -213,6 +249,72 @@ export function ProgressPage() {
           {latestActivity ? 'Lanjutkan belajar' : 'Mulai dari Hiragana'}
           <ArrowRight size={16} aria-hidden="true"/>
         </Link>
+      </section>
+
+      <section className="central-progress-section" aria-labelledby="central-progress-jlpt-title">
+        <div className="dashboard-section-heading">
+          <div>
+            <p className="eyebrow">N5 → N4</p>
+            <h2 id="central-progress-jlpt-title">Progress JLPT</h2>
+          </div>
+          <p>
+            Dihitung hanya dari Kosakata, Kanji, dan Tata Bahasa yang memiliki
+            label JLPT N5/N4 pada source data KOJAC.
+          </p>
+        </div>
+
+        {detailLoading && !detail ? (
+          <div className="central-progress-level-grid" aria-label="Memuat progress JLPT">
+            <span className="central-progress-level-loading"/>
+            <span className="central-progress-level-loading"/>
+          </div>
+        ) : detail && detail.jlptLevels.length > 0 ? (
+          <div className="central-progress-level-grid">
+            {detail.jlptLevels.map((level) => {
+              const masteryCoverage = level.total > 0
+                ? clampPercent((100 * level.mastered) / level.total)
+                : 0;
+              const startedCoverage = level.total > 0
+                ? clampPercent((100 * level.started) / level.total)
+                : 0;
+
+              return (
+                <article className="central-progress-level-card" key={level.level}>
+                  <div className="central-progress-level-top">
+                    <div>
+                      <span>JLPT LEVEL</span>
+                      <h3>{level.level}</h3>
+                    </div>
+                    <strong>{masteryCoverage}%</strong>
+                  </div>
+
+                  <div className="central-progress-level-track" aria-hidden="true">
+                    <span style={{ width: `${masteryCoverage}%` }}/>
+                  </div>
+
+                  <div className="central-progress-level-metrics">
+                    <div>
+                      <strong>{level.mastered} / {level.total}</strong>
+                      <span>Dikuasai ≥80</span>
+                    </div>
+                    <div>
+                      <strong>{level.started} / {level.total}</strong>
+                      <span>Sudah dimulai · {startedCoverage}%</span>
+                    </div>
+                    <div>
+                      <strong>{level.averageMastery}%</strong>
+                      <span>Mastery rata-rata</span>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="central-progress-detail-fallback">
+            Detail N5/N4 belum dapat dimuat.
+          </div>
+        )}
       </section>
 
       <section className="central-progress-section" aria-labelledby="central-progress-detail-title">
@@ -242,48 +344,135 @@ export function ProgressPage() {
       <section className="central-progress-section" aria-labelledby="central-progress-review-title">
         <div className="dashboard-section-heading">
           <div>
-            <p className="eyebrow">AREA REVIEW</p>
-            <h2 id="central-progress-review-title">Fokus Berikutnya</h2>
+            <p className="eyebrow">REVIEW INTELLIGENCE</p>
+            <h2 id="central-progress-review-title">Prioritas Review</h2>
           </div>
           <p>
-            Diurutkan otomatis dari modul yang sudah dimulai dengan progress
-            terendah. Tidak mengubah jadwal atau mastery.
+            Item yang sudah jatuh tempo diurutkan dari mastery terendah. Hanya
+            membaca status SRS existing.
           </p>
         </div>
 
-        <div className="central-progress-focus-grid">
-          {reviewPriorities.length > 0 ? reviewPriorities.map((module) => (
-            <Link className="central-progress-focus-card" to={module.route} key={module.key}>
-              <div className="central-progress-focus-icon" aria-hidden="true">
-                <Target size={18}/>
+        {detailLoading && !detail ? (
+          <div className="central-progress-review-grid">
+            {Array.from({ length: 4 }, (_, index) => (
+              <span className="central-progress-review-loading" key={index}/>
+            ))}
+          </div>
+        ) : detail && detail.reviewPriorities.length > 0 ? (
+          <div className="central-progress-review-grid">
+            {detail.reviewPriorities.map((item, index) => {
+              const meta = MODULE_META[item.moduleKey];
+
+              return (
+                <Link
+                  className="central-progress-review-card"
+                  to={meta.route}
+                  key={`${item.moduleKey}-${item.title}-${item.dueAt}-${index}`}
+                >
+                  <div className="central-progress-review-card-top">
+                    <span>{meta.title}</span>
+                    <strong>{item.masteryScore}%</strong>
+                  </div>
+                  <h3>{item.title}</h3>
+                  {item.reading && <p className="central-progress-review-reading">{item.reading}</p>}
+                  {item.meaning && <p>{item.meaning}</p>}
+                  <div className="central-progress-review-due">
+                    <Clock3 size={13} aria-hidden="true"/>
+                    <span>Jatuh tempo {formatDue(item.dueAt)}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="central-progress-focus-grid">
+            {moduleReviewPriorities.length > 0 ? moduleReviewPriorities.map((module) => (
+              <Link className="central-progress-focus-card" to={module.route} key={module.key}>
+                <div className="central-progress-focus-icon" aria-hidden="true">
+                  <Target size={18}/>
+                </div>
+                <div>
+                  <strong>{module.title}</strong>
+                  <span>{clampPercent(module.percent)}% · {module.metricValue}</span>
+                </div>
+                <ArrowRight size={15} aria-hidden="true"/>
+              </Link>
+            )) : notStarted.length > 0 ? notStarted.map((module) => (
+              <Link className="central-progress-focus-card" to={module.route} key={module.key}>
+                <div className="central-progress-focus-icon" aria-hidden="true">
+                  <TrendingUp size={18}/>
+                </div>
+                <div>
+                  <strong>{module.title}</strong>
+                  <span>Belum dimulai</span>
+                </div>
+                <ArrowRight size={15} aria-hidden="true"/>
+              </Link>
+            )) : (
+              <div className="central-progress-complete panel">
+                <CheckCircle2 size={20} aria-hidden="true"/>
+                <div>
+                  <strong>Tidak ada review jatuh tempo</strong>
+                  <span>Gunakan masing-masing modul untuk menjaga mastery.</span>
+                </div>
               </div>
-              <div>
-                <strong>{module.title}</strong>
-                <span>{clampPercent(module.percent)}% · {module.metricValue}</span>
-              </div>
-              <ArrowRight size={15} aria-hidden="true"/>
-            </Link>
-          )) : notStarted.length > 0 ? notStarted.map((module) => (
-            <Link className="central-progress-focus-card" to={module.route} key={module.key}>
-              <div className="central-progress-focus-icon" aria-hidden="true">
-                <TrendingUp size={18}/>
-              </div>
-              <div>
-                <strong>{module.title}</strong>
-                <span>Belum dimulai</span>
-              </div>
-              <ArrowRight size={15} aria-hidden="true"/>
-            </Link>
-          )) : (
-            <div className="central-progress-complete panel">
-              <CheckCircle2 size={20} aria-hidden="true"/>
-              <div>
-                <strong>Semua modul utama sudah mencapai 100%</strong>
-                <span>Tetap gunakan review pada masing-masing modul untuk menjaga mastery.</span>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
+        )}
+      </section>
+
+      <section className="central-progress-section" aria-labelledby="central-progress-activity-title">
+        <div className="dashboard-section-heading">
+          <div>
+            <p className="eyebrow">AKTIVITAS TERBARU</p>
+            <h2 id="central-progress-activity-title">Riwayat Belajar</h2>
+          </div>
+          <p>
+            Maksimal 12 aktivitas terbaru dari SRS, Reading, dan Listening.
+          </p>
         </div>
+
+        {detailLoading && !detail ? (
+          <div className="central-progress-activity-list">
+            {Array.from({ length: 4 }, (_, index) => (
+              <span className="central-progress-activity-loading" key={index}/>
+            ))}
+          </div>
+        ) : detail && detail.recentActivity.length > 0 ? (
+          <div className="central-progress-activity-list">
+            {detail.recentActivity.map((activity, index) => {
+              const meta = MODULE_META[activity.moduleKey];
+              const time = formatActivityTime(activity.occurredAt);
+
+              return (
+                <Link
+                  to={meta.route}
+                  className="central-progress-activity-item"
+                  key={`${activity.moduleKey}-${activity.occurredAt}-${index}`}
+                >
+                  <div className="central-progress-activity-icon" aria-hidden="true">
+                    {activity.activityType === 'review'
+                      ? <RotateCcw size={16}/>
+                      : <CheckCircle2 size={16}/>}
+                  </div>
+                  <div className="central-progress-activity-copy">
+                    <div>
+                      <strong>{activity.title}</strong>
+                      <span>{meta.title}</span>
+                    </div>
+                    <p>{activity.detail}</p>
+                  </div>
+                  <time dateTime={activity.occurredAt}>{time ?? 'Aktivitas terbaru'}</time>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="central-progress-detail-fallback">
+            Belum ada aktivitas detail yang tersimpan.
+          </div>
+        )}
       </section>
     </div>
   );
