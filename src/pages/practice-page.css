@@ -1,11 +1,11 @@
-/* KOJAC LMS v1.4 — Latihan Center Phase 1 */
+/* KOJAC LMS v1.4 — Latihan Center Phase 2 */
 .practice-center-page{padding-bottom:54px}
 .practice-center-header{align-items:flex-end;gap:20px}
 .practice-center-header>div:first-child{max-width:760px}
 .practice-center-refresh{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto}
 .practice-center-refresh:disabled{opacity:.6;cursor:wait}
 .practice-center-warning{margin:-4px 0 16px;padding:11px 13px;border:1px solid #e3c9cd;border-radius:11px;background:#fff8f9;color:#6b3a41;font-size:12px;line-height:1.5}
-.practice-center-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.practice-center-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
 .practice-center-summary>article{min-width:0;display:flex;align-items:center;gap:11px;padding:15px;background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 7px 24px rgba(63,31,36,.025)}
 .practice-center-summary-icon{width:38px;height:38px;display:grid;place-items:center;flex:0 0 auto;border-radius:11px;background:var(--soft);color:var(--maroon)}
 .practice-center-summary strong,.practice-center-summary span{display:block;min-width:0}
@@ -17,6 +17,22 @@
 .practice-center-primary-link{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:11px 15px;border-radius:10px;background:var(--maroon);color:#fff;text-decoration:none;font-size:12px;font-weight:800}
 .practice-center-primary-link:hover{background:var(--maroon-dark);color:#fff}
 .practice-center-section{margin-top:30px}
+.practice-review-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.practice-review-card{min-width:0;display:flex;flex-direction:column;padding:14px;border:1px solid #eadfe1;border-radius:14px;background:#fff;color:inherit;text-decoration:none}
+.practice-review-card:hover{border-color:#cda9af;background:#fff8f9}
+.practice-review-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.practice-review-card-top span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:9.5px;font-weight:800}
+.practice-review-card-top strong{flex:0 0 auto;color:var(--maroon);font-size:12px}
+.practice-review-card h3{margin:12px 0 2px;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+.practice-review-card>p{margin:3px 0 0;color:var(--muted);font-size:10.5px;line-height:1.4;overflow-wrap:anywhere}
+.practice-review-reading{color:#514548!important;font-weight:750}
+.practice-review-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:12px;color:#7b6266;font-size:9.5px}
+.practice-review-footer svg{flex:0 0 auto;color:var(--maroon)}
+.practice-review-loading{display:block;min-height:168px;border-radius:14px;background:linear-gradient(90deg,#f0e9ea,#faf7f7,#f0e9ea);background-size:200% 100%;animation:dashboard-shimmer 1.2s infinite}
+.practice-filter-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.practice-filter-row button{padding:7px 10px;border:1px solid #decfd2;border-radius:999px;background:#fff;color:#655357;font-size:10.5px;font-weight:800}
+.practice-filter-row button:hover{border-color:#c9a6ac;background:#fff8f9}
+.practice-filter-row button.active{border-color:var(--maroon);background:var(--maroon);color:#fff}
 .practice-center-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .practice-center-card{min-width:0;display:flex;flex-direction:column;padding:18px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 7px 24px rgba(63,31,36,.025)}
 .practice-center-card-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
@@ -26,14 +42,21 @@
 .practice-center-card-top h3{margin:3px 0 0;font-size:17px;line-height:1.3}
 .practice-center-due-badge{padding:4px 7px;border-radius:999px;background:#efe0e3;color:var(--maroon);font-size:9px;font-weight:850;white-space:nowrap}
 .practice-center-card-description{min-height:58px;margin:15px 0 12px;color:var(--muted);font-size:11.5px;line-height:1.55}
-.practice-center-mode-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:17px}
+.practice-center-mode-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .practice-center-mode-list span{padding:5px 8px;border:1px solid #eadfe1;border-radius:999px;background:#fcfafb;color:#6b575b;font-size:9.5px;font-weight:750}
+.practice-center-health{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.practice-center-health span{display:inline-flex;align-items:center;gap:4px;padding:5px 7px;border-radius:8px;background:#fff6f7;color:#7a3c45;font-size:9.5px;font-weight:750}
 .practice-center-progress-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;color:var(--muted);font-size:10.5px;font-weight:700}
 .practice-center-progress-row strong{color:var(--maroon);font-size:11px}
 .practice-center-progress-track{height:5px;margin:7px 0 16px;overflow:hidden;border-radius:999px;background:#eee7e8}
 .practice-center-progress-track>span{display:block;height:100%;border-radius:inherit;background:var(--maroon)}
 .practice-center-module-link{display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;padding:9px 11px;border-radius:9px;background:#f2e8e9;color:var(--maroon);text-decoration:none;font-size:11px;font-weight:800}
 .practice-center-module-link:hover{background:var(--maroon);color:#fff}
+.practice-center-empty{display:flex;align-items:center;gap:10px;padding:16px;border:1px dashed #d8c5c8;border-radius:13px;background:#fcfafb;color:#665659}
+.practice-center-empty>svg{flex:0 0 auto;color:var(--maroon)}
+.practice-center-empty strong,.practice-center-empty span{display:block}
+.practice-center-empty strong{font-size:12.5px}
+.practice-center-empty span{margin-top:3px;color:var(--muted);font-size:10.5px}
 .practice-center-note{display:flex;align-items:flex-start;gap:11px;margin-top:30px;padding:17px}
 .practice-center-note>svg{flex:0 0 auto;color:var(--maroon)}
 .practice-center-note strong{display:block;font-size:13px}
@@ -42,7 +65,8 @@
 .practice-center-exam-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--soft);color:var(--maroon)}
 .practice-center-exam-teaser h2{margin:3px 0 5px;font-size:18px}
 .practice-center-exam-teaser p:not(.eyebrow){margin:0;color:var(--muted);font-size:11.5px;line-height:1.5}
-@media(max-width:1100px){.practice-center-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1150px){.practice-center-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.practice-review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.practice-center-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:820px){.practice-center-header{align-items:flex-start;flex-direction:column}.practice-center-refresh{width:100%;justify-content:center}.practice-center-recommendation{align-items:flex-start;flex-direction:column}.practice-center-primary-link{width:100%;justify-content:center}}
-@media(max-width:650px){.practice-center-summary{grid-template-columns:1fr}.practice-center-grid{grid-template-columns:1fr}.practice-center-page{padding-bottom:36px}.practice-center-card-description{min-height:0}.practice-center-recommendation{padding:18px}.practice-center-recommendation h2{font-size:21px}}
+@media(max-width:650px){.practice-center-summary{grid-template-columns:1fr}.practice-review-grid,.practice-center-grid{grid-template-columns:1fr}.practice-center-page{padding-bottom:36px}.practice-center-card-description{min-height:0}.practice-center-recommendation{padding:18px}.practice-center-recommendation h2{font-size:21px}.practice-filter-row{flex-wrap:nowrap;overflow:auto;padding-bottom:3px}.practice-filter-row button{flex:0 0 auto;white-space:nowrap}}
 @media(max-width:390px){.practice-center-card{padding:16px}.practice-center-card-top{grid-template-columns:auto minmax(0,1fr)}.practice-center-due-badge{grid-column:2;width:max-content}}
+@media(prefers-reduced-motion:reduce){.practice-review-loading{animation:none}}
