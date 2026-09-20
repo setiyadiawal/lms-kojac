@@ -52,6 +52,7 @@ type PracticeQuestion = {
   audioText?: string;
   typeLabel: string;
   explanation?: string;
+  reviewItemId?: string;
 };
 
 type PracticeAttempt = {
@@ -63,6 +64,7 @@ type PracticeAttempt = {
 type PracticeCache = {
   vocabulary: VocabularyRow[];
   kanji: KanjiRow[];
+  grammarItemIdByPattern?: Map<string, string>;
 };
 
 type CrossFlashcardField = 'kanji' | 'kana' | 'romaji' | 'arti' | 'jenis' | 'kategori';
@@ -437,6 +439,26 @@ async function loadAllVocabulary() {
   return rows;
 }
 
+async function loadGrammarItemIdByPattern() {
+  const { data, error } = await supabase
+    .from('learning_items')
+    .select('id,extra')
+    .eq('item_type', 'grammar')
+    .eq('is_published', true);
+
+  if (error) throw error;
+
+  const map = new Map<string, string>();
+  for (const row of (data ?? []) as Array<{ id: string; extra: Record<string, unknown> | null }>) {
+    const patternId = typeof row.extra?.pattern_id === 'string'
+      ? row.extra.pattern_id.trim()
+      : '';
+    if (patternId) map.set(patternId, row.id);
+  }
+
+  return map;
+}
+
 async function loadAllKanji() {
   const rows: KanjiRow[] = [];
 
@@ -489,6 +511,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-jp-meaning`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih arti yang benar.',
@@ -504,6 +527,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-meaning-jp`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih kosakata Jepang yang benar.',
@@ -519,6 +543,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-kanji-kana`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih reading Kana yang benar.',
@@ -534,6 +559,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-kana-meaning`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih arti dari Kana berikut.',
@@ -549,6 +575,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-meaning-kana`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih Kana yang benar.',
@@ -564,6 +591,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-kana-kanji`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih Kanji yang sesuai dengan reading berikut.',
@@ -579,6 +607,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-typing-kana`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'typing',
         instruction: 'Ketik Kana yang benar.',
@@ -595,6 +624,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-typing-romaji`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'typing',
         instruction: 'Ketik Romaji yang benar.',
@@ -611,6 +641,7 @@ function buildVocabularyQuestions(
       questions.push({
         id: `vocabulary-${row.id}-audio-meaning`,
         module: 'vocabulary',
+        reviewItemId: row.id,
         chapter,
         kind: 'audio',
         instruction: 'Dengarkan, lalu pilih arti yang benar.',
@@ -669,6 +700,7 @@ function buildKanjiQuestions(
       questions.push({
         id: `kanji-${row.id}-meaning`,
         module: 'kanji',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih arti Kanji yang benar.',
@@ -685,6 +717,7 @@ function buildKanjiQuestions(
       questions.push({
         id: `kanji-${row.id}-symbol`,
         module: 'kanji',
+        reviewItemId: row.id,
         chapter,
         kind: 'choice',
         instruction: 'Pilih Kanji yang sesuai dengan arti berikut.',
@@ -718,6 +751,7 @@ function buildKanjiQuestions(
       questions.push({
         id: `kanji-${row.id}-typing-onyomi`,
         module: 'kanji',
+        reviewItemId: row.id,
         chapter,
         kind: 'typing',
         instruction: 'Ketik salah satu Onyomi yang benar.',
@@ -752,6 +786,7 @@ function buildKanjiQuestions(
       questions.push({
         id: `kanji-${row.id}-typing-kunyomi`,
         module: 'kanji',
+        reviewItemId: row.id,
         chapter,
         kind: 'typing',
         instruction: 'Ketik salah satu Kunyomi yang benar.',
@@ -768,7 +803,11 @@ function buildKanjiQuestions(
   });
 }
 
-function buildGrammarQuestions(start: number, end: number) {
+function buildGrammarQuestions(
+  start: number,
+  end: number,
+  grammarItemIdByPattern: Map<string, string>,
+) {
   const patternById = new Map(GRAMMAR_PATTERNS.map((pattern) => [pattern.id, pattern]));
 
   return GRAMMAR_EXERCISES.flatMap<PracticeQuestion>((exercise) => {
@@ -785,6 +824,7 @@ function buildGrammarQuestions(start: number, end: number) {
       return [{
         id: `grammar-${exercise.id}`,
         module: 'grammar',
+        reviewItemId: grammarItemIdByPattern.get(exercise.patternId),
         chapter: pattern.chapter,
         kind: 'choice',
         instruction: exercise.instruction,
@@ -813,6 +853,7 @@ function buildGrammarQuestions(start: number, end: number) {
       return [{
         id: `grammar-${exercise.id}-typing`,
         module: 'grammar',
+        reviewItemId: grammarItemIdByPattern.get(exercise.patternId),
         chapter: pattern.chapter,
         kind: 'typing',
         instruction: exercise.instruction,
@@ -874,10 +915,11 @@ function buildSession(
   end: number,
   vocabulary: VocabularyRow[],
   kanjiRows: KanjiRow[],
+  grammarItemIdByPattern: Map<string, string>,
 ) {
   const vocabularyQuestions = buildVocabularyQuestions(vocabulary, start, end);
   const kanjiQuestions = buildKanjiQuestions(vocabulary, kanjiRows, start, end);
-  const grammarQuestions = buildGrammarQuestions(start, end);
+  const grammarQuestions = buildGrammarQuestions(start, end, grammarItemIdByPattern);
 
   if (module === 'vocabulary') return selectBalanced(vocabularyQuestions, questionCount, start, end);
   if (module === 'kanji') return selectBalanced(kanjiQuestions, questionCount, start, end);
@@ -952,6 +994,10 @@ export function CrossChapterPractice() {
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [typedAnswer, setTypedAnswer] = useState('');
   const [loadError, setLoadError] = useState('');
+  const [progressPending, setProgressPending] = useState(0);
+  const [progressSaveError, setProgressSaveError] = useState('');
+  const progressQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const recordedProgressKeysRef = useRef(new Set<string>());
   const [flashcardItems, setFlashcardItems] = useState<VocabularyRow[]>([]);
   const [flashcardDeckIds, setFlashcardDeckIds] = useState<string[]>([]);
   const [flashcardIndex, setFlashcardIndex] = useState(0);
@@ -1047,6 +1093,44 @@ export function CrossChapterPractice() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [flashcardDeckIds.length, flashcardSettingsOpen, phase]);
 
+  const queuePracticeProgress = (question: PracticeQuestion, correct: boolean) => {
+    if (!question.reviewItemId) return;
+
+    // Vocabulary/Kanji: satu update per learning item per sesi.
+    // Grammar: tetap per exercise seperti Quiz Grammar existing.
+    const reviewKey = question.module === 'grammar'
+      ? question.id
+      : question.reviewItemId;
+
+    if (recordedProgressKeysRef.current.has(reviewKey)) return;
+    recordedProgressKeysRef.current.add(reviewKey);
+
+    setProgressPending((current) => current + 1);
+    setProgressSaveError('');
+
+    progressQueueRef.current = progressQueueRef.current.then(async () => {
+      try {
+        const { error } = await supabase.rpc('record_learning_review', {
+          p_item_id: question.reviewItemId,
+          p_rating: correct ? 2 : 0,
+        });
+
+        if (error) {
+          const detail = [error.message, error.details, error.hint].filter(Boolean).join(' — ');
+          throw new Error(detail || 'Progress latihan gagal disimpan.');
+        }
+      } catch (saveError) {
+        setProgressSaveError(
+          saveError instanceof Error
+            ? saveError.message
+            : 'Sebagian progress latihan belum tersimpan.',
+        );
+      } finally {
+        setProgressPending((current) => Math.max(0, current - 1));
+      }
+    });
+  };
+
   const startFlashcardSession = async () => {
     const effectiveStart = standaloneMode === 'flashcard' ? routeStartChapter : startChapter;
     const effectiveEnd = standaloneMode === 'flashcard' ? routeEndChapter : endChapter;
@@ -1105,11 +1189,20 @@ export function CrossChapterPractice() {
     setCurrentIndex(0);
     setSelectedAnswer('');
     setTypedAnswer('');
+    setProgressPending(0);
+    setProgressSaveError('');
+    recordedProgressKeysRef.current.clear();
 
     try {
       if (!cacheRef.current) {
-        const [vocabulary, kanji] = await Promise.all([loadAllVocabulary(), loadAllKanji()]);
-        cacheRef.current = { vocabulary, kanji };
+        const [vocabulary, kanji, grammarItemIdByPattern] = await Promise.all([
+          loadAllVocabulary(),
+          loadAllKanji(),
+          loadGrammarItemIdByPattern(),
+        ]);
+        cacheRef.current = { vocabulary, kanji, grammarItemIdByPattern };
+      } else if (!cacheRef.current.grammarItemIdByPattern) {
+        cacheRef.current.grammarItemIdByPattern = await loadGrammarItemIdByPattern();
       }
 
       const session = buildSession(
@@ -1119,6 +1212,7 @@ export function CrossChapterPractice() {
         effectiveEnd,
         cacheRef.current.vocabulary,
         cacheRef.current.kanji,
+        cacheRef.current.grammarItemIdByPattern ?? new Map(),
       );
 
       if (!session.length) throw new Error('Tidak ada soal yang dapat dibuat untuk rentang dan jenis latihan ini.');
@@ -1174,6 +1268,7 @@ export function CrossChapterPractice() {
       },
     ];
     setAttempts(nextAttempts);
+    queuePracticeProgress(currentQuestion, correct);
 
     if (currentIndex >= questions.length - 1) {
       setPhase('result');
@@ -1197,6 +1292,9 @@ export function CrossChapterPractice() {
     setFlashcardRevealed(false);
     setFlashcardSettingsOpen(false);
     setLoadError('');
+    setProgressPending(0);
+    setProgressSaveError('');
+    recordedProgressKeysRef.current.clear();
   };
 
   const returnToPracticeCenter = () => {
@@ -1443,6 +1541,14 @@ export function CrossChapterPractice() {
           <span style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}/>
         </div>
 
+        {(progressPending > 0 || progressSaveError) && (
+          <div className={`cross-practice-progress-sync ${progressSaveError ? 'error' : ''}`} role="status">
+            {progressSaveError
+              ? `Progress belum tersimpan: ${progressSaveError}`
+              : `Menyinkronkan progress… ${progressPending}`}
+          </div>
+        )}
+
         <article className="cross-practice-question-card">
           <div className="cross-practice-question-meta">
             <span>{moduleLabel(currentQuestion.module)}</span>
@@ -1623,8 +1729,16 @@ export function CrossChapterPractice() {
           </div>
         </section>
 
+        {(progressPending > 0 || progressSaveError) && (
+          <div className={`cross-practice-progress-sync ${progressSaveError ? 'error' : ''}`} role="status">
+            {progressSaveError
+              ? `Sebagian progress belum tersimpan: ${progressSaveError}`
+              : `Menyinkronkan ${progressPending} update progress…`}
+          </div>
+        )}
+
         <p className="cross-practice-result-note">
-          Hasil ini hanya untuk sesi latihan dan tidak mengubah mastery, SRS, atau progress formal.
+          Jawaban pada sesi ini memperbarui mastery, SRS, due date, akurasi, dan progress materi seperti Quiz di menu Belajar.
         </p>
 
         <div className="cross-practice-result-actions">
@@ -1792,7 +1906,7 @@ export function CrossChapterPractice() {
       </div>
 
       <p className="cross-practice-safety-note">
-        Latihan Lintas Bab bersifat independen. Jawaban pada sesi ini tidak mengubah SRS, mastery, due date, atau progress modul existing.
+        Jawaban pada Quiz Latihan Lintas Bab memperbarui SRS, mastery, due date, akurasi, dan progress materi. Flashcard Lintas Bab tetap tidak mengubah progress karena tidak memiliki rating/jawaban.
       </p>
     </section>
   );

@@ -7,6 +7,7 @@ import type {
   KanjiExample,
   KanjiItem,
   KanjiLevel,
+  KanjiProgress,
   KanjiRecordReview,
   KanjiSentence,
 } from '../kanji/useKanji';
@@ -98,18 +99,24 @@ async function loadPaged<T>(
   return rows;
 }
 
-const noProgressReview: KanjiRecordReview = async (itemId) => ({
-  item_id: itemId,
-  repetitions: 0,
-  interval_days: 0,
-  ease_factor: 2.5,
-  due_at: '',
-  last_rating: null,
-  last_reviewed_at: null,
-  correct_count: 0,
-  wrong_count: 0,
-  mastery_score: 0,
-});
+const recordCrossKanjiReview: KanjiRecordReview = async (itemId, rating) => {
+  const { data, error } = await supabase.rpc('record_learning_review', {
+    p_item_id: itemId,
+    p_rating: rating,
+  });
+
+  if (error) {
+    const detail = [error.message, error.details, error.hint].filter(Boolean).join(' — ');
+    throw new Error(detail || 'Gagal menyimpan progress Kanji.');
+  }
+
+  const row = (Array.isArray(data) ? data[0] : data) as KanjiProgress | null;
+  if (!row?.item_id) {
+    throw new Error('Supabase tidak mengembalikan progress Kanji yang tersimpan.');
+  }
+
+  return row;
+};
 
 export function CrossChapterKanjiQuizPage() {
   const navigate = useNavigate();
@@ -253,8 +260,8 @@ export function CrossChapterKanjiQuizPage() {
         <KanjiQuiz
           items={items}
           level="N5"
-          onRecordReview={noProgressReview}
-          persistProgress={false}
+          onRecordReview={recordCrossKanjiReview}
+          persistProgress
           setupTitle={`Quiz Kanji · Bab ${startChapter}–${endChapter}`}
           setupDescription={`Pilih tipe latihan dan jumlah soal. Semua soal memakai Kanji yang relevan dengan Vocabulary Bab ${startChapter}–${endChapter}.`}
           availabilityLabel={`${items.length} Kanji relevan tersedia pada rentang ini.`}
@@ -262,7 +269,8 @@ export function CrossChapterKanjiQuizPage() {
       )}
 
       <p className="cross-reuse-safety">
-        Sesi lintas bab tidak mengubah SRS, mastery, due date, atau progress formal.
+        Jawaban Quiz Lintas Bab memperbarui mastery, SRS, due date, akurasi,
+        dan progress Kanji melalui sistem review yang sama dengan Quiz di menu Belajar.
       </p>
     </div>
   );

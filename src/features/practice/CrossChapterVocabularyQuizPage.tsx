@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { VocabularyQuiz } from '../vocabulary/VocabularyQuiz';
 import type {
   VocabularyJenis,
+  VocabularyProgress,
   VocabularyRecordReview,
   VocabularyWithProgress,
 } from '../vocabulary/useVocabulary';
@@ -73,18 +74,24 @@ async function loadPublishedVocabulary() {
   return rows;
 }
 
-const noProgressReview: VocabularyRecordReview = async (itemId) => ({
-  item_id: itemId,
-  repetitions: 0,
-  interval_days: 0,
-  ease_factor: 2.5,
-  due_at: '',
-  last_rating: null,
-  last_reviewed_at: null,
-  correct_count: 0,
-  wrong_count: 0,
-  mastery_score: 0,
-});
+const recordCrossVocabularyReview: VocabularyRecordReview = async (itemId, rating) => {
+  const { data, error } = await supabase.rpc('record_learning_review', {
+    p_item_id: itemId,
+    p_rating: rating,
+  });
+
+  if (error) {
+    const detail = [error.message, error.details, error.hint].filter(Boolean).join(' — ');
+    throw new Error(detail || 'Gagal menyimpan progress Vocabulary.');
+  }
+
+  const row = (Array.isArray(data) ? data[0] : data) as VocabularyProgress | null;
+  if (!row?.item_id) {
+    throw new Error('Supabase tidak mengembalikan progress Vocabulary yang tersimpan.');
+  }
+
+  return row;
+};
 
 export function CrossChapterVocabularyQuizPage() {
   const navigate = useNavigate();
@@ -218,8 +225,8 @@ export function CrossChapterVocabularyQuizPage() {
       {!loading && !error && (
         <VocabularyQuiz
           items={items}
-          onRecordReview={noProgressReview}
-          persistProgress={false}
+          onRecordReview={recordCrossVocabularyReview}
+          persistProgress
           setupTitle={`Quiz Vocabulary · Bab ${startChapter}–${endChapter}`}
           setupDescription={`Pilih tipe latihan dan jumlah soal. Semua soal menggunakan gabungan kosakata Bab ${startChapter}–${endChapter}.`}
           emptyDescription={`Tidak ada kosakata published pada Bab ${startChapter}–${endChapter}.`}
@@ -227,8 +234,8 @@ export function CrossChapterVocabularyQuizPage() {
       )}
 
       <p className="cross-vocab-safety">
-        Sesi lintas bab bersifat latihan independen dan tidak mengubah SRS,
-        mastery, due date, atau progress formal.
+        Jawaban Quiz Lintas Bab memperbarui mastery, SRS, due date, akurasi,
+        dan progress Vocabulary melalui sistem review yang sama dengan Quiz di menu Belajar.
       </p>
     </div>
   );

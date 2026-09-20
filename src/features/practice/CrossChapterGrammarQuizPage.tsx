@@ -1,6 +1,7 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { GrammarQuiz } from '../grammar/GrammarQuiz';
+import { useGrammarProgress } from '../grammar/useGrammarProgress';
 import './cross-chapter-quiz-page.css';
 
 const MAX_CHAPTER = 35;
@@ -13,6 +14,7 @@ function routeChapter(value: string | null, fallback: number) {
 
 export function CrossChapterGrammarQuizPage() {
   const navigate = useNavigate();
+  const grammarProgress = useGrammarProgress();
   const [searchParams] = useSearchParams();
 
   const startChapter = routeChapter(searchParams.get('start'), 1);
@@ -36,12 +38,28 @@ export function CrossChapterGrammarQuizPage() {
         </div>
       </div>
 
-      <GrammarQuiz
-        chapterRange={{ start: startChapter, end: endChapter }}
-      />
+      {grammarProgress.loading ? (
+        <div className="cross-reuse-state" role="status">
+          <strong>Menyiapkan progress Tata Bahasa…</strong>
+          <span>Quiz akan menggunakan sistem mastery/SRS yang sama dengan menu Belajar.</span>
+        </div>
+      ) : (
+        <GrammarQuiz
+          chapterRange={{ start: startChapter, end: endChapter }}
+          recordGrammarReview={grammarProgress.recordReview}
+        />
+      )}
+
+      {grammarProgress.error && !grammarProgress.loading && (
+        <div className="cross-reuse-state error" role="status">
+          <strong>Perhatian progress Grammar</strong>
+          <span>{grammarProgress.error}</span>
+        </div>
+      )}
 
       <p className="cross-reuse-safety">
-        Sesi lintas bab tidak mengubah SRS, mastery, due date, atau progress formal.
+        Jawaban Quiz Lintas Bab memperbarui mastery, SRS, due date, akurasi,
+        dan progress Tata Bahasa melalui sistem review yang sama dengan Quiz di menu Belajar.
       </p>
     </div>
   );

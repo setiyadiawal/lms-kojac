@@ -900,3 +900,22 @@
     font-size:clamp(16px,5vw,20px);
   }
 }
+
+
+/* KOJAC CROSS CHAPTER PROGRESS SYNC */
+.cross-practice-progress-sync{
+  width:100%;
+  margin:0 0 12px;
+  padding:10px 12px;
+  border:1px solid #d8c7ca;
+  border-radius:10px;
+  background:#faf6f7;
+  color:#694e53;
+  font-size:11px;
+  line-height:1.45;
+}
+.cross-practice-progress-sync.error{
+  border-color:#d9aeb5;
+  background:#fff4f5;
+  color:#8a2634;
+}
