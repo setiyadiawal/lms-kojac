@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabase';
 import { GRAMMAR_PATTERNS } from '../grammar/grammarData';
 import { GRAMMAR_EXERCISES } from '../grammar/grammarExercises';
 import { READING_ITEMS } from '../reading/readingData';
-import { LISTENING_ITEMS, getListeningScript } from '../listening/listeningData';
+import { LISTENING_ITEMS, type ListeningSpeakerTurn } from '../listening/listeningData';
 
 export type JlptSimulationLevel = 'N5' | 'N4';
 export type JlptSimulationSection = 'language' | 'reading' | 'listening';
@@ -17,8 +17,7 @@ export type JlptSimulationQuestion = {
   correctAnswer: string;
   explanation: string;
   passage?: string;
-  listeningScript?: string;
-  audioUrl?: string;
+  listeningTurns?: ListeningSpeakerTurn[];
 };
 
 type LearningItemRow = {
@@ -63,28 +62,16 @@ function buildOptions(correct: string, pool: string[]) {
 
 type ReadingPassage = (typeof READING_ITEMS)[number]['passage'];
 
-function textOfReadingPassage(passage: unknown): string {
-  const readText = (value: unknown): string => {
-    if (Array.isArray(value)) {
-      const containsNestedArray = value.some((item) => Array.isArray(item));
-      const parts = value
-        .map((item) => readText(item))
-        .filter((item) => item.length > 0);
-
-      return parts.join(containsNestedArray ? '\n' : '');
-    }
-
-    if (typeof value === 'string') return value;
-
-    if (value && typeof value === 'object' && 'text' in value) {
-      const text = (value as { text?: unknown }).text;
-      return typeof text === 'string' ? text : '';
-    }
-
-    return '';
-  };
-
-  return readText(passage).trim();
+function textOfReadingPassage(passage: ReadingPassage): string {
+  return passage
+    .map((paragraph) =>
+      paragraph
+        .map((segment) => segment.text)
+        .join('')
+        .trim(),
+    )
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 function buildVocabularyQuestions(
@@ -193,7 +180,7 @@ function buildGrammarQuestions(level: JlptSimulationLevel) {
     GRAMMAR_PATTERNS.map((pattern) => [pattern.id, pattern.jlptLevel]),
   );
 
-  return shuffle(
+  const eligibleExercises = shuffle(
     GRAMMAR_EXERCISES.filter((exercise) => {
       if (patternLevel.get(exercise.patternId) !== level) return false;
       const options = exercise.options ?? [];
@@ -203,22 +190,58 @@ function buildGrammarQuestions(level: JlptSimulationLevel) {
         && ['multiple_choice', 'pattern_choice', 'fill_blank', 'error_correction'].includes(exercise.type)
       );
     }),
-  )
-    .slice(0, TARGET_COUNTS.grammar)
-    .map<JlptSimulationQuestion>((exercise) => ({
-      id: `jlpt-${level}-grammar-${exercise.id}`,
+  ).slice(0, TARGET_COUNTS.grammar);
+
+  const questions: JlptSimulationQuestion[] = eligibleExercises.map((exercise) => ({
+    id: `jlpt-${level}-grammar-${exercise.id}`,
+    level,
+    section: 'language',
+    category: 'Tata Bahasa',
+    prompt: [
+      exercise.instruction,
+      exercise.context ? `Konteks: ${exercise.context}` : '',
+      exercise.prompt,
+    ].filter(Boolean).join('\n'),
+    options: shuffle(exercise.options ?? []),
+    correctAnswer: exercise.answer,
+    explanation: exercise.explanation,
+  }));
+
+  if (questions.length >= TARGET_COUNTS.grammar) return questions;
+
+  // N4 belum memiliki GRAMMAR_EXERCISES existing.
+  // Isi kekurangan hanya dari GRAMMAR_PATTERNS existing, tanpa membuat
+  // kalimat/contoh materi baru dan tanpa mengubah modul Grammar.
+  const usedPatternIds = new Set(eligibleExercises.map((exercise) => exercise.patternId));
+  const sameLevelPatterns = GRAMMAR_PATTERNS.filter(
+    (pattern) =>
+      pattern.jlptLevel === level
+      && pattern.pattern.trim().length > 0
+      && pattern.meaning.trim().length > 0,
+  );
+  const meaningPool = sameLevelPatterns.map((pattern) => pattern.meaning);
+
+  for (const pattern of shuffle(
+    sameLevelPatterns.filter((item) => !usedPatternIds.has(item.id)),
+  )) {
+    const options = buildOptions(pattern.meaning, meaningPool);
+    if (options.length !== 4) continue;
+
+    questions.push({
+      id: `jlpt-${level}-grammar-pattern-${pattern.id}`,
       level,
       section: 'language',
-      category: 'Tata Bahasa',
-      prompt: [
-        exercise.instruction,
-        exercise.context ? `Konteks: ${exercise.context}` : '',
-        exercise.prompt,
-      ].filter(Boolean).join('\n'),
-      options: shuffle(exercise.options ?? []),
-      correctAnswer: exercise.answer,
-      explanation: exercise.explanation,
-    }));
+      category: 'Tata Bahasa · Arti Pola',
+      prompt: `Arti/fungsi yang paling sesuai untuk pola 「${pattern.pattern}」 adalah...`,
+      options,
+      correctAnswer: pattern.meaning,
+      explanation: pattern.explanation,
+    });
+
+    if (questions.length >= TARGET_COUNTS.grammar) break;
+  }
+
+  return questions;
 }
 
 function buildReadingQuestions(level: JlptSimulationLevel) {
@@ -264,8 +287,7 @@ function buildListeningQuestions(level: JlptSimulationLevel) {
       options: shuffle(question.options),
       correctAnswer: question.correctAnswer,
       explanation: question.explanation,
-      listeningScript: getListeningScript(item),
-      audioUrl: item.audioSource === 'file' ? item.audioUrl : undefined,
+      listeningTurns: item.speakerTurns,
     });
 
     if (questions.length >= TARGET_COUNTS.listening) break;

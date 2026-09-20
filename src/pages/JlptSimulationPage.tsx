@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -20,6 +20,7 @@ import {
   type JlptSimulationQuestion,
   type JlptSimulationSection,
 } from '../features/jlpt/jlptSimulationBank';
+import { useListeningSpeech } from '../features/listening/useListeningSpeech';
 import './jlpt-simulation.css';
 
 type Phase = 'setup' | 'loading' | 'exam' | 'result' | 'error';
@@ -74,6 +75,8 @@ export function JlptSimulationPage() {
   const [audioPlays, setAudioPlays] = useState<Record<string, number>>({});
   const [errorMessage, setErrorMessage] = useState('');
   const [result, setResult] = useState<JlptResult | null>(() => loadLastResult());
+  const deadlineRef = useRef<number | null>(null);
+  const listeningSpeech = useListeningSpeech();
 
   const current = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
@@ -97,11 +100,38 @@ export function JlptSimulationPage() {
   useEffect(() => {
     if (phase !== 'exam') return undefined;
 
-    const timer = window.setInterval(() => {
-      setRemainingSeconds((value) => Math.max(0, value - 1));
-    }, 1000);
+    const updateRemainingTime = () => {
+      const deadline = deadlineRef.current;
+      if (deadline === null) return;
+      setRemainingSeconds(
+        Math.max(0, Math.ceil((deadline - Date.now()) / 1000)),
+      );
+    };
 
-    return () => window.clearInterval(timer);
+    updateRemainingTime();
+    const timer = window.setInterval(updateRemainingTime, 1000);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') updateRemainingTime();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== 'exam') return undefined;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [phase]);
 
   useEffect(() => {
@@ -112,9 +142,13 @@ export function JlptSimulationPage() {
 
   useEffect(() => {
     return () => {
-      window.speechSynthesis?.cancel();
+      listeningSpeech.stop();
     };
-  }, []);
+  }, [listeningSpeech.stop]);
+
+  useEffect(() => {
+    listeningSpeech.stop();
+  }, [current?.id, listeningSpeech.stop]);
 
   const startSimulation = async () => {
     setPhase('loading');
@@ -124,12 +158,15 @@ export function JlptSimulationPage() {
     setAudioPlays({});
     setCurrentIndex(0);
     setRemainingSeconds(DURATION_SECONDS);
+    deadlineRef.current = null;
 
     try {
       const bank = await buildJlptSimulation(level);
       setQuestions(bank);
+      deadlineRef.current = Date.now() + (DURATION_SECONDS * 1000);
       setPhase('exam');
     } catch (error) {
+      deadlineRef.current = null;
       console.error('JLPT simulation bank failed', error);
       setErrorMessage(
         error instanceof Error
@@ -156,34 +193,17 @@ export function JlptSimulationPage() {
   };
 
   const playListening = () => {
-    if (!current?.listeningScript) return;
+    if (!current?.listeningTurns?.length) return;
     const used = audioPlays[current.id] ?? 0;
-    if (used >= 2) return;
+    if (used >= 2 || !listeningSpeech.supported) return;
+
+    const started = listeningSpeech.play(current.listeningTurns);
+    if (!started) return;
 
     setAudioPlays((state) => ({
       ...state,
       [current.id]: used + 1,
     }));
-
-    if (current.audioUrl) {
-      const audio = new Audio(current.audioUrl);
-      void audio.play();
-      return;
-    }
-
-    if (!('speechSynthesis' in window)) return;
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(current.listeningScript);
-    utterance.lang = 'ja-JP';
-    utterance.rate = 0.92;
-
-    const voice = window.speechSynthesis
-      .getVoices()
-      .find((entry) => entry.lang.toLowerCase().startsWith('ja'));
-    if (voice) utterance.voice = voice;
-
-    window.speechSynthesis.speak(utterance);
   };
 
   const submitExam = (automatic = false) => {
@@ -218,21 +238,23 @@ export function JlptSimulationPage() {
       bySection,
     };
 
+    deadlineRef.current = null;
     setResult(nextResult);
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(nextResult));
-    window.speechSynthesis?.cancel();
+    listeningSpeech.stop();
     setPhase('result');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const resetToSetup = () => {
-    window.speechSynthesis?.cancel();
+    listeningSpeech.stop();
     setQuestions([]);
     setAnswers({});
     setFlags(new Set());
     setAudioPlays({});
     setCurrentIndex(0);
     setRemainingSeconds(DURATION_SECONDS);
+    deadlineRef.current = null;
     setPhase('setup');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -500,13 +522,19 @@ export function JlptSimulationPage() {
                 <Headphones size={21}/>
                 <div>
                   <strong>Audio Listening</strong>
-                  <span>Maksimal 2 kali · telah diputar {usedPlays}/2</span>
+                  <span>
+                    {!listeningSpeech.supported
+                      ? 'Audio TTS tidak didukung browser ini.'
+                      : listeningSpeech.error
+                        ? listeningSpeech.error
+                        : `Maksimal 2 kali · telah diputar ${usedPlays}/2`}
+                  </span>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={playListening}
-                disabled={usedPlays >= 2}
+                disabled={usedPlays >= 2 || !listeningSpeech.supported || !current.listeningTurns?.length}
               >
                 <Volume2 size={16}/>
                 Putar Audio
