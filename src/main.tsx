@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './state/AuthContext';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
+import { PWAUpdatePrompt } from './components/PWAUpdatePrompt';
 import './styles.css';
 import './pwa.css';
 
@@ -14,17 +15,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <App />
       </AuthProvider>
       <PWAInstallPrompt />
+      <PWAUpdatePrompt />
     </BrowserRouter>
   </React.StrictMode>,
 );
 
-
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    void navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
-      .catch((error) => {
-        console.error('KOJAC service worker registration failed', error);
-      });
-  });
-}

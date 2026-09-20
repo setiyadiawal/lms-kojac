@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'kojac-pwa-';
-const CACHE_VERSION = 'v1.2-brand1';
+const CACHE_VERSION = 'v1.2-pwa3';
 const SHELL_CACHE = `${CACHE_PREFIX}${CACHE_VERSION}-shell`;
 const ASSET_CACHE = `${CACHE_PREFIX}${CACHE_VERSION}-assets`;
 
@@ -16,9 +16,14 @@ const CORE_FILES = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then((cache) => cache.addAll(CORE_FILES))
-      .then(() => self.skipWaiting()),
+      .then((cache) => cache.addAll(CORE_FILES)),
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {
@@ -71,6 +76,23 @@ async function cacheFirstStatic(request) {
   return response;
 }
 
+async function networkFirstStatic(request) {
+  try {
+    const response = await fetch(request);
+
+    if (response && response.ok) {
+      const cache = await caches.open(ASSET_CACHE);
+      await cache.put(request, response.clone());
+    }
+
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    throw new Error('Static asset tidak tersedia.');
+  }
+}
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
 
@@ -86,12 +108,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Vite production assets are content-hashed. Public KOJAC assets under /assets/
-  // are also safe to cache locally. Data/API requests are intentionally excluded.
-  if (
-    url.pathname.startsWith('/assets/')
-    || url.pathname.startsWith('/brand/')
-  ) {
+  // Vite assets are content-hashed and safe for cache-first.
+  if (url.pathname.startsWith('/assets/')) {
     event.respondWith(cacheFirstStatic(request));
+    return;
+  }
+
+  // Brand assets have stable filenames, so always prefer the network version.
+  if (url.pathname.startsWith('/brand/')) {
+    event.respondWith(networkFirstStatic(request));
   }
 });
