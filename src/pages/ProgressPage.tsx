@@ -1,17 +1,30 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Award,
+  BookMarked,
+  BookOpenCheck,
+  BookOpenText,
+  BrainCircuit,
   CheckCircle2,
   Clock3,
   Gauge,
+  Headphones,
+  Languages,
   Layers3,
+  LockKeyhole,
   RefreshCw,
   RotateCcw,
+  SpellCheck,
   Target,
   TrendingUp,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { StudentProgressOverview } from '../features/dashboard/StudentProgressOverview';
+import {
+  evaluateStudentAchievements,
+  type Achievement,
+} from '../features/dashboard/studentAchievements';
 import {
   useStudentDashboardProgress,
   type DashboardModuleKey,
@@ -85,6 +98,76 @@ function SummaryStat({
   );
 }
 
+function AchievementModuleIcon({
+  category,
+}: {
+  category: Achievement['category'];
+}) {
+  if (category === 'general') return <Award size={21}/>;
+  if (category === 'hiragana') return <Languages size={21}/>;
+  if (category === 'katakana') return <SpellCheck size={21}/>;
+  if (category === 'vocabulary') return <BookMarked size={21}/>;
+  if (category === 'kanji') return <BookOpenCheck size={21}/>;
+  if (category === 'grammar') return <BrainCircuit size={21}/>;
+  if (category === 'reading') return <BookOpenText size={21}/>;
+  return <Headphones size={21}/>;
+}
+
+function ProgressAchievementCard({
+  achievement,
+  loading,
+}: {
+  achievement: Achievement;
+  loading: boolean;
+}) {
+  const status = loading ? 'Memuat' : achievement.unlocked ? 'Tercapai' : 'Terkunci';
+  const progressText = loading ? 'Memuat progress…' : achievement.progressText;
+  const progressValue = loading ? 0 : achievement.progressPercent;
+
+  return (
+    <article
+      className={`student-achievement-card ${achievement.unlocked ? 'unlocked' : 'locked'} ${loading ? 'loading' : ''}`}
+    >
+      <div className="student-achievement-card-top">
+        <div className="achievement-icon" aria-hidden="true">
+          <AchievementModuleIcon category={achievement.category}/>
+        </div>
+
+        <span
+          className={`achievement-status ${achievement.unlocked ? 'unlocked' : 'locked'}`}
+        >
+          {!loading && (
+            achievement.unlocked
+              ? <CheckCircle2 size={13} aria-hidden="true"/>
+              : <LockKeyhole size={13} aria-hidden="true"/>
+          )}
+          {status}
+        </span>
+      </div>
+
+      <h3>{achievement.title}</h3>
+      <p>{achievement.description}</p>
+
+      <div className="achievement-progress-row">
+        <span>Progress</span>
+        <strong>{progressText}</strong>
+      </div>
+
+      <div
+        className="achievement-progress-track"
+        role="progressbar"
+        aria-label={`Progress ${achievement.title}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressValue}
+        aria-valuetext={progressText}
+      >
+        <span style={{ width: `${progressValue}%` }}/>
+      </div>
+    </article>
+  );
+}
+
 function DetailCard({ module }: { module: DashboardModuleSummary }) {
   const percent = clampPercent(module.percent);
 
@@ -131,6 +214,12 @@ export function ProgressPage() {
     hasError: detailHasError,
     reload: reloadDetail,
   } = useStudentProgressDetail();
+
+  const achievements = evaluateStudentAchievements(modules);
+  const unlockedAchievementCount = achievements.filter(
+    (achievement) => achievement.unlocked,
+  ).length;
+  const achievementLoading = loading && modules.length === 0;
 
   const availableModules = modules.filter((module) => module.available);
   const activeModules = availableModules.filter(moduleStarted);
@@ -420,6 +509,33 @@ export function ProgressPage() {
             )}
           </div>
         )}
+      </section>
+
+      <section
+        className="central-progress-section central-progress-achievement-section"
+        aria-labelledby="central-progress-achievement-title"
+      >
+        <div className="dashboard-section-heading central-progress-achievement-heading">
+          <div>
+            <p className="eyebrow">PENCAPAIAN</p>
+            <h2 id="central-progress-achievement-title">Achievement Kamu</h2>
+          </div>
+          <p>
+            {achievementLoading
+              ? 'Memuat pencapaian…'
+              : `${unlockedAchievementCount} / ${achievements.length} Achievement Terbuka`}
+          </p>
+        </div>
+
+        <div className="student-achievement-grid">
+          {achievements.map((achievement) => (
+            <ProgressAchievementCard
+              key={achievement.id}
+              achievement={achievement}
+              loading={achievementLoading}
+            />
+          ))}
+        </div>
       </section>
 
       <section className="central-progress-section" aria-labelledby="central-progress-activity-title">

@@ -91,3 +91,17 @@
 @media(max-width:620px){.central-progress-page{padding-bottom:36px}.central-progress-stats{grid-template-columns:1fr 1fr;gap:8px}.central-progress-stat{padding:12px;gap:8px}.central-progress-stat-icon{width:34px;height:34px}.central-progress-stat strong{font-size:15px}.central-progress-stat span{font-size:9.5px}.central-progress-module-grid,.central-progress-loading-grid,.central-progress-review-grid{grid-template-columns:1fr}.central-progress-next{padding:18px}.central-progress-next h2{font-size:21px}.central-progress-module-card{padding:16px}.central-progress-level-metrics{grid-template-columns:1fr}.central-progress-level-card{padding:17px}.central-progress-level-top h3{font-size:25px}.central-progress-review-card{padding:13px}}
 @media(max-width:390px){.central-progress-stats{grid-template-columns:1fr}.central-progress-stat strong{font-size:16px}.central-progress-activity-copy>div{align-items:flex-start;flex-direction:column;gap:4px}.central-progress-activity-copy>div>span{width:max-content}}
 @media(prefers-reduced-motion:reduce){.central-progress-loading-grid span,.central-progress-level-loading,.central-progress-review-loading,.central-progress-activity-loading{animation:none}}
+
+
+/* KOJAC PROGRESS PAGE — ACHIEVEMENT */
+.central-progress-achievement-section{
+  margin-top:30px;
+}
+.central-progress-achievement-heading{
+  margin-bottom:14px;
+}
+@media(max-width:620px){
+  .central-progress-achievement-section{
+    margin-top:24px;
+  }
+}
