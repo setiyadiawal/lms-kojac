@@ -16,7 +16,8 @@ type VersionPayload = {
 };
 
 const VERSION_URL = '/version.json';
-const CHECK_INTERVAL_MS = 15 * 60 * 1000;
+const CHECK_INTERVAL_MS = 60 * 1000;
+const INTERACTION_CHECK_THROTTLE_MS = 10 * 1000;
 const DISMISS_KEY = 'kojac:pwa-update-dismissed-at';
 const DISMISS_FOR_MS = 30 * 60 * 1000;
 const RELOAD_GUARD_KEY = 'kojac:pwa-update-reload-at';
@@ -219,6 +220,8 @@ export function PWAUpdatePrompt() {
   useEffect(() => {
     if (!registration) return;
 
+    let lastInteractionCheckAt = 0;
+
     const check = () => {
       void checkRemoteVersion(registration);
       void registration.update().catch(() => {
@@ -226,19 +229,40 @@ export function PWAUpdatePrompt() {
       });
     };
 
+    const checkWhenVisible = () => {
+      if (document.visibilityState === 'visible') check();
+    };
+
     const onVisibilityChange = () => {
       if (document.visibilityState === 'visible') check();
     };
 
-    const interval = window.setInterval(check, CHECK_INTERVAL_MS);
+    const onInteraction = () => {
+      if (document.visibilityState !== 'visible') return;
+
+      const now = Date.now();
+      if (now - lastInteractionCheckAt < INTERACTION_CHECK_THROTTLE_MS) return;
+
+      lastInteractionCheckAt = now;
+      check();
+    };
+
+    const interval = window.setInterval(checkWhenVisible, CHECK_INTERVAL_MS);
+
     window.addEventListener('focus', check);
     window.addEventListener('online', check);
+    window.addEventListener('pageshow', checkWhenVisible);
+    window.addEventListener('pointerdown', onInteraction, { passive: true });
+    window.addEventListener('keydown', onInteraction);
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       window.clearInterval(interval);
       window.removeEventListener('focus', check);
       window.removeEventListener('online', check);
+      window.removeEventListener('pageshow', checkWhenVisible);
+      window.removeEventListener('pointerdown', onInteraction);
+      window.removeEventListener('keydown', onInteraction);
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [registration, checkRemoteVersion]);
