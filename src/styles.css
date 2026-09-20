@@ -194,3 +194,3248 @@
     border-radius:12px;
   }
 }
+
+
+/* KOJAC AUTH PREMIUM REDESIGN — LOGIN + REGISTER */
+.auth-screen{
+  min-height:100dvh;
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);
+  background:#f7f2f3;
+}
+.auth-copy{
+  position:relative;
+  min-width:0;
+  min-height:100dvh;
+  overflow:hidden;
+  padding:clamp(38px,5vw,74px);
+  display:flex;
+  align-items:center;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(220,119,132,.48) 0,rgba(220,119,132,0) 28%),
+    radial-gradient(circle at 88% 85%,rgba(125,31,43,.65) 0,rgba(125,31,43,0) 34%),
+    linear-gradient(145deg,#8d2634 0%,#721b27 46%,#451018 100%);
+  color:#fff;
+}
+.auth-copy::before{
+  content:"空";
+  position:absolute;
+  right:-.05em;
+  bottom:-.22em;
+  font-family:Georgia,"Yu Mincho",serif;
+  font-size:clamp(250px,31vw,560px);
+  line-height:1;
+  font-weight:700;
+  color:rgba(255,255,255,.035);
+  pointer-events:none;
+  user-select:none;
+}
+.auth-copy::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:38px 38px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
+  pointer-events:none;
+}
+.auth-copy-inner{
+  position:relative;
+  z-index:1;
+  width:min(100%,760px);
+  margin:auto;
+}
+.auth-copy .hero-brand{
+  width:min(100%,360px);
+}
+.auth-copy .hero-brand-logo{
+  width:min(100%,350px);
+  padding:10px 14px;
+  border-radius:13px;
+  box-shadow:0 16px 40px rgba(30,7,11,.18);
+}
+.auth-hero-badge{
+  width:max-content;
+  max-width:100%;
+  margin-top:30px;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  color:#f9e9eb;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.auth-copy h1{
+  max-width:720px;
+  margin:22px 0 16px;
+  font-size:clamp(48px,5vw,76px);
+  line-height:.98;
+  letter-spacing:-.055em;
+}
+.auth-copy h1 em{
+  color:#f4cbd1;
+  font-family:Georgia,serif;
+  font-weight:400;
+}
+.auth-hero-lead{
+  max-width:680px!important;
+  margin:0!important;
+  color:#f4e3e6!important;
+  font-size:clamp(15px,1.35vw,18px)!important;
+  line-height:1.65!important;
+}
+.auth-feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:28px;
+}
+.auth-feature-item{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:10px;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:13px;
+  background:rgba(255,255,255,.065);
+  backdrop-filter:blur(7px);
+}
+.auth-feature-icon{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+.auth-feature-item strong,
+.auth-feature-item span{
+  display:block;
+}
+.auth-feature-item strong{
+  margin-bottom:3px;
+  color:#fff;
+  font-size:11.5px;
+}
+.auth-feature-item>div>span{
+  color:#ecd7da;
+  font-size:9.8px;
+  line-height:1.45;
+}
+.auth-hero-footer{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:22px;
+  color:#e9cfd3;
+  font-size:10.5px;
+  font-weight:750;
+}
+.auth-hero-footer svg{
+  color:#f3c8ce;
+}
+
+.auth-card{
+  min-width:0;
+  min-height:100dvh;
+  padding:clamp(28px,4.4vw,68px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+  background:
+    radial-gradient(circle at 100% 0,#f7ebed 0,transparent 28%),
+    #fbf9f9;
+}
+.auth-card-inner{
+  width:min(100%,530px);
+  margin:auto;
+  padding:clamp(26px,3vw,38px);
+  border:1px solid #eadfe1;
+  border-radius:24px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 22px 65px rgba(77,35,42,.09);
+}
+.auth-form-heading .eyebrow{
+  margin:0 0 6px;
+}
+.auth-form-heading h2{
+  margin:0 0 7px;
+  font-size:clamp(28px,2.25vw,34px);
+  line-height:1.12;
+  letter-spacing:-.04em;
+}
+.auth-form-heading .muted{
+  margin:0;
+  font-size:12.5px;
+  line-height:1.55;
+}
+.auth-mode-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  margin-top:22px;
+  padding:4px;
+  border:1px solid #e4d8da;
+  border-radius:12px;
+  background:#f4eff0;
+}
+.auth-mode-tabs button{
+  min-height:39px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#75666a;
+  font-size:11.5px;
+  font-weight:800;
+}
+.auth-mode-tabs button.active{
+  background:#fff;
+  color:var(--maroon);
+  box-shadow:0 2px 10px rgba(67,30,36,.08);
+}
+.auth-mode-tabs button:disabled{
+  opacity:.65;
+}
+.auth-card form{
+  gap:14px;
+  margin-top:20px;
+}
+.auth-field{
+  gap:6px;
+}
+.auth-field label{
+  color:#4d4143;
+  font-size:11.5px;
+  font-weight:800;
+}
+.auth-card input,
+.auth-card select{
+  min-height:45px;
+  border-color:#dfd3d5;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+}
+.auth-card input::placeholder{
+  color:#ae9fa2;
+}
+.auth-card input:hover,
+.auth-card select:hover{
+  border-color:#cdb9bd;
+}
+.auth-card input:focus,
+.auth-card select:focus{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(122,31,43,.08);
+}
+.auth-password-toggle{
+  color:#80666b;
+}
+.auth-submit-btn{
+  min-height:47px;
+  margin-top:3px;
+  border-radius:11px;
+  box-shadow:0 8px 20px rgba(122,31,43,.14);
+  font-size:12px;
+}
+.auth-submit-btn:disabled{
+  opacity:.65;
+  cursor:wait;
+  box-shadow:none;
+}
+.auth-notice{
+  margin-top:14px;
+  font-size:11.5px;
+  line-height:1.45;
+}
+.auth-form-footnote{
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+  margin-top:14px;
+  padding:10px 11px;
+  border-radius:10px;
+  background:#f8f4f5;
+  color:#79696c;
+  font-size:9.8px;
+  line-height:1.45;
+}
+.auth-form-footnote svg{
+  flex:0 0 auto;
+  margin-top:1px;
+  color:var(--maroon);
+}
+.auth-alternate-action{
+  display:block;
+  width:100%;
+  margin-top:11px;
+  padding:8px;
+  font-size:10.5px;
+}
+.auth-mobile-intro{
+  display:none;
+}
+
+.auth-mode-register .auth-card{
+  align-items:flex-start;
+}
+.auth-mode-register .auth-card-inner{
+  margin-block:clamp(18px,3vh,42px);
+}
+.auth-mode-register .auth-card form{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.auth-mode-register .auth-card form>.auth-field:nth-of-type(5),
+.auth-mode-register .auth-card form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-submit-btn{
+  grid-column:1/-1;
+}
+.auth-mode-register .auth-card .notice{
+  width:100%;
+}
+
+@media(max-width:1180px){
+  .auth-screen{
+    grid-template-columns:minmax(0,1fr) minmax(410px,.9fr);
+  }
+  .auth-copy{
+    padding:42px;
+  }
+  .auth-feature-grid{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .auth-feature-item{
+    padding:10px 11px;
+  }
+  .auth-feature-item:nth-child(n+5){
+    display:none;
+  }
+  .auth-card{
+    padding:32px;
+  }
+}
+
+@media(max-width:900px){
+  .auth-screen{
+    display:block;
+    min-height:100dvh;
+  }
+  .auth-copy{
+    display:none;
+  }
+  .auth-card,
+  .auth-mode-register .auth-card{
+    min-height:100dvh;
+    padding:28px 22px;
+    align-items:flex-start;
+    background:
+      radial-gradient(circle at 0 0,rgba(122,31,43,.10),transparent 28%),
+      #f8f4f5;
+  }
+  .auth-card-inner,
+  .auth-mode-register .auth-card-inner{
+    width:min(100%,600px);
+    margin:auto;
+    padding:28px;
+    border-radius:20px;
+  }
+  .auth-mobile-intro{
+    display:block;
+    margin:-28px -28px 26px;
+    padding:24px 28px 22px;
+    border-radius:20px 20px 16px 16px;
+    background:
+      radial-gradient(circle at 90% 0,rgba(255,255,255,.13),transparent 34%),
+      linear-gradient(145deg,#872432,#681925);
+    color:#fff;
+  }
+  .auth-mobile-logo{
+    display:block;
+    width:min(100%,270px);
+    height:auto;
+    padding:7px 9px;
+    border-radius:9px;
+    background:#fff;
+    box-shadow:0 8px 22px rgba(38,8,13,.15);
+  }
+  .auth-mobile-kicker{
+    display:block;
+    margin-top:17px;
+    color:#e8cbd0;
+    font-size:9px;
+    font-weight:850;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+  }
+  .auth-mobile-intro h1{
+    margin:5px 0 6px;
+    color:#fff;
+    font-size:27px;
+    line-height:1.08;
+    letter-spacing:-.04em;
+  }
+  .auth-mobile-intro p{
+    margin:0;
+    color:#efdfe2;
+    font-size:11px;
+    line-height:1.5;
+  }
+  .auth-mobile-features{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+    margin-top:17px;
+  }
+  .auth-mobile-features span{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 9px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:9px;
+    background:rgba(255,255,255,.07);
+    color:#f7eaec;
+    font-size:9px;
+    font-weight:750;
+    line-height:1.3;
+  }
+  .auth-mobile-features svg{
+    flex:0 0 auto;
+  }
+}
+
+@media(max-width:600px){
+  .auth-card,
+  .auth-mode-register .auth-card{
+    padding:0;
+    background:#fff;
+  }
+  .auth-card-inner,
+  .auth-mode-register .auth-card-inner{
+    width:100%;
+    min-height:100dvh;
+    margin:0;
+    padding:0 20px 30px;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+  }
+  .auth-mobile-intro{
+    margin:0 -20px 25px;
+    padding:22px 20px 20px;
+    border-radius:0 0 18px 18px;
+  }
+  .auth-mobile-logo{
+    width:min(100%,235px);
+  }
+  .auth-mobile-intro h1{
+    font-size:25px;
+  }
+  .auth-form-heading h2{
+    font-size:27px;
+  }
+  .auth-form-heading .muted{
+    font-size:11.5px;
+  }
+  .auth-mode-tabs{
+    margin-top:19px;
+  }
+  .auth-card form,
+  .auth-mode-register .auth-card form{
+    grid-template-columns:1fr;
+    gap:13px;
+    margin-top:18px;
+  }
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(5),
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(6),
+  .auth-mode-register .auth-submit-btn{
+    grid-column:auto;
+  }
+  .auth-card input,
+  .auth-card select{
+    min-height:46px;
+    font-size:16px;
+  }
+  .auth-submit-btn{
+    min-height:48px;
+  }
+}
+
+@media(max-width:390px){
+  .auth-card-inner,
+  .auth-mode-register .auth-card-inner{
+    padding-inline:16px;
+  }
+  .auth-mobile-intro{
+    margin-inline:-16px;
+    padding-inline:16px;
+  }
+  .auth-mobile-features{
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  .auth-mobile-features span{
+    padding:7px;
+    font-size:8.5px;
+  }
+  .auth-form-heading h2{
+    font-size:25px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .auth-submit-btn,
+  .auth-mode-tabs button{
+    transition:none;
+  }
+}
+
+
+/* KOJAC AUTH V2 — ONE SCREEN / NO SCROLL */
+
+/* =========================================================
+   CORE: SELALU 1 VIEWPORT
+   ========================================================= */
+.auth-screen{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+.auth-copy,
+.auth-card{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+.auth-copy-inner,
+.auth-card-inner{
+  min-height:0;
+}
+
+/* =========================================================
+   DESKTOP — HERO + FORM TANPA SCROLL
+   ========================================================= */
+@media(min-width:901px){
+  .auth-screen{
+    grid-template-columns:minmax(0,1.08fr) minmax(430px,.92fr);
+  }
+
+  .auth-copy{
+    padding:clamp(24px,3.3vw,54px);
+  }
+
+  .auth-copy-inner{
+    width:min(100%,700px);
+  }
+
+  .auth-copy .hero-brand{
+    width:min(100%,315px);
+  }
+
+  .auth-copy .hero-brand-logo{
+    width:min(100%,305px);
+    padding:8px 11px;
+  }
+
+  .auth-hero-badge{
+    margin-top:18px;
+    padding:6px 9px;
+  }
+
+  .auth-copy h1{
+    margin:15px 0 10px;
+    font-size:clamp(43px,4.35vw,66px);
+    line-height:.96;
+  }
+
+  .auth-hero-lead{
+    max-width:620px!important;
+    font-size:clamp(13px,1.05vw,16px)!important;
+    line-height:1.5!important;
+  }
+
+  .auth-feature-grid{
+    gap:8px;
+    margin-top:18px;
+  }
+
+  .auth-feature-item{
+    gap:8px;
+    padding:9px 10px;
+    border-radius:11px;
+  }
+
+  .auth-feature-icon{
+    width:30px;
+    height:30px;
+    border-radius:8px;
+  }
+
+  .auth-feature-icon svg{
+    width:16px;
+    height:16px;
+  }
+
+  .auth-feature-item strong{
+    margin-bottom:2px;
+    font-size:10.5px;
+  }
+
+  .auth-feature-item>div>span{
+    font-size:9px;
+    line-height:1.35;
+  }
+
+  .auth-hero-footer{
+    margin-top:13px;
+    font-size:9.5px;
+  }
+
+  .auth-card{
+    padding:clamp(16px,2.5vw,38px);
+  }
+
+  .auth-card-inner{
+    width:min(100%,520px);
+    max-height:calc(100dvh - 32px);
+    padding:clamp(20px,2.1vw,30px);
+    border-radius:20px;
+    overflow:hidden;
+  }
+
+  .auth-form-heading h2{
+    margin-bottom:5px;
+    font-size:clamp(25px,1.9vw,31px);
+  }
+
+  .auth-form-heading .muted{
+    font-size:11.5px;
+    line-height:1.42;
+  }
+
+  .auth-mode-tabs{
+    margin-top:15px;
+  }
+
+  .auth-mode-tabs button{
+    min-height:35px;
+  }
+
+  .auth-card form{
+    gap:10px;
+    margin-top:14px;
+  }
+
+  .auth-field{
+    gap:4px;
+  }
+
+  .auth-field label{
+    font-size:10.5px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-height:40px;
+    padding-top:9px;
+    padding-bottom:9px;
+    font-size:13px;
+  }
+
+  .auth-password-toggle{
+    width:34px;
+    height:34px;
+  }
+
+  .auth-submit-btn{
+    min-height:42px;
+    margin-top:0;
+  }
+
+  .auth-form-footnote{
+    margin-top:10px;
+    padding:8px 9px;
+    font-size:9px;
+  }
+
+  /* Register: 4 baris form saja.
+     Row 1: nama lengkap + panggilan
+     Row 2: tanggal lahir + tipe user
+     Row 3: email full
+     Row 4: password + konfirmasi
+  */
+  .auth-mode-register .auth-card{
+    align-items:center;
+  }
+
+  .auth-mode-register .auth-card-inner{
+    margin:auto;
+  }
+
+  .auth-mode-register .auth-card form{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px 10px;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field{
+    grid-column:auto;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(5){
+    grid-column:1/-1;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(6),
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(7){
+    grid-column:auto;
+  }
+
+  .auth-mode-register .auth-submit-btn{
+    grid-column:1/-1;
+  }
+}
+
+/* =========================================================
+   LAPTOP PENDEK — MASIH 1 LAYAR
+   ========================================================= */
+@media(min-width:901px) and (max-height:780px){
+  .auth-copy{
+    padding-block:22px;
+  }
+
+  .auth-copy .hero-brand{
+    width:min(100%,275px);
+  }
+
+  .auth-hero-badge{
+    margin-top:12px;
+  }
+
+  .auth-copy h1{
+    margin:11px 0 8px;
+    font-size:clamp(39px,4vw,56px);
+  }
+
+  .auth-hero-lead{
+    font-size:13px!important;
+  }
+
+  .auth-feature-grid{
+    margin-top:12px;
+    gap:6px;
+  }
+
+  .auth-feature-item{
+    padding:7px 9px;
+  }
+
+  .auth-feature-item:nth-child(n+5){
+    display:none;
+  }
+
+  .auth-hero-footer{
+    margin-top:10px;
+  }
+
+  .auth-card{
+    padding:12px 24px;
+  }
+
+  .auth-card-inner{
+    max-height:calc(100dvh - 24px);
+    padding:20px 24px;
+  }
+
+  .auth-form-heading h2{
+    font-size:25px;
+  }
+
+  .auth-mode-tabs{
+    margin-top:11px;
+  }
+
+  .auth-card form{
+    gap:7px 9px;
+    margin-top:11px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-height:37px;
+    padding-top:7px;
+    padding-bottom:7px;
+  }
+
+  .auth-submit-btn{
+    min-height:39px;
+  }
+
+  .auth-form-footnote{
+    margin-top:7px;
+    padding:6px 8px;
+  }
+}
+
+@media(min-width:901px) and (max-height:650px){
+  .auth-copy h1{
+    font-size:41px;
+  }
+
+  .auth-hero-lead{
+    display:none;
+  }
+
+  .auth-feature-item{
+    padding:6px 8px;
+  }
+
+  .auth-hero-footer{
+    display:none;
+  }
+
+  .auth-card-inner{
+    padding:16px 21px;
+  }
+
+  .auth-form-heading .muted{
+    display:none;
+  }
+
+  .auth-mode-tabs{
+    margin-top:8px;
+  }
+
+  .auth-card form{
+    margin-top:8px;
+    gap:5px 8px;
+  }
+
+  .auth-field{
+    gap:2px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-height:34px;
+    padding-block:5px;
+  }
+
+  .auth-form-footnote{
+    display:none;
+  }
+}
+
+/* =========================================================
+   TABLET + MOBILE — SATU LAYAR, HERO RINGKAS
+   ========================================================= */
+@media(max-width:900px){
+  .auth-screen{
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .auth-card,
+  .auth-mode-register .auth-card{
+    height:100dvh;
+    min-height:0;
+    padding:0;
+    overflow:hidden;
+    align-items:stretch;
+    background:#fff;
+  }
+
+  .auth-card-inner,
+  .auth-mode-register .auth-card-inner{
+    width:min(100%,620px);
+    height:100dvh;
+    min-height:0;
+    max-height:none;
+    margin:0 auto;
+    padding:0 20px 14px;
+    overflow:hidden;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .auth-mobile-intro{
+    flex:0 0 auto;
+    margin:0 -20px 14px;
+    padding:14px 20px 13px;
+    border-radius:0 0 16px 16px;
+  }
+
+  .auth-mobile-logo{
+    width:min(100%,205px);
+    padding:5px 7px;
+    border-radius:8px;
+  }
+
+  .auth-mobile-kicker{
+    margin-top:8px;
+    font-size:8px;
+  }
+
+  .auth-mobile-intro h1{
+    margin:3px 0 3px;
+    font-size:21px;
+  }
+
+  .auth-mobile-intro p{
+    font-size:9.5px;
+    line-height:1.35;
+  }
+
+  .auth-mobile-features{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:5px;
+    margin-top:9px;
+  }
+
+  .auth-mobile-features span{
+    justify-content:center;
+    min-height:32px;
+    padding:5px 4px;
+    border-radius:7px;
+    font-size:7.4px;
+    line-height:1.15;
+    text-align:center;
+  }
+
+  .auth-mobile-features svg{
+    width:12px;
+    height:12px;
+  }
+
+  .auth-form-heading{
+    flex:0 0 auto;
+  }
+
+  .auth-form-heading .eyebrow{
+    margin-bottom:3px;
+    font-size:8.5px;
+  }
+
+  .auth-form-heading h2{
+    margin:0 0 3px;
+    font-size:22px;
+    line-height:1.06;
+  }
+
+  .auth-form-heading .muted{
+    margin:0;
+    font-size:9.5px;
+    line-height:1.3;
+  }
+
+  .auth-mode-tabs{
+    flex:0 0 auto;
+    margin-top:9px;
+    padding:3px;
+  }
+
+  .auth-mode-tabs button{
+    min-height:32px;
+    font-size:10px;
+  }
+
+  .auth-card form,
+  .auth-mode-register .auth-card form{
+    flex:0 0 auto;
+    margin-top:9px;
+    gap:7px;
+  }
+
+  .auth-field{
+    gap:3px;
+  }
+
+  .auth-field label{
+    font-size:9px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-width:0;
+    min-height:38px;
+    padding:7px 9px;
+    border-radius:9px;
+    font-size:16px;
+  }
+
+  .auth-password-field input{
+    padding-right:38px;
+  }
+
+  .auth-password-toggle{
+    right:3px;
+    width:34px;
+    height:34px;
+  }
+
+  .auth-submit-btn{
+    min-height:40px;
+    margin-top:0;
+    font-size:10.5px;
+  }
+
+  .auth-notice{
+    flex:0 0 auto;
+    margin-top:7px;
+    padding:7px 8px;
+    font-size:9px;
+  }
+
+  .auth-form-footnote{
+    flex:0 0 auto;
+    margin-top:7px;
+    padding:6px 8px;
+    font-size:8.4px;
+  }
+
+  /* Register tetap 2 kolom pada mobile agar tidak perlu scroll */
+  .auth-mode-register .auth-card form{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px 8px;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field{
+    grid-column:auto;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(5){
+    grid-column:1/-1;
+  }
+
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(6),
+  .auth-mode-register .auth-card form>.auth-field:nth-of-type(7){
+    grid-column:auto;
+  }
+
+  .auth-mode-register .auth-submit-btn{
+    grid-column:1/-1;
+  }
+
+  .auth-mode-register .auth-form-footnote{
+    display:none;
+  }
+}
+
+/* =========================================================
+   MOBILE PENDEK — UTAMAKAN FORM, TANPA SCROLL
+   ========================================================= */
+@media(max-width:900px) and (max-height:720px){
+  .auth-mobile-intro{
+    margin-bottom:10px;
+    padding-block:10px;
+  }
+
+  .auth-mobile-logo{
+    width:175px;
+  }
+
+  .auth-mobile-kicker{
+    margin-top:5px;
+  }
+
+  .auth-mobile-intro h1{
+    font-size:18px;
+  }
+
+  .auth-mobile-intro p{
+    display:none;
+  }
+
+  .auth-mobile-features{
+    margin-top:6px;
+  }
+
+  .auth-mobile-features span{
+    min-height:27px;
+    font-size:6.8px;
+  }
+
+  .auth-form-heading .muted{
+    display:none;
+  }
+
+  .auth-form-heading h2{
+    font-size:20px;
+  }
+
+  .auth-mode-tabs{
+    margin-top:6px;
+  }
+
+  .auth-card form,
+  .auth-mode-register .auth-card form{
+    margin-top:6px;
+    gap:4px 7px;
+  }
+
+  .auth-field{
+    gap:2px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-height:34px;
+    padding-block:5px;
+  }
+
+  .auth-submit-btn{
+    min-height:36px;
+  }
+
+  .auth-form-footnote{
+    display:none;
+  }
+}
+
+@media(max-width:900px) and (max-height:620px){
+  .auth-mobile-intro{
+    padding:8px 16px;
+  }
+
+  .auth-mobile-logo{
+    width:150px;
+  }
+
+  .auth-mobile-kicker,
+  .auth-mobile-intro h1{
+    display:none;
+  }
+
+  .auth-mobile-features{
+    margin-top:5px;
+  }
+
+  .auth-mobile-features span:nth-child(n+3){
+    display:none;
+  }
+
+  .auth-form-heading .eyebrow{
+    display:none;
+  }
+
+  .auth-mode-tabs button{
+    min-height:29px;
+  }
+
+  .auth-card input,
+  .auth-card select{
+    min-height:32px;
+  }
+}
+
+/* Narrow mobile: tetap 2 kolom untuk register, tapi gap dipadatkan */
+@media(max-width:390px){
+  .auth-card-inner,
+  .auth-mode-register .auth-card-inner{
+    padding-inline:14px;
+  }
+
+  .auth-mobile-intro{
+    margin-inline:-14px;
+    padding-inline:14px;
+  }
+
+  .auth-mobile-features{
+    gap:4px;
+  }
+
+  .auth-mobile-features span{
+    font-size:6.8px;
+  }
+
+  .auth-mode-register .auth-card form{
+    gap-inline:6px;
+  }
+
+  .auth-field label{
+    font-size:8.5px;
+  }
+}
+
+/* tidak ada internal scroll pada auth */
+.auth-screen *,
+.auth-screen *::before,
+.auth-screen *::after{
+  box-sizing:border-box;
+}
+
+
+/* KOJAC AUTH V3 — SIMPLE ELEGANT + SELLING */
+
+/* =========================================================
+   RESET / OVERRIDE AUTH PREVIOUS VERSIONS
+   ========================================================= */
+.auth-simple-screen{
+  width:100%;
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:minmax(0,1.22fr) minmax(420px,.78fr);
+  background:#fff;
+}
+
+.auth-simple-copy,
+.auth-simple-card{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+
+.auth-simple-copy{
+  position:relative;
+  display:flex;
+  align-items:center;
+  padding:clamp(38px,4.6vw,82px);
+  color:#fff;
+  background:
+    radial-gradient(circle at 0 0,rgba(190,66,82,.56),transparent 36%),
+    linear-gradient(135deg,#922735 0%,#741a27 52%,#53131d 100%);
+}
+
+.auth-simple-copy::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(115deg,rgba(255,255,255,.035),transparent 40%);
+  pointer-events:none;
+}
+
+.auth-simple-copy-inner{
+  position:relative;
+  z-index:1;
+  width:min(100%,720px);
+  margin:auto;
+}
+
+.auth-simple-brand{
+  width:min(100%,390px)!important;
+}
+
+.auth-simple-brand .hero-brand-logo{
+  width:min(100%,390px)!important;
+  padding:10px 13px!important;
+  border-radius:13px!important;
+  box-shadow:0 16px 38px rgba(30,7,11,.16)!important;
+}
+
+.auth-simple-kicker{
+  margin-top:34px;
+  color:#e8c8cd;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.13em;
+}
+
+.auth-simple-copy h1{
+  margin:13px 0 18px!important;
+  max-width:660px;
+  color:#fff;
+  font-size:clamp(55px,5.4vw,82px)!important;
+  line-height:.96!important;
+  letter-spacing:-.055em!important;
+}
+
+.auth-simple-copy h1 em{
+  color:#fff;
+  font-family:Georgia,serif;
+  font-weight:400;
+}
+
+.auth-simple-lead{
+  max-width:660px!important;
+  margin:0!important;
+  color:#f0dde0!important;
+  font-size:clamp(14px,1.2vw,17px)!important;
+  line-height:1.58!important;
+}
+
+.auth-selling-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px 14px;
+  margin-top:26px;
+  max-width:680px;
+}
+
+.auth-selling-grid article{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:9px;
+  align-items:start;
+  padding:9px 0;
+}
+
+.auth-selling-grid article>span{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:9px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+}
+
+.auth-selling-grid strong,
+.auth-selling-grid small{
+  display:block;
+}
+
+.auth-selling-grid strong{
+  margin-bottom:2px;
+  color:#fff;
+  font-size:11.5px;
+  line-height:1.25;
+}
+
+.auth-selling-grid small{
+  color:#ddc4c8;
+  font-size:9.5px;
+  line-height:1.4;
+}
+
+.auth-simple-proof{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:17px;
+  color:#dfc6ca;
+  font-size:10px;
+  font-weight:750;
+}
+
+.auth-simple-card{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:clamp(28px,4vw,68px)!important;
+  background:#fff!important;
+}
+
+.auth-simple-form-wrap{
+  width:min(100%,520px);
+  margin:auto;
+}
+
+.auth-simple-form-wrap>.eyebrow{
+  margin:0 0 13px;
+  color:var(--maroon);
+  font-size:10px;
+  letter-spacing:.12em;
+}
+
+.auth-simple-form-wrap h2{
+  margin:0 0 11px!important;
+  color:#151112;
+  font-size:clamp(29px,2.25vw,38px)!important;
+  line-height:1.06;
+  letter-spacing:-.045em!important;
+}
+
+.auth-simple-subtitle{
+  margin:0;
+  color:#7b666a!important;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.auth-mobile-selling{
+  display:none;
+}
+
+.auth-simple-form-wrap form{
+  display:grid;
+  gap:14px;
+  margin-top:30px!important;
+}
+
+.auth-simple-form-wrap .auth-field{
+  gap:6px;
+}
+
+.auth-simple-form-wrap .auth-field label{
+  margin:0;
+  color:#473a3d;
+  font-size:11px;
+  font-weight:800;
+}
+
+.auth-simple-form-wrap input,
+.auth-simple-form-wrap select{
+  min-height:47px;
+  margin:0!important;
+  padding:11px 13px;
+  border:1px solid #ddcfd2;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+  font-size:14px;
+}
+
+.auth-simple-form-wrap input:hover,
+.auth-simple-form-wrap select:hover{
+  border-color:#c9b2b6;
+}
+
+.auth-simple-form-wrap input:focus,
+.auth-simple-form-wrap select:focus{
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(122,31,43,.07);
+}
+
+.auth-simple-form-wrap .auth-password-field input{
+  padding-right:47px;
+}
+
+.auth-simple-form-wrap .auth-password-toggle{
+  right:5px;
+  width:38px;
+  height:38px;
+}
+
+.auth-simple-submit{
+  min-height:48px;
+  margin-top:2px;
+  border-radius:10px;
+  font-size:13px;
+  box-shadow:none;
+}
+
+.auth-simple-switch{
+  display:block;
+  width:100%;
+  margin-top:17px!important;
+  padding:7px;
+  color:var(--maroon);
+  font-size:11.5px;
+  font-weight:800;
+}
+
+.auth-simple-notice{
+  margin-top:12px;
+  font-size:11px;
+}
+
+/* REGISTER desktop: compact 2-column without losing the clean look */
+.auth-mode-register .auth-simple-card{
+  align-items:center!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap{
+  width:min(100%,610px);
+}
+
+.auth-mode-register .auth-simple-form-wrap form{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px 12px;
+  margin-top:22px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form>.auth-field{
+  grid-column:auto;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-email-field{
+  grid-column:1/-1;
+}
+
+.auth-mode-register .auth-simple-submit{
+  grid-column:1/-1;
+}
+
+/* =========================================================
+   LAPTOP HEIGHT COMPACTION
+   ========================================================= */
+@media(min-width:901px) and (max-height:760px){
+  .auth-simple-copy{
+    padding-block:28px;
+  }
+
+  .auth-simple-brand{
+    width:min(100%,320px)!important;
+  }
+
+  .auth-simple-kicker{
+    margin-top:22px;
+  }
+
+  .auth-simple-copy h1{
+    margin:9px 0 11px!important;
+    font-size:clamp(48px,4.8vw,67px)!important;
+  }
+
+  .auth-simple-lead{
+    font-size:13px!important;
+  }
+
+  .auth-selling-grid{
+    margin-top:16px;
+    gap:5px 12px;
+  }
+
+  .auth-selling-grid article{
+    padding:5px 0;
+  }
+
+  .auth-simple-proof{
+    margin-top:10px;
+  }
+
+  .auth-simple-card{
+    padding:24px 42px!important;
+  }
+
+  .auth-simple-form-wrap form{
+    gap:10px;
+    margin-top:20px!important;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:42px;
+    padding-block:8px;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    gap:8px 10px;
+    margin-top:16px!important;
+  }
+
+  .auth-simple-switch{
+    margin-top:11px!important;
+  }
+}
+
+@media(min-width:901px) and (max-height:620px){
+  .auth-simple-kicker,
+  .auth-simple-proof{
+    display:none;
+  }
+
+  .auth-simple-copy h1{
+    font-size:44px!important;
+  }
+
+  .auth-selling-grid article:nth-child(n+3){
+    display:none;
+  }
+
+  .auth-simple-subtitle{
+    display:none;
+  }
+
+  .auth-simple-form-wrap form,
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:10px!important;
+    gap:6px 8px;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:36px;
+    padding-block:6px;
+  }
+}
+
+/* =========================================================
+   TABLET / MOBILE — SIMPLE LIKE ORIGINAL SCREENSHOTS
+   ========================================================= */
+@media(max-width:900px){
+  .auth-simple-screen{
+    display:block;
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
+    background:#fff;
+  }
+
+  .auth-simple-copy{
+    display:none!important;
+  }
+
+  .auth-simple-card,
+  .auth-mode-register .auth-simple-card{
+    width:100%;
+    height:100dvh;
+    min-height:0;
+    padding:24px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden;
+    background:#fff!important;
+  }
+
+  .auth-simple-form-wrap,
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,620px);
+    margin:auto;
+  }
+
+  .auth-simple-form-wrap>.eyebrow{
+    margin-bottom:10px;
+  }
+
+  .auth-simple-form-wrap h2{
+    margin-bottom:8px!important;
+    font-size:31px!important;
+  }
+
+  .auth-simple-subtitle{
+    font-size:12px;
+  }
+
+  .auth-mobile-selling{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:14px;
+  }
+
+  .auth-mobile-selling span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:6px 8px;
+    border:1px solid #eadcdf;
+    border-radius:999px;
+    background:#faf6f7;
+    color:#694f54;
+    font-size:8.8px;
+    font-weight:750;
+  }
+
+  .auth-mobile-selling svg{
+    flex:0 0 auto;
+    color:var(--maroon);
+  }
+
+  .auth-simple-form-wrap form{
+    margin-top:20px!important;
+    gap:11px;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px 10px;
+    margin-top:15px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field{
+    grid-column:auto;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap .auth-email-field{
+    grid-column:1/-1;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    grid-column:1/-1;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:44px;
+    font-size:16px;
+  }
+
+  .auth-simple-submit{
+    min-height:46px;
+  }
+
+  .auth-simple-switch{
+    margin-top:12px!important;
+  }
+}
+
+/* =========================================================
+   MOBILE PHONE
+   ========================================================= */
+@media(max-width:560px){
+  .auth-simple-card,
+  .auth-mode-register .auth-simple-card{
+    padding:18px 16px!important;
+  }
+
+  .auth-simple-form-wrap>.eyebrow{
+    margin-bottom:7px;
+    font-size:8.5px;
+  }
+
+  .auth-simple-form-wrap h2{
+    margin-bottom:6px!important;
+    font-size:27px!important;
+  }
+
+  .auth-simple-subtitle{
+    font-size:10.5px;
+    line-height:1.35;
+  }
+
+  .auth-mobile-selling{
+    gap:5px;
+    margin-top:10px;
+  }
+
+  .auth-mobile-selling span{
+    padding:5px 7px;
+    font-size:7.8px;
+  }
+
+  .auth-simple-form-wrap form{
+    margin-top:15px!important;
+    gap:9px;
+  }
+
+  .auth-simple-form-wrap .auth-field{
+    gap:3px;
+  }
+
+  .auth-simple-form-wrap .auth-field label{
+    font-size:9px;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:40px;
+    padding:7px 9px;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    gap:6px 8px;
+    margin-top:11px!important;
+  }
+
+  .auth-simple-submit{
+    min-height:41px;
+    font-size:11px;
+  }
+
+  .auth-simple-switch{
+    margin-top:8px!important;
+    font-size:10px;
+  }
+}
+
+/* Height-aware compaction keeps 100dvh / no-scroll promise */
+@media(max-width:900px) and (max-height:720px){
+  .auth-simple-card,
+  .auth-mode-register .auth-simple-card{
+    padding-block:12px!important;
+  }
+
+  .auth-simple-form-wrap h2{
+    font-size:24px!important;
+  }
+
+  .auth-simple-subtitle{
+    display:none;
+  }
+
+  .auth-mobile-selling{
+    margin-top:7px;
+  }
+
+  .auth-simple-form-wrap form,
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:8px!important;
+    gap:5px 7px;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:35px;
+    padding-block:5px;
+  }
+
+  .auth-simple-submit{
+    min-height:36px;
+  }
+
+  .auth-simple-switch{
+    margin-top:5px!important;
+  }
+}
+
+@media(max-width:900px) and (max-height:620px){
+  .auth-mobile-selling{
+    display:none;
+  }
+
+  .auth-simple-form-wrap>.eyebrow{
+    margin-bottom:4px;
+  }
+
+  .auth-simple-form-wrap h2{
+    font-size:21px!important;
+  }
+
+  .auth-simple-form-wrap form,
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:6px!important;
+    gap:4px 6px;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select{
+    min-height:32px;
+  }
+
+  .auth-simple-submit{
+    min-height:34px;
+  }
+}
+
+.auth-simple-screen *,
+.auth-simple-screen *::before,
+.auth-simple-screen *::after{
+  box-sizing:border-box;
+}
+
+
+/* KOJAC AUTH V4 — REGISTER HORIZONTAL + LARGER TYPE */
+
+/* =========================================================
+   TYPOGRAPHY — lebih besar, lebih mudah dibaca
+   ========================================================= */
+.auth-simple-form-wrap>.eyebrow,
+.auth-card>.eyebrow{
+  font-size:11px!important;
+  letter-spacing:.12em;
+}
+
+.auth-simple-form-wrap h2,
+.auth-card h2{
+  font-size:clamp(31px,2.4vw,40px)!important;
+  line-height:1.08!important;
+}
+
+.auth-simple-subtitle,
+.auth-card>.muted{
+  font-size:14px!important;
+  line-height:1.5!important;
+}
+
+.auth-simple-form-wrap .auth-field label,
+.auth-card .auth-field label{
+  font-size:12px!important;
+  line-height:1.2;
+}
+
+.auth-simple-form-wrap input,
+.auth-simple-form-wrap select,
+.auth-card .auth-field input,
+.auth-card .auth-field select{
+  font-size:16px!important;
+  font-weight:500;
+}
+
+.auth-simple-submit,
+.auth-card .primary-btn{
+  font-size:14px!important;
+  font-weight:800!important;
+}
+
+.auth-simple-switch,
+.auth-card .link-btn{
+  font-size:13px!important;
+  font-weight:800!important;
+}
+
+/* =========================================================
+   REGISTER — SELALU HORIZONTAL
+   ========================================================= */
+.auth-mode-register .auth-simple-form-wrap,
+.auth-mode-register .auth-card-inner{
+  width:min(100%,660px)!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form,
+.auth-mode-register .auth-register-form{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  column-gap:12px!important;
+  row-gap:10px!important;
+}
+
+/* 1 Nama Lengkap | 2 Nama Panggilan */
+/* 3 Tanggal Lahir | 4 Tipe Pengguna */
+/* 5 Email = full width */
+/* 6 Password | 7 Konfirmasi Password */
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(7),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(7){
+  grid-column:auto!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(5),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(5),
+.auth-mode-register .auth-email-field{
+  grid-column:1/-1!important;
+}
+
+.auth-mode-register .auth-simple-submit,
+.auth-mode-register .auth-register-form>.primary-btn{
+  grid-column:1/-1!important;
+}
+
+/* =========================================================
+   HEIGHT MANAGEMENT — tetap 100dvh / no scroll
+   ========================================================= */
+.auth-mode-register.auth-simple-screen,
+.auth-mode-register .auth-simple-card,
+.auth-mode-register .auth-card{
+  height:100dvh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form{
+  margin-top:18px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap input,
+.auth-mode-register .auth-simple-form-wrap select{
+  min-height:43px!important;
+  padding:8px 10px!important;
+}
+
+.auth-mode-register .auth-simple-submit{
+  min-height:44px!important;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+@media(max-width:900px){
+  .auth-mode-register .auth-simple-card,
+  .auth-mode-register .auth-card{
+    padding:18px 20px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap,
+  .auth-mode-register .auth-card-inner{
+    width:min(100%,680px)!important;
+  }
+
+  .auth-simple-form-wrap h2,
+  .auth-card h2{
+    font-size:31px!important;
+  }
+
+  .auth-simple-subtitle,
+  .auth-card>.muted{
+    font-size:13px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    column-gap:10px!important;
+    row-gap:8px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:14px!important;
+  }
+
+  .auth-simple-form-wrap .auth-field label,
+  .auth-card .auth-field label{
+    font-size:11px!important;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select,
+  .auth-card .auth-field input,
+  .auth-card .auth-field select{
+    font-size:16px!important;
+  }
+}
+
+/* =========================================================
+   MOBILE — tetap 2 kolom, font tetap nyaman
+   ========================================================= */
+@media(max-width:560px){
+  .auth-mode-register .auth-simple-card,
+  .auth-mode-register .auth-card{
+    padding:12px 14px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap,
+  .auth-mode-register .auth-card-inner{
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  .auth-simple-form-wrap>.eyebrow,
+  .auth-card>.eyebrow{
+    font-size:9.5px!important;
+  }
+
+  .auth-simple-form-wrap h2,
+  .auth-card h2{
+    font-size:27px!important;
+  }
+
+  .auth-simple-subtitle,
+  .auth-card>.muted{
+    font-size:11.5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    column-gap:7px!important;
+    row-gap:6px!important;
+    margin-top:10px!important;
+  }
+
+  .auth-simple-form-wrap .auth-field,
+  .auth-card .auth-field{
+    min-width:0;
+  }
+
+  .auth-simple-form-wrap .auth-field label,
+  .auth-card .auth-field label{
+    font-size:10px!important;
+    white-space:normal;
+  }
+
+  .auth-simple-form-wrap input,
+  .auth-simple-form-wrap select,
+  .auth-card .auth-field input,
+  .auth-card .auth-field select{
+    min-width:0!important;
+    width:100%!important;
+    min-height:40px!important;
+    padding:7px 8px!important;
+    font-size:16px!important;
+  }
+
+  .auth-simple-form-wrap select,
+  .auth-card .auth-field select{
+    padding-right:26px!important;
+  }
+
+  .auth-simple-submit,
+  .auth-card .primary-btn{
+    min-height:41px!important;
+    font-size:13px!important;
+  }
+
+  .auth-simple-switch,
+  .auth-card .link-btn{
+    margin-top:7px!important;
+    font-size:11.5px!important;
+  }
+}
+
+/* =========================================================
+   MOBILE SEMPIT
+   ========================================================= */
+@media(max-width:390px){
+  .auth-mode-register .auth-simple-card,
+  .auth-mode-register .auth-card{
+    padding-inline:11px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    column-gap:6px!important;
+  }
+
+  .auth-simple-form-wrap h2,
+  .auth-card h2{
+    font-size:25px!important;
+  }
+
+  .auth-simple-form-wrap .auth-field label,
+  .auth-card .auth-field label{
+    font-size:9.5px!important;
+  }
+}
+
+/* =========================================================
+   LAYAR PENDEK
+   ========================================================= */
+@media(max-height:720px){
+  .auth-mode-register .auth-simple-subtitle,
+  .auth-mode-register .auth-card>.muted{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-mobile-selling{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:8px!important;
+    row-gap:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select,
+  .auth-mode-register .auth-card .auth-field input,
+  .auth-mode-register .auth-card .auth-field select{
+    min-height:36px!important;
+    padding-block:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit,
+  .auth-mode-register .auth-card .primary-btn{
+    min-height:38px!important;
+  }
+}
+
+
+/* KOJAC AUTH V5 — REGISTER STRUCTURE REFINEMENT */
+
+/* =========================================================
+   REGISTER STRUCTURE
+   Nama Lengkap                FULL
+   Nama Panggilan              FULL
+   Tanggal Lahir               FULL
+   Tipe Pengguna               FULL
+   Email                       FULL
+   Kata Sandi | Konfirmasi     HALF + HALF
+   ========================================================= */
+.auth-mode-register .auth-simple-form-wrap{
+  width:min(100%,620px)!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form,
+.auth-mode-register .auth-register-form{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  column-gap:12px!important;
+  row-gap:9px!important;
+}
+
+/* Field 1–5 full width */
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(5),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(5){
+  grid-column:1/-1!important;
+}
+
+/* Password pair horizontal */
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(7),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(7){
+  grid-column:auto!important;
+}
+
+.auth-mode-register .auth-simple-submit,
+.auth-mode-register .auth-register-form>.primary-btn{
+  grid-column:1/-1!important;
+}
+
+/* =========================================================
+   LARGER COPY
+   ========================================================= */
+.auth-simple-lead{
+  font-size:clamp(16px,1.35vw,19px)!important;
+  line-height:1.62!important;
+  max-width:690px!important;
+}
+
+/* Feature text sedikit lebih mudah dibaca agar balance */
+.auth-selling-grid strong{
+  font-size:12px!important;
+}
+
+.auth-selling-grid small{
+  font-size:10px!important;
+  line-height:1.45!important;
+}
+
+/* Link bawah form */
+.auth-simple-switch{
+  margin-top:14px!important;
+  font-size:15px!important;
+  line-height:1.3!important;
+  font-weight:850!important;
+}
+
+/* =========================================================
+   REGISTER SPACING — tetap satu layar
+   ========================================================= */
+.auth-mode-register .auth-simple-form-wrap form{
+  margin-top:18px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap input,
+.auth-mode-register .auth-simple-form-wrap select{
+  min-height:39px!important;
+  padding:7px 10px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field{
+  gap:4px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field label{
+  font-size:11px!important;
+}
+
+.auth-mode-register .auth-simple-submit{
+  min-height:42px!important;
+}
+
+/* =========================================================
+   LAPTOP 1366x768 / HEIGHT COMPACTION
+   ========================================================= */
+@media(min-width:901px) and (max-height:800px){
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,600px)!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap h2{
+    font-size:32px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:12px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:13px!important;
+    row-gap:6px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:36px!important;
+    padding-block:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:38px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:8px!important;
+    font-size:14px!important;
+  }
+}
+
+/* =========================================================
+   MOBILE / TABLET
+   Tetap urutan vertikal untuk 5 field pertama,
+   password pair tetap horizontal
+   ========================================================= */
+@media(max-width:900px){
+  .auth-mode-register .auth-simple-form-wrap,
+  .auth-mode-register .auth-card-inner{
+    width:min(100%,620px)!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    column-gap:8px!important;
+    row-gap:6px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(1),
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(2),
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(3),
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(4),
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(5),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(1),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(2),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(3),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(4),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(5){
+    grid-column:1/-1!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(6),
+  .auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(7),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(6),
+  .auth-mode-register .auth-register-form>.auth-field:nth-of-type(7){
+    grid-column:auto!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:10px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    font-size:13px!important;
+  }
+}
+
+/* =========================================================
+   MOBILE PHONE — tetap no scroll
+   ========================================================= */
+@media(max-width:560px){
+  .auth-mode-register .auth-simple-form-wrap h2{
+    font-size:26px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:10.5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:8px!important;
+    row-gap:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:36px!important;
+    padding-block:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:38px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:6px!important;
+    font-size:12px!important;
+  }
+}
+
+/* =========================================================
+   VERY SHORT VIEWPORT
+   ========================================================= */
+@media(max-height:700px){
+  .auth-mode-register .auth-simple-subtitle{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-mobile-selling{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form{
+    margin-top:6px!important;
+    row-gap:4px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:33px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:35px!important;
+  }
+}
+
+
+/* KOJAC AUTH V6 — REGISTER FORM UX MATCH LOGIN */
+
+/* =========================================================
+   REGISTER FORM — samakan rasa UI/UX dengan LOGIN
+   Fokus:
+   - form kanan lebih lega
+   - ada napas atas & bawah
+   - heading / subtitle / field / CTA lebih proporsional
+   - struktur field tetap seperti versi terbaru
+   ========================================================= */
+
+.auth-mode-register .auth-simple-card{
+  align-items:center!important;
+  justify-content:center!important;
+  padding:40px 54px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap{
+  width:min(100%,620px)!important;
+  max-width:620px!important;
+  margin:auto!important;
+  padding:12px 0 14px!important; /* tambah napas atas & bawah */
+}
+
+.auth-mode-register .auth-simple-form-wrap > .eyebrow{
+  margin:0 0 12px!important;
+  font-size:10.5px!important;
+  letter-spacing:.12em!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap h2{
+  margin:0 0 12px!important;
+  font-size:clamp(33px,2.45vw,40px)!important;
+  line-height:1.06!important;
+  letter-spacing:-.045em!important;
+}
+
+.auth-mode-register .auth-simple-subtitle{
+  margin:0 0 2px!important;
+  font-size:13px!important;
+  line-height:1.52!important;
+  color:#7b666a!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form,
+.auth-mode-register .auth-register-form{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  column-gap:14px!important;
+  row-gap:11px!important;
+  margin-top:22px!important;
+}
+
+/* full width: 1–5 */
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(5),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(1),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(2),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(3),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(4),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(5){
+  grid-column:1/-1!important;
+}
+
+/* pair horizontal: 6–7 */
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-simple-form-wrap form>.auth-field:nth-of-type(7),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(6),
+.auth-mode-register .auth-register-form>.auth-field:nth-of-type(7){
+  grid-column:auto!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field{
+  gap:5px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field label{
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  color:#473a3d!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap input,
+.auth-mode-register .auth-simple-form-wrap select{
+  min-height:44px!important;
+  padding:9px 12px!important;
+  border-radius:11px!important;
+  border:1px solid #ddcfd2!important;
+  background:#fff!important;
+  font-size:15px!important;
+  font-weight:500!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-password-field input{
+  padding-right:45px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-password-toggle{
+  right:4px!important;
+  width:36px!important;
+  height:36px!important;
+}
+
+.auth-mode-register .auth-simple-submit,
+.auth-mode-register .auth-register-form>.primary-btn{
+  grid-column:1/-1!important;
+  min-height:46px!important;
+  margin-top:4px!important;
+  border-radius:11px!important;
+  font-size:14px!important;
+  font-weight:800!important;
+}
+
+.auth-mode-register .auth-simple-switch{
+  margin-top:15px!important;
+  font-size:15px!important;
+  line-height:1.3!important;
+  font-weight:850!important;
+}
+
+/* form area notice bila ada */
+.auth-mode-register .auth-simple-notice{
+  margin-top:12px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+
+/* =========================================================
+   Desktop pendek: padatkan sedikit tapi tetap seperti login
+   ========================================================= */
+@media (min-width:901px) and (max-height:820px){
+  .auth-mode-register .auth-simple-card{
+    padding:30px 46px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,605px)!important;
+    padding:8px 0 10px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap > .eyebrow{
+    margin-bottom:10px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap h2{
+    margin-bottom:10px!important;
+    font-size:32px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:12px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:16px!important;
+    column-gap:12px!important;
+    row-gap:8px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:40px!important;
+    padding:7px 10px!important;
+    font-size:14px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:42px!important;
+    margin-top:2px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:10px!important;
+    font-size:14px!important;
+  }
+}
+
+/* =========================================================
+   Desktop sangat pendek: pertahankan 100dvh tanpa scroll
+   ========================================================= */
+@media (min-width:901px) and (max-height:700px){
+  .auth-mode-register .auth-simple-subtitle{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    padding:4px 0 6px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:10px!important;
+    row-gap:6px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:36px!important;
+    padding-block:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:38px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:7px!important;
+    font-size:13px!important;
+  }
+}
+
+/* =========================================================
+   Tablet / Mobile
+   - tetap struktur terbaru
+   - rasa form tetap seperti login
+   ========================================================= */
+@media (max-width:900px){
+  .auth-mode-register .auth-simple-card{
+    padding:20px 20px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,620px)!important;
+    padding:6px 0 8px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap h2{
+    font-size:29px!important;
+    margin-bottom:9px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:12px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    column-gap:10px!important;
+    row-gap:7px!important;
+    margin-top:12px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:40px!important;
+    padding:7px 10px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:42px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:10px!important;
+    font-size:13px!important;
+  }
+}
+
+@media (max-width:560px){
+  .auth-mode-register .auth-simple-card{
+    padding:14px 14px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    width:100%!important;
+    max-width:none!important;
+    padding:4px 0 6px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap > .eyebrow{
+    margin-bottom:8px!important;
+    font-size:9.5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap h2{
+    font-size:26px!important;
+    margin-bottom:8px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:10.5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    column-gap:8px!important;
+    row-gap:6px!important;
+    margin-top:10px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap .auth-field label{
+    font-size:10px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:37px!important;
+    font-size:16px!important;
+    padding:6px 8px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:39px!important;
+    font-size:13px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:8px!important;
+    font-size:12px!important;
+  }
+}
+
+/* viewport pendek mobile */
+@media (max-width:900px) and (max-height:700px){
+  .auth-mode-register .auth-simple-subtitle,
+  .auth-mode-register .auth-mobile-selling{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:8px!important;
+    row-gap:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select{
+    min-height:34px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:36px!important;
+  }
+
+  .auth-mode-register .auth-simple-switch{
+    margin-top:6px!important;
+  }
+}
+
+
+/* KOJAC AUTH V7 — REGISTER COMFORT + CUSTOM DATE PICKER */
+
+/* =========================================================
+   REGISTER — lebih besar ke atas & bawah, tetap proporsional
+   ========================================================= */
+.auth-mode-register .auth-simple-card{
+  padding:48px 56px!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap{
+  width:min(100%,650px)!important;
+  max-width:650px!important;
+  padding:20px 0 22px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap > .eyebrow{
+  margin-bottom:14px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap h2{
+  margin-bottom:13px!important;
+  font-size:clamp(34px,2.55vw,42px)!important;
+}
+
+.auth-mode-register .auth-simple-subtitle{
+  font-size:13.5px!important;
+  line-height:1.55!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap form,
+.auth-mode-register .auth-register-form{
+  margin-top:24px!important;
+  row-gap:12px!important;
+  column-gap:14px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field{
+  gap:6px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap .auth-field label{
+  font-size:11.5px!important;
+}
+
+.auth-mode-register .auth-simple-form-wrap input,
+.auth-mode-register .auth-simple-form-wrap select,
+.auth-mode-register .kojac-date-trigger{
+  min-height:47px!important;
+}
+
+.auth-mode-register .auth-simple-submit{
+  min-height:48px!important;
+  margin-top:5px!important;
+}
+
+.auth-mode-register .auth-simple-switch{
+  margin-top:16px!important;
+}
+
+/* =========================================================
+   CUSTOM DATE TRIGGER
+   ========================================================= */
+.kojac-date-trigger{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border:1px solid #ddcfd2;
+  border-radius:11px;
+  background:#fff;
+  color:#9d8c90;
+  text-align:left;
+  font-size:15px;
+  font-weight:500;
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+
+.kojac-date-trigger:hover{
+  border-color:#c9b2b6;
+  background:#fffdfd;
+}
+
+.kojac-date-trigger:focus-visible{
+  outline:none;
+  border-color:var(--maroon);
+  box-shadow:0 0 0 3px rgba(122,31,43,.08);
+}
+
+.kojac-date-trigger.has-value{
+  color:var(--ink);
+}
+
+.kojac-date-trigger svg{
+  flex:0 0 auto;
+  color:var(--maroon);
+}
+
+/* =========================================================
+   CUSTOM KOJAC DATE PICKER
+   ========================================================= */
+.kojac-date-picker-layer{
+  position:fixed;
+  inset:0;
+  z-index:3000;
+  display:grid;
+  place-items:center;
+  padding:18px;
+}
+
+.kojac-date-picker-backdrop{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  background:rgba(31,15,18,.34);
+  backdrop-filter:blur(3px);
+}
+
+.kojac-date-picker{
+  position:relative;
+  z-index:1;
+  width:min(100%,390px);
+  overflow:hidden;
+  border:1px solid #e1d2d5;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 24px 70px rgba(50,18,24,.24);
+}
+
+.kojac-date-picker-head{
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:17px 18px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(255,255,255,.13),transparent 42%),
+    linear-gradient(135deg,#922735,#741a27 58%,#5a141f);
+  color:#fff;
+}
+
+.kojac-date-picker-head span,
+.kojac-date-picker-head strong{
+  display:block;
+}
+
+.kojac-date-picker-head span{
+  color:#e9cdd1;
+  font-size:8.5px;
+  font-weight:850;
+  letter-spacing:.12em;
+}
+
+.kojac-date-picker-head strong{
+  margin-top:5px;
+  font-size:20px;
+  line-height:1.2;
+}
+
+.kojac-date-picker-close{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+}
+
+.kojac-date-picker-close:hover{
+  background:rgba(255,255,255,.15);
+}
+
+.kojac-date-picker-controls{
+  display:grid;
+  grid-template-columns:34px minmax(0,1.35fr) minmax(0,.8fr) 34px;
+  align-items:center;
+  gap:7px;
+  padding:14px 14px 10px;
+}
+
+.kojac-date-picker-controls select{
+  width:100%;
+  min-width:0;
+  min-height:36px!important;
+  margin:0!important;
+  padding:6px 28px 6px 9px!important;
+  border:1px solid #e1d4d6!important;
+  border-radius:9px!important;
+  background:#faf7f8!important;
+  color:#493d3f!important;
+  font-size:11px!important;
+  font-weight:800!important;
+}
+
+.kojac-date-nav{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e1d4d6;
+  border-radius:9px;
+  background:#fff;
+  color:var(--maroon);
+  font-size:22px;
+  font-weight:500;
+}
+
+.kojac-date-nav:hover{
+  border-color:#c9aeb3;
+  background:#faf4f5;
+}
+
+.kojac-date-weekdays,
+.kojac-date-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+}
+
+.kojac-date-weekdays{
+  padding:4px 14px 6px;
+}
+
+.kojac-date-weekdays span{
+  display:grid;
+  place-items:center;
+  min-height:25px;
+  color:#927f83;
+  font-size:9px;
+  font-weight:800;
+}
+
+.kojac-date-grid{
+  gap:3px;
+  padding:0 14px 12px;
+}
+
+.kojac-date-grid button{
+  aspect-ratio:1;
+  min-width:0;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#3f3436;
+  font-size:11px;
+  font-weight:700;
+}
+
+.kojac-date-grid button:hover:not(:disabled){
+  background:#f6edef;
+  color:var(--maroon);
+}
+
+.kojac-date-grid button.outside{
+  color:#b9aaad;
+}
+
+.kojac-date-grid button.selected{
+  background:var(--maroon);
+  color:#fff;
+  box-shadow:0 4px 12px rgba(122,31,43,.18);
+}
+
+.kojac-date-grid button:disabled{
+  color:#d8ced0;
+  cursor:not-allowed;
+}
+
+.kojac-date-picker-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:7px;
+  padding:11px 14px 14px;
+  border-top:1px solid #f0e7e8;
+}
+
+.kojac-date-picker-actions button{
+  min-height:35px;
+  padding:7px 12px;
+  border:1px solid #dfd0d3;
+  border-radius:9px;
+  background:#fff;
+  color:#6f5e62;
+  font-size:10px;
+  font-weight:800;
+}
+
+.kojac-date-picker-actions button.primary{
+  border-color:var(--maroon);
+  background:var(--maroon);
+  color:#fff;
+}
+
+/* =========================================================
+   HEIGHT-AWARE COMPACTION
+   ========================================================= */
+@media(min-width:901px) and (max-height:820px){
+  .auth-mode-register .auth-simple-card{
+    padding:32px 48px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,620px)!important;
+    padding:10px 0 12px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:16px!important;
+    row-gap:8px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select,
+  .auth-mode-register .kojac-date-trigger{
+    min-height:41px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:42px!important;
+  }
+}
+
+@media(max-width:900px){
+  .auth-mode-register .auth-simple-card{
+    padding:20px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    width:min(100%,620px)!important;
+    padding:8px 0 10px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:13px!important;
+    row-gap:7px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select,
+  .auth-mode-register .kojac-date-trigger{
+    min-height:40px!important;
+  }
+
+  .kojac-date-picker{
+    width:min(100%,370px);
+  }
+}
+
+@media(max-width:560px){
+  .auth-mode-register .auth-simple-card{
+    padding:14px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    padding:5px 0 7px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap h2{
+    font-size:26px!important;
+  }
+
+  .auth-mode-register .auth-simple-subtitle{
+    font-size:10.5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:9px!important;
+    row-gap:5px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select,
+  .auth-mode-register .kojac-date-trigger{
+    min-height:37px!important;
+  }
+
+  .kojac-date-picker-layer{
+    padding:10px;
+    align-items:center;
+  }
+
+  .kojac-date-picker{
+    width:min(100%,360px);
+    border-radius:16px;
+  }
+
+  .kojac-date-picker-head{
+    min-height:72px;
+    padding:14px 15px;
+  }
+
+  .kojac-date-picker-head strong{
+    font-size:18px;
+  }
+
+  .kojac-date-picker-controls{
+    grid-template-columns:32px minmax(0,1.25fr) minmax(0,.8fr) 32px;
+    gap:5px;
+    padding:11px 10px 8px;
+  }
+
+  .kojac-date-picker-controls select{
+    min-height:34px!important;
+    font-size:10px!important;
+  }
+
+  .kojac-date-nav{
+    width:32px;
+    height:32px;
+  }
+
+  .kojac-date-weekdays{
+    padding-inline:10px;
+  }
+
+  .kojac-date-grid{
+    gap:2px;
+    padding:0 10px 10px;
+  }
+
+  .kojac-date-grid button{
+    border-radius:8px;
+    font-size:10.5px;
+  }
+}
+
+@media(max-height:700px){
+  .auth-mode-register .auth-simple-subtitle{
+    display:none!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap{
+    padding:2px 0 4px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap form,
+  .auth-mode-register .auth-register-form{
+    margin-top:7px!important;
+    row-gap:4px!important;
+  }
+
+  .auth-mode-register .auth-simple-form-wrap input,
+  .auth-mode-register .auth-simple-form-wrap select,
+  .auth-mode-register .kojac-date-trigger{
+    min-height:34px!important;
+  }
+
+  .auth-mode-register .auth-simple-submit{
+    min-height:36px!important;
+  }
+}
+
+
+/* KOJAC AUTH V8 — DATE PICKER FORM AREA ONLY */
+
+/* Panel form menjadi positioning context untuk popup kalender */
+.auth-simple-card{
+  position:relative!important;
+  isolation:isolate;
+}
+
+/* Popup hanya memenuhi area panel form kanan */
+.auth-simple-card .kojac-date-picker-layer{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:100!important;
+  padding:20px!important;
+  overflow:hidden!important;
+}
+
+/* Backdrop hanya di dalam area form */
+.auth-simple-card .kojac-date-picker-backdrop{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  border:0!important;
+  background:rgba(54,28,33,.16)!important;
+  backdrop-filter:blur(2px)!important;
+}
+
+/* Kalender tetap fokus di tengah panel kanan */
+.auth-simple-card .kojac-date-picker{
+  position:relative!important;
+  z-index:2!important;
+  width:min(100%,390px)!important;
+  max-height:calc(100% - 40px)!important;
+}
+
+/* Desktop: sedikit lebih soft karena panel putih tetap menjadi konteks */
+@media(min-width:901px){
+  .auth-simple-card .kojac-date-picker-layer{
+    place-items:center!important;
+  }
+
+  .auth-simple-card .kojac-date-picker-backdrop{
+    background:rgba(122,31,43,.08)!important;
+  }
+}
+
+/* Mobile: form memang full-screen, tetap nyaman */
+@media(max-width:900px){
+  .auth-simple-card .kojac-date-picker-layer{
+    padding:12px!important;
+  }
+
+  .auth-simple-card .kojac-date-picker{
+    width:min(100%,360px)!important;
+    max-height:calc(100% - 24px)!important;
+  }
+}
