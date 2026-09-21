@@ -9,11 +9,13 @@ import {
   School,
   Sparkles,
   UserRound,
+  Video,
 } from 'lucide-react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
+import { LIVE_CLASSROOM_ENABLED } from '../features/live-classroom/config';
 
 type EnrollmentStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
@@ -114,6 +116,15 @@ function ActiveClassCard({ row }: { row: MyClassRow }) {
           <span className="class-info-value"><span className={statusClass(row.class_status)}>{classLabels[row.class_status]}</span></span>
         </div>
       </div>
+      {LIVE_CLASSROOM_ENABLED
+        && row.enrollment_status === 'active'
+        && row.class_status === 'active' && (
+          <div className="class-action-row">
+            <Link className="class-action-primary" to={`/kelas-live/${row.class_id}`}>
+              <Video size={16}/>Masuk Kelas Live
+            </Link>
+          </div>
+        )}
     </article>
   );
 }

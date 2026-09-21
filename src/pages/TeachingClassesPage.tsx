@@ -11,12 +11,14 @@ import {
   School,
   UserRound,
   UsersRound,
+  Video,
   X,
 } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
 import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
+import { LIVE_CLASSROOM_ENABLED } from '../features/live-classroom/config';
 import type { AppRole } from '../types';
 
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
@@ -182,7 +184,13 @@ function ClassCard({
       </div>
 
       <div className="class-action-row">
-        <Link className={management ? 'class-action-secondary' : 'class-action-primary'} to={`/kelas-mengajar/${row.class_id}/laporan`}>
+        {LIVE_CLASSROOM_ENABLED
+          && (row.class_status === 'planned' || row.class_status === 'active') && (
+            <Link className="class-action-primary" to={`/kelas-live/${row.class_id}`}>
+              <Video size={16}/>Buka Kelas Live
+            </Link>
+          )}
+        <Link className="class-action-secondary" to={`/kelas-mengajar/${row.class_id}/laporan`}>
           <FileText size={16}/>{management ? 'Lihat Laporan' : 'Laporan Mengajar'}
         </Link>
         <button className="class-action-secondary" type="button" disabled={busy} onClick={onOpen}>

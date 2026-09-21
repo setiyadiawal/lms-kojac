@@ -38,6 +38,7 @@ const KanjiPage = lazy(() => import('./pages/KanjiPage').then((module) => ({ def
 const GrammarPage = lazy(() => import('./pages/GrammarPage').then((module) => ({ default: module.GrammarPage })));
 const ReadingPage = lazy(() => import('./pages/ReadingPage').then((module) => ({ default: module.ReadingPage })));
 const ListeningPage = lazy(() => import('./pages/ListeningPage').then((module) => ({ default: module.ListeningPage })));
+const LiveClassroomPage = lazy(() => import('./features/live-classroom/LiveClassroomPage').then((module) => ({ default: module.LiveClassroomPage })));
 
 function LazyModule({ children }: { children: ReactNode }) {
   return (
@@ -63,6 +64,7 @@ export default function App() {
       <Route path="pengajar/tugas" element={<TeacherAssignmentsPage />} />
       <Route path="kelas-mengajar" element={<TeachingClassesPage />} />
       <Route path="kelas-mengajar/:classId/laporan" element={<TeachingReportsPage />} />
+      <Route path="kelas-live/:classId" element={<LazyModule><LiveClassroomPage /></LazyModule>} />
       <Route path="rekap-kelas" element={<ManagementClassRecapPage />} />
       <Route path="manajemen/dashboard" element={<RoleRoute minimum="administrator"><ManagementDashboardPage /></RoleRoute>} />
       <Route path="manajemen/siswa" element={<RoleRoute minimum="administrator"><ManagementStudentsPage /></RoleRoute>} />
