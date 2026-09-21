@@ -275,7 +275,27 @@ Deno.serve(async (request) => {
     return json(request, { error: 'live_classroom_access_denied' }, 403);
   }
 
-  const provider = (Deno.env.get('LIVE_CLASSROOM_PROVIDER') || 'jaas').trim();
+  const { data: liveState, error: liveStateError } = await callerClient
+    .rpc('get_live_classroom_state', { p_class_id: classId })
+    .maybeSingle();
+
+  if (liveStateError) {
+    console.error('KOJAC Live session lookup failed', liveStateError);
+    return json(request, { error: 'server_lookup_failed' }, 500);
+  }
+
+  if (!liveState?.session_id || liveState.session_status !== 'active') {
+    return json(request, { error: 'session_not_active' }, 409);
+  }
+
+  const provider = String(liveState.provider ?? '').trim();
+  const roomName = String(liveState.provider_room_name ?? '').trim();
+  const configuredProvider = (Deno.env.get('LIVE_CLASSROOM_PROVIDER') || 'jaas').trim();
+
+  if (!provider || !roomName || provider !== configuredProvider) {
+    return json(request, { error: 'provider_configuration_mismatch' }, 503);
+  }
+
   if (provider !== 'jaas') {
     return json(request, { error: 'provider_not_supported' }, 503);
   }
@@ -294,7 +314,6 @@ Deno.serve(async (request) => {
     || profile.full_name?.trim()
     || 'Pengguna KOJAC';
 
-  const roomName = `kojac_${classId.replaceAll('-', '')}`;
   const now = Math.floor(Date.now() / 1000);
 
   try {
@@ -335,6 +354,7 @@ Deno.serve(async (request) => {
 
     return json(request, {
       provider: 'jaas',
+      session_id: liveState.session_id,
       app_id: appId,
       room_name: roomName,
       jwt: token,

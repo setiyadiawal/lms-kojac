@@ -4,6 +4,7 @@ export type LiveClassroomProvider = 'jaas';
 
 export type LiveClassroomAccess = {
   provider: LiveClassroomProvider;
+  sessionId: string;
   appId: string;
   roomName: string;
   jwt: string;
@@ -17,6 +18,7 @@ export type LiveClassroomAccess = {
 
 type LiveClassroomAccessResponse = {
   provider?: string;
+  session_id?: string;
   app_id?: string;
   room_name?: string;
   jwt?: string;
@@ -29,6 +31,22 @@ type LiveClassroomAccessResponse = {
   error?: string;
 };
 
+async function edgeErrorCode(error: unknown) {
+  const context = (error as { context?: Response } | null)?.context;
+  if (!(context instanceof Response)) return 'live_classroom_access_failed';
+
+  try {
+    const payload = await context.clone().json() as { error?: unknown };
+    if (typeof payload.error === 'string' && payload.error.trim()) {
+      return payload.error.trim();
+    }
+  } catch {
+    // Fallback generik bila response bukan JSON.
+  }
+
+  return 'live_classroom_access_failed';
+}
+
 export async function requestLiveClassroomAccess(
   classId: string,
 ): Promise<LiveClassroomAccess> {
@@ -40,7 +58,7 @@ export async function requestLiveClassroomAccess(
   );
 
   if (error) {
-    throw new Error('live_classroom_access_failed');
+    throw new Error(await edgeErrorCode(error));
   }
 
   if (data?.error) {
@@ -49,6 +67,7 @@ export async function requestLiveClassroomAccess(
 
   if (
     data?.provider !== 'jaas'
+    || !data.session_id
     || !data.app_id
     || !data.room_name
     || !data.jwt
@@ -62,6 +81,7 @@ export async function requestLiveClassroomAccess(
 
   return {
     provider: 'jaas',
+    sessionId: data.session_id,
     appId: data.app_id,
     roomName: data.room_name,
     jwt: data.jwt,

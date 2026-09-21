@@ -652,3 +652,191 @@
   .student-management-filter-actions{grid-template-columns:1fr}
   .student-management-filter-actions>span{grid-column:auto}
 }
+
+
+/* KOJAC STUDENT LIVE ATTENDANCE HISTORY V2.4 */
+
+.class-history-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.student-attendance-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:1200;
+  display:flex;
+  justify-content:flex-end;
+  background:rgba(35,20,24,.34);
+  backdrop-filter:blur(2px);
+}
+
+.student-attendance-panel{
+  width:min(470px,100%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding:22px;
+  background:#fff;
+  box-shadow:-18px 0 48px rgba(42,18,23,.16);
+}
+
+.student-attendance-panel>header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:16px;
+  border-bottom:1px solid #eee4e6;
+}
+
+.student-attendance-panel>header h2{
+  margin:4px 0;
+  font-size:21px;
+}
+
+.student-attendance-panel>header span{
+  color:#8a777c;
+  font-size:10px;
+}
+
+.student-attendance-panel>header button{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e6d9dc;
+  border-radius:10px;
+  background:#fff;
+  color:#655156;
+  cursor:pointer;
+}
+
+.student-attendance-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:15px 0;
+}
+
+.student-attendance-summary>div{
+  display:grid;
+  gap:2px;
+  padding:12px;
+  border:1px solid #eee4e6;
+  border-radius:11px;
+  background:#fcfafa;
+}
+
+.student-attendance-summary strong{
+  font-size:18px;
+}
+
+.student-attendance-summary span{
+  color:#857478;
+  font-size:9px;
+}
+
+.student-attendance-list{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:grid;
+  align-content:start;
+  gap:8px;
+  padding-right:3px;
+}
+
+.student-attendance-list article{
+  display:grid;
+  gap:9px;
+  padding:12px 13px;
+  border:1px solid #eee4e6;
+  border-radius:11px;
+  background:#fcfafa;
+}
+
+.student-attendance-row-main{
+  display:grid;
+  gap:3px;
+}
+
+.student-attendance-row-main strong{
+  font-size:11px;
+}
+
+.student-attendance-row-main span{
+  color:#837276;
+  font-size:9.5px;
+}
+
+.student-attendance-row-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+.student-attendance-row-meta span{
+  padding:5px 7px;
+  border-radius:999px;
+  background:#f3ecee;
+  color:#694f55;
+  font-size:8.5px;
+  font-weight:750;
+}
+
+.student-attendance-row-meta span.is-late{
+  background:#fff0e8;
+  color:#a45327;
+}
+
+.student-attendance-row-meta span.is-on-time{
+  background:#edf8f1;
+  color:#2d7c51;
+}
+
+.student-attendance-state{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  text-align:center;
+  color:#7d6b70;
+  font-size:11px;
+}
+
+.student-attendance-state.is-error{
+  color:#9b2b3d;
+}
+
+.student-attendance-state button{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px solid #dfd0d3;
+  border-radius:10px;
+  background:#fff;
+  color:#665256;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+@media(max-width:760px){
+  .student-attendance-panel{
+    width:100%;
+    padding:17px;
+  }
+
+  .class-history-actions{
+    align-items:flex-start;
+    justify-content:flex-start;
+  }
+}

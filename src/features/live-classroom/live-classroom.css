@@ -1,4 +1,4 @@
-/* KOJAC LIVE CLASSROOM — PHASE 1A */
+/* KOJAC LIVE CLASSROOM — PHASE 1 + PHASE 2 */
 
 .live-classroom-page{
   min-width:0;
@@ -46,6 +46,7 @@
   color:#624d52;
   font-size:11px;
   font-weight:800;
+  cursor:pointer;
 }
 
 .live-classroom-role{
@@ -53,6 +54,7 @@
   display:inline-flex;
   align-items:center;
   gap:7px;
+  min-height:36px;
   padding:8px 11px;
   border:1px solid #e6d5d8;
   border-radius:999px;
@@ -60,6 +62,83 @@
   color:#7b1f2f;
   font-size:10px;
   font-weight:850;
+}
+
+.live-classroom-header-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.live-session-running{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:36px;
+  padding:7px 11px;
+  border:1px solid #e7d4d8;
+  border-radius:999px;
+  background:#fff;
+  color:#6d555b;
+  font-size:10px;
+}
+
+.live-session-running strong{
+  color:#941d32;
+  letter-spacing:.08em;
+}
+
+.live-session-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#c9243f;
+  box-shadow:0 0 0 4px rgba(201,36,63,.1);
+}
+
+.live-session-attendance-button,
+.live-session-end-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:36px;
+  padding:7px 11px;
+  border-radius:10px;
+  font-size:10px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.live-session-attendance-button{
+  border:1px solid #dfd0d3;
+  background:#fff;
+  color:#5f4a4f;
+}
+
+.live-session-attendance-button span{
+  min-width:18px;
+  height:18px;
+  display:inline-grid;
+  place-items:center;
+  border-radius:999px;
+  background:#f5e9eb;
+  color:#7b1f2f;
+  font-size:9px;
+}
+
+.live-session-end-button{
+  border:1px solid #8d1d30;
+  background:#8d1d30;
+  color:#fff;
+}
+
+.live-session-end-button:disabled,
+.live-session-start-button:disabled{
+  opacity:.65;
+  cursor:not-allowed;
 }
 
 .live-classroom-stage{
@@ -159,6 +238,7 @@
   color:#fff;
   font-size:11px;
   font-weight:800;
+  cursor:pointer;
 }
 
 .live-classroom-state-actions{
@@ -179,8 +259,341 @@
   animation:live-classroom-spin .9s linear infinite;
 }
 
+.live-session-lobby{
+  width:min(100%,900px);
+  margin:24px auto 60px;
+}
+
+.live-session-lobby>.live-classroom-back{
+  margin-bottom:14px;
+}
+
+.live-session-lobby-card{
+  min-height:390px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:38px;
+  border:1px solid #e3d5d8;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 18px 50px rgba(50,19,25,.06);
+}
+
+.live-session-lobby-card h1{
+  margin:5px 0 4px;
+  font-size:clamp(28px,4vw,42px);
+  line-height:1.05;
+  letter-spacing:-.04em;
+}
+
+.live-session-lobby-card h2{
+  margin:20px 0 7px;
+  font-size:18px;
+}
+
+.live-session-lobby-card>p:not(.eyebrow):not(.live-session-lobby-code):not(.live-session-inline-error){
+  max-width:560px;
+  margin:0;
+  color:#77686b;
+  font-size:12px;
+  line-height:1.65;
+}
+
+.live-session-lobby-code{
+  margin:0;
+  color:#9b858a;
+  font-size:11px;
+  font-weight:750;
+}
+
+.live-session-start-button,
+.live-session-refresh-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:44px;
+  margin-top:22px;
+  padding:10px 17px;
+  border-radius:11px;
+  font-size:11px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.live-session-start-button{
+  border:1px solid #841d30;
+  background:#841d30;
+  color:#fff;
+}
+
+.live-session-refresh-button{
+  border:1px solid #dfd0d3;
+  background:#fff;
+  color:#665256;
+}
+
+.live-session-inline-error{
+  margin:16px 0 0;
+  color:#a22739;
+  font-size:11px;
+  font-weight:750;
+}
+
+.live-session-history{
+  margin-top:18px;
+  padding:20px;
+  border:1px solid #e5d8da;
+  border-radius:16px;
+  background:#fff;
+}
+
+.live-session-section-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:13px;
+  color:#7b1f2f;
+}
+
+.live-session-section-heading h2{
+  margin:3px 0 0;
+  color:#241a1c;
+  font-size:17px;
+}
+
+.live-session-history-list{
+  display:grid;
+  gap:8px;
+}
+
+.live-session-history-list article{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:12px 13px;
+  border:1px solid #eee4e6;
+  border-radius:11px;
+  background:#fcfafa;
+}
+
+.live-session-history-list article>div:first-child{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+
+.live-session-history-list strong{
+  font-size:11px;
+}
+
+.live-session-history-list span{
+  color:#837276;
+  font-size:9.5px;
+}
+
+.live-session-history-metrics{
+  flex:0 0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:6px;
+}
+
+.live-session-history-metrics span{
+  padding:5px 7px;
+  border-radius:999px;
+  background:#f3ecee;
+  color:#694f55;
+  font-weight:750;
+}
+
+.live-attendance-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:flex;
+  justify-content:flex-end;
+  background:rgba(32,18,21,.34);
+  backdrop-filter:blur(2px);
+}
+
+.live-attendance-panel{
+  width:min(430px,100%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding:20px;
+  background:#fff;
+  box-shadow:-16px 0 45px rgba(38,14,19,.16);
+}
+
+.live-attendance-panel>header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:15px;
+  border-bottom:1px solid #eee4e6;
+}
+
+.live-attendance-panel>header h2{
+  margin:3px 0 0;
+  font-size:20px;
+}
+
+.live-attendance-panel>header button{
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border:1px solid #e6d9dc;
+  border-radius:10px;
+  background:#fff;
+  color:#655156;
+  cursor:pointer;
+}
+
+.live-attendance-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  padding:14px 0;
+}
+
+.live-attendance-summary>div{
+  display:grid;
+  gap:2px;
+  padding:11px;
+  border:1px solid #eee4e6;
+  border-radius:11px;
+  background:#fcfafa;
+}
+
+.live-attendance-summary strong{
+  font-size:18px;
+}
+
+.live-attendance-summary span{
+  color:#857478;
+  font-size:9px;
+}
+
+.live-attendance-list{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  display:grid;
+  align-content:start;
+  gap:7px;
+  padding-right:3px;
+}
+
+.live-attendance-list article{
+  display:grid;
+  gap:8px;
+  padding:11px 12px;
+  border:1px solid #eee4e6;
+  border-radius:11px;
+}
+
+.live-attendance-person{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.live-attendance-person>div{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+
+.live-attendance-person strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:11px;
+}
+
+.live-attendance-person span{
+  color:#8a777c;
+  font-size:9px;
+}
+
+.live-attendance-online{
+  flex:0 0 auto;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#b9afb1;
+}
+
+.live-attendance-online.is-online{
+  background:#2f9a62;
+  box-shadow:0 0 0 4px rgba(47,154,98,.1);
+}
+
+.live-attendance-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+.live-attendance-meta span{
+  padding:4px 6px;
+  border-radius:999px;
+  background:#f5f0f1;
+  color:#6f5a5f;
+  font-size:8.5px;
+  font-weight:700;
+}
+
+.live-attendance-meta span.is-late{
+  background:#fff0e8;
+  color:#a45327;
+}
+
+.live-attendance-empty{
+  padding:30px 12px;
+  text-align:center;
+  color:#8a777c;
+  font-size:11px;
+}
+
+.live-attendance-refresh{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:39px;
+  margin-top:12px;
+  border:1px solid #dfd0d3;
+  border-radius:10px;
+  background:#fff;
+  color:#675257;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
 @keyframes live-classroom-spin{
   to{transform:rotate(360deg)}
+}
+
+@media(max-width:1000px){
+  .live-classroom-header{
+    align-items:flex-start;
+  }
+
+  .live-classroom-header-actions{
+    max-width:48%;
+  }
 }
 
 @media(max-width:760px){
@@ -201,13 +614,19 @@
     gap:9px;
   }
 
+  .live-classroom-header-actions{
+    width:100%;
+    max-width:none;
+    justify-content:flex-start;
+  }
+
   .live-classroom-header h1{
     font-size:25px;
   }
 
   .live-classroom-stage{
-    height:calc(100dvh - 230px);
-    min-height:440px;
+    height:calc(100dvh - 285px);
+    min-height:420px;
     border-radius:13px;
   }
 
@@ -215,6 +634,25 @@
     align-items:flex-start;
     flex-direction:column;
     gap:4px;
+  }
+
+  .live-session-lobby{
+    margin-top:12px;
+  }
+
+  .live-session-lobby-card{
+    min-height:350px;
+    padding:28px 18px;
+  }
+
+  .live-session-history-list article{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:9px;
+  }
+
+  .live-session-history-metrics{
+    justify-content:flex-start;
   }
 }
 
@@ -231,15 +669,30 @@
     font-size:10.5px;
   }
 
+  .live-session-running,
+  .live-classroom-role{
+    min-height:33px;
+  }
+
+  .live-session-attendance-button,
+  .live-session-end-button{
+    min-height:36px;
+  }
+
   .live-classroom-stage{
-    height:calc(100dvh - 215px);
-    min-height:410px;
+    height:calc(100dvh - 300px);
+    min-height:390px;
     border-radius:11px;
   }
 
   .live-classroom-state{
     min-height:360px;
     padding:24px 17px;
+  }
+
+  .live-attendance-panel{
+    width:100%;
+    padding:16px;
   }
 }
 

@@ -10,12 +10,17 @@ import {
   Sparkles,
   UserRound,
   Video,
+  X,
 } from 'lucide-react';
 import { Link, Navigate } from 'react-router-dom';
 import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import { LIVE_CLASSROOM_ENABLED } from '../features/live-classroom/config';
+import {
+  getMyLiveClassAttendanceHistory,
+  type MyLiveAttendanceHistory,
+} from '../features/live-classroom/session';
 
 type EnrollmentStatus = 'active' | 'paused' | 'completed' | 'cancelled';
 type ClassStatus = 'planned' | 'active' | 'completed' | 'cancelled';
@@ -68,6 +73,34 @@ function formatPeriod(start: string | null, end: string | null) {
   return `Sampai ${formatDate(end)}`;
 }
 
+function formatDateTime(value: string | null | undefined) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '—';
+  return new Intl.DateTimeFormat('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function formatClock(value: string | null | undefined) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '—';
+  return new Intl.DateTimeFormat('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+}
+
+function formatDuration(seconds: number) {
+  const total = Math.max(0, Math.floor(seconds));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  if (hours > 0) return `${hours}j ${minutes}m`;
+  return `${minutes} menit`;
+}
+
 function statusClass(status: EnrollmentStatus | ClassStatus) {
   return `class-status-badge is-${status}`;
 }
@@ -84,7 +117,13 @@ function SummaryCard({ icon, value, label }: { icon: React.ReactNode; value: num
   );
 }
 
-function ActiveClassCard({ row }: { row: MyClassRow }) {
+function ActiveClassCard({
+  row,
+  onAttendanceHistory,
+}: {
+  row: MyClassRow;
+  onAttendanceHistory: () => void;
+}) {
   return (
     <article className="class-card">
       <div className="class-card-header">
@@ -116,20 +155,33 @@ function ActiveClassCard({ row }: { row: MyClassRow }) {
           <span className="class-info-value"><span className={statusClass(row.class_status)}>{classLabels[row.class_status]}</span></span>
         </div>
       </div>
-      {LIVE_CLASSROOM_ENABLED
-        && row.enrollment_status === 'active'
-        && row.class_status === 'active' && (
-          <div className="class-action-row">
+      {LIVE_CLASSROOM_ENABLED && (
+        <div className="class-action-row">
+          {row.enrollment_status === 'active' && row.class_status === 'active' && (
             <Link className="class-action-primary" to={`/kelas-live/${row.class_id}`}>
               <Video size={16}/>Masuk Kelas Live
             </Link>
-          </div>
-        )}
+          )}
+          <button
+            className="class-action-secondary"
+            type="button"
+            onClick={onAttendanceHistory}
+          >
+            <History size={16}/>Riwayat Kehadiran
+          </button>
+        </div>
+      )}
     </article>
   );
 }
 
-function HistoryRow({ row }: { row: MyClassRow }) {
+function HistoryRow({
+  row,
+  onAttendanceHistory,
+}: {
+  row: MyClassRow;
+  onAttendanceHistory: () => void;
+}) {
   return (
     <article className="class-history-row">
       <div className="class-history-main">
@@ -146,9 +198,20 @@ function HistoryRow({ row }: { row: MyClassRow }) {
         <span>Status kelas <strong>{classLabels[row.class_status]}</strong></span>
       </div>
 
-      <span className={statusClass(row.enrollment_status)}>
-        {enrollmentLabels[row.enrollment_status]}
-      </span>
+      <div className="class-history-actions">
+        <span className={statusClass(row.enrollment_status)}>
+          {enrollmentLabels[row.enrollment_status]}
+        </span>
+        {LIVE_CLASSROOM_ENABLED && (
+          <button
+            className="class-action-secondary"
+            type="button"
+            onClick={onAttendanceHistory}
+          >
+            <History size={15}/>Riwayat Kehadiran
+          </button>
+        )}
+      </div>
     </article>
   );
 }
@@ -178,6 +241,10 @@ export function MyClassesPage() {
   const [rows, setRows] = useState<MyClassRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [attendanceClass, setAttendanceClass] = useState<MyClassRow | null>(null);
+  const [attendanceRows, setAttendanceRows] = useState<MyLiveAttendanceHistory[]>([]);
+  const [attendanceLoading, setAttendanceLoading] = useState(false);
+  const [attendanceError, setAttendanceError] = useState(false);
 
   const loadClasses = useCallback(async () => {
     if (role !== 'siswa') return;
@@ -200,6 +267,23 @@ export function MyClassesPage() {
   useEffect(() => {
     if (!authLoading && role === 'siswa') void loadClasses();
   }, [authLoading, role, loadClasses]);
+
+  const openAttendanceHistory = useCallback(async (row: MyClassRow) => {
+    setAttendanceClass(row);
+    setAttendanceRows([]);
+    setAttendanceLoading(true);
+    setAttendanceError(false);
+
+    try {
+      const history = await getMyLiveClassAttendanceHistory(row.class_id, 50);
+      setAttendanceRows(history);
+    } catch (loadError) {
+      console.error('KOJAC student attendance history load failed', loadError);
+      setAttendanceError(true);
+    } finally {
+      setAttendanceLoading(false);
+    }
+  }, []);
 
   const activeRows = useMemo(
     () => rows.filter((row) => row.enrollment_status === 'active' || row.enrollment_status === 'paused'),
@@ -264,7 +348,13 @@ export function MyClassesPage() {
 
             {activeRows.length > 0 ? (
               <div className="class-card-grid">
-                {activeRows.map((row) => <ActiveClassCard key={row.class_id} row={row}/>) }
+                {activeRows.map((row) => (
+                  <ActiveClassCard
+                    key={row.class_id}
+                    row={row}
+                    onAttendanceHistory={() => void openAttendanceHistory(row)}
+                  />
+                ))}
               </div>
             ) : (
               <div className="class-state-card" style={{ marginTop: 0, paddingBlock: 26 }}>
@@ -283,11 +373,102 @@ export function MyClassesPage() {
                 <span className="class-section-count">{historyRows.length} kelas</span>
               </div>
               <div className="class-history-list">
-                {historyRows.map((row) => <HistoryRow key={row.class_id} row={row}/>) }
+                {historyRows.map((row) => (
+                  <HistoryRow
+                    key={row.class_id}
+                    row={row}
+                    onAttendanceHistory={() => void openAttendanceHistory(row)}
+                  />
+                ))}
               </div>
             </section>
           )}
         </>
+      )}
+
+      {attendanceClass && (
+        <div
+          className="student-attendance-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Riwayat Kehadiran"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setAttendanceClass(null);
+          }}
+        >
+          <aside className="student-attendance-panel">
+            <header>
+              <div>
+                <p className="eyebrow">RIWAYAT KEHADIRAN</p>
+                <h2>{attendanceClass.class_name}</h2>
+                <span>{attendanceClass.class_code || 'Kelas KOJAC'}</span>
+              </div>
+              <button type="button" aria-label="Tutup" onClick={() => setAttendanceClass(null)}>
+                <X size={19}/>
+              </button>
+            </header>
+
+            {attendanceLoading ? (
+              <div className="student-attendance-state">Memuat riwayat kehadiran…</div>
+            ) : attendanceError ? (
+              <div className="student-attendance-state is-error">
+                Riwayat kehadiran belum dapat dimuat.
+                <button type="button" onClick={() => void openAttendanceHistory(attendanceClass)}>
+                  <RefreshCw size={15}/>Coba Lagi
+                </button>
+              </div>
+            ) : attendanceRows.length === 0 ? (
+              <div className="student-attendance-state">
+                Belum ada riwayat kehadiran Live pada kelas ini.
+              </div>
+            ) : (
+              <>
+                <div className="student-attendance-summary">
+                  <div>
+                    <strong>{attendanceRows.length}</strong>
+                    <span>Pertemuan</span>
+                  </div>
+                  <div>
+                    <strong>{attendanceRows.filter((row) => row.wasLate).length}</strong>
+                    <span>Terlambat</span>
+                  </div>
+                  <div>
+                    <strong>
+                      {Math.floor(
+                        attendanceRows.reduce((sum, row) => sum + row.durationSeconds, 0) / 60,
+                      )}
+                    </strong>
+                    <span>Total menit</span>
+                  </div>
+                </div>
+
+                <div className="student-attendance-list">
+                  {attendanceRows.map((row) => (
+                    <article key={row.sessionId}>
+                      <div className="student-attendance-row-main">
+                        <strong>{formatDateTime(row.sessionStartedAt)}</strong>
+                        <span>
+                          Masuk {formatClock(row.firstJoinedAt)}
+                          {row.sessionEndedAt
+                            ? ` · Selesai ${formatClock(row.sessionEndedAt)}`
+                            : ' · Sedang berlangsung'}
+                        </span>
+                      </div>
+
+                      <div className="student-attendance-row-meta">
+                        <span>{formatDuration(row.durationSeconds)}</span>
+                        {row.joinCount > 1 && <span>{row.joinCount}× masuk</span>}
+                        <span className={row.wasLate ? 'is-late' : 'is-on-time'}>
+                          {row.wasLate ? 'Terlambat' : 'Tepat waktu'}
+                        </span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            )}
+          </aside>
+        </div>
       )}
     </div>
   );
