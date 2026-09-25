@@ -14,6 +14,7 @@ export type LiveClassroomAccess = {
   email: string;
   avatarUrl: string | null;
   moderator: boolean;
+  recordingEnabled: boolean;
 };
 
 type LiveClassroomAccessResponse = {
@@ -28,6 +29,7 @@ type LiveClassroomAccessResponse = {
   email?: string;
   avatar_url?: string | null;
   moderator?: boolean;
+  recording_enabled?: boolean;
   error?: string;
 };
 
@@ -91,5 +93,6 @@ export async function requestLiveClassroomAccess(
     email: data.email,
     avatarUrl: data.avatar_url ?? null,
     moderator: data.moderator,
+    recordingEnabled: Boolean(data.recording_enabled),
   };
 }

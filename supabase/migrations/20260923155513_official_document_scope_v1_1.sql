@@ -1,0 +1,3 @@
+-- Production migration official_document_scope_v1_1 is already APPLIED.
+-- KWT/LPG are legacy and inactive for new issuance.
+-- Honor payments remain administrative records without issuing new KWT documents.

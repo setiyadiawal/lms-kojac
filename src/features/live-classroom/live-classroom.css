@@ -699,3 +699,122 @@
 @media(prefers-reduced-motion:reduce){
   .live-classroom-spinner{animation:none}
 }
+
+
+/* KOJAC LOCAL RECORDING FREE V4.2 */
+
+.live-local-recording-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:36px;
+  padding:7px 11px;
+  border:1px solid #dfd0d3;
+  border-radius:10px;
+  background:#fff;
+  color:#6a5359;
+  font-size:10px;
+  font-weight:850;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.live-local-recording-button.is-active{
+  border-color:#b32139;
+  background:#b32139;
+  color:#fff;
+  box-shadow:0 0 0 4px rgba(179,33,57,.09);
+}
+
+.live-local-recording-button:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+}
+
+.live-local-recording-result{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:1190;
+  width:min(440px,calc(100vw - 32px));
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 14px;
+  border:1px solid #dfd0d3;
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 16px 44px rgba(46,20,25,.18);
+}
+
+.live-local-recording-result-copy{
+  flex:1;
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+
+.live-local-recording-result-copy strong{
+  font-size:11px;
+  color:#281c1e;
+}
+
+.live-local-recording-result-copy span{
+  color:#725e63;
+  font-size:9.5px;
+  line-height:1.45;
+}
+
+.live-local-recording-result-copy small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#98878a;
+  font-size:8.5px;
+}
+
+.live-local-recording-result>button{
+  flex:0 0 auto;
+  min-height:37px;
+  padding:8px 11px;
+  border:1px solid #811d30;
+  border-radius:9px;
+  background:#811d30;
+  color:#fff;
+  font-size:9.5px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.live-local-recording-result>button.is-dismiss{
+  border-color:#dfd0d3;
+  background:#fff;
+  color:#68545a;
+}
+
+.live-local-recording-result>button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+@media(max-width:1050px){
+  .live-classroom-header-actions{
+    flex-wrap:wrap;
+  }
+}
+
+@media(max-width:760px){
+  .live-local-recording-result{
+    right:14px;
+    bottom:14px;
+    left:14px;
+    width:auto;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .live-local-recording-result>button{
+    width:100%;
+  }
+}

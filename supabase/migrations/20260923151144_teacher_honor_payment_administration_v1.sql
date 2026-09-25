@@ -1,0 +1,16 @@
+-- KOJAC Honor Payment Administration V1
+-- Production migration version: 20260923151144
+-- Production status: APPLIED.
+-- Do not replay manually and do not use `supabase db push`.
+--
+-- Objects created/updated:
+-- private.teacher_payroll_payment_records
+-- private.create_teacher_payroll_payment_record(...)
+-- public.record_management_teacher_payroll_payment(...)
+-- public.mark_management_teacher_payroll_paid(...) [compatibility upgrade]
+-- public.get_management_teacher_payment_overview(...)
+-- public.get_management_teacher_payment_detail(...)
+-- public.get_teacher_payroll_detail(...) [payment data added]
+--
+-- Existing paid payrolls were backfilled into payment records and received
+-- a receipt (KWT) number from the centralized document-number registry.

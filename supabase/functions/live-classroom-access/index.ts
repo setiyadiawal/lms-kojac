@@ -314,6 +314,9 @@ Deno.serve(async (request) => {
     || profile.full_name?.trim()
     || 'Pengguna KOJAC';
 
+  const recordingEnabled =
+    moderator && Deno.env.get('JAAS_RECORDING_ENABLED') === 'true';
+
   const now = Math.floor(Date.now() / 1000);
 
   try {
@@ -331,7 +334,7 @@ Deno.serve(async (request) => {
         },
         features: {
           livestreaming: false,
-          recording: false,
+          recording: recordingEnabled ? 'true' : 'false',
           transcription: false,
           'outbound-call': false,
         },
@@ -364,6 +367,7 @@ Deno.serve(async (request) => {
       email: caller.email ?? '',
       avatar_url: profile.avatar_url,
       moderator,
+      recording_enabled: recordingEnabled,
     });
   } catch (error) {
     console.error('KOJAC Live JWT signing failed', error);

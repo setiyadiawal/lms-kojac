@@ -23,6 +23,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../state/AuthContext';
 import { LIVE_CLASSROOM_ENABLED } from './config';
 import {
+  connectBackgroundGoogleDrive,
+  startBackgroundRecordingUpload,
+  useBackgroundRecordingUpload,
+} from '../recordings/backgroundRecordingUpload';
+import {
+  startLocalClassRecording,
+  type LocalRecordingResult,
+  type LocalRecordingSession,
+} from './localRecording';
+import {
   requestLiveClassroomAccess,
   type LiveClassroomAccess,
 } from './provider';
@@ -112,7 +122,7 @@ function sessionElapsed(startedAt: string | null, now: number) {
 export function LiveClassroomPage() {
   const { classId } = useParams();
   const navigate = useNavigate();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
 
   const [classState, setClassState] = useState<LiveClassroomState | null>(null);
   const [access, setAccess] = useState<LiveClassroomAccess | null>(null);
@@ -123,7 +133,15 @@ export function LiveClassroomPage() {
   const [sessionBusy, setSessionBusy] = useState(false);
   const [errorCode, setErrorCode] = useState('');
   const [attendanceOpen, setAttendanceOpen] = useState(false);
+  const [meetingJoined, setMeetingJoined] = useState(false);
+  const [localRecordingSession, setLocalRecordingSession] = useState<LocalRecordingSession | null>(null);
+  const [localRecordingResult, setLocalRecordingResult] = useState<LocalRecordingResult | null>(null);
+  const [localRecordingBusy, setLocalRecordingBusy] = useState(false);
+  const [localRecordingMessage, setLocalRecordingMessage] = useState('');
+  const [localUploadBusy, setLocalUploadBusy] = useState(false);
   const [now, setNow] = useState(Date.now());
+
+  const uploadState = useBackgroundRecordingUpload(user?.id);
 
   const apiRef = useRef<JitsiExternalApi | null>(null);
   const apiCleanupRef = useRef<(() => void) | null>(null);
@@ -325,11 +343,13 @@ export function LiveClassroomPage() {
     if (!sessionId) return;
 
     const onJoined = () => {
+      setMeetingJoined(true);
       void markJoined(sessionId);
       if (classState.canModerate) void loadAttendance(sessionId);
     };
 
     const onLeft = () => {
+      setMeetingJoined(false);
       void markLeave();
       if (classState.canModerate) void loadAttendance(sessionId);
     };
@@ -381,6 +401,131 @@ export function LiveClassroomPage() {
     }
   };
 
+  const finishLocalRecording = useCallback(async (
+    targetSession: LocalRecordingSession,
+  ) => {
+    setLocalRecordingBusy(true);
+    setLocalRecordingMessage('Menyelesaikan file recording…');
+
+    try {
+      const result = await targetSession.stop();
+      setLocalRecordingResult(result);
+      setLocalRecordingSession(null);
+      setLocalRecordingMessage('Recording selesai dan file WebM sudah didownload.');
+    } catch (error) {
+      console.error('KOJAC local recording stop failed', error);
+      setLocalRecordingMessage(
+        error instanceof Error
+          ? error.message
+          : 'Recording lokal belum dapat diselesaikan.',
+      );
+    } finally {
+      setLocalRecordingBusy(false);
+    }
+  }, []);
+
+  const beginLocalRecording = async () => {
+    if (
+      !classState?.canModerate
+      || !meetingJoined
+      || localRecordingSession
+      || localRecordingBusy
+    ) return;
+
+    const confirmed = window.confirm(
+      'Mulai recording lokal KOJAC?\n\nPada dialog Chrome berikutnya:\n1. Pilih TAB KOJAC Live\n2. WAJIB aktifkan "Bagikan audio tab"\n3. Izinkan mikrofon pengajar',
+    );
+    if (!confirmed) return;
+
+    setLocalRecordingBusy(true);
+    setLocalRecordingMessage('');
+
+    try {
+      const date = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Jakarta',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).format(new Date()).replace(/[,:]/g, '-').replace(/\s+/g, '_');
+
+      const targetSession = await startLocalClassRecording({
+        suggestedName: `KOJAC Live - ${classState.className} - ${date}`,
+      });
+
+      setLocalRecordingSession(targetSession);
+      setLocalRecordingResult(null);
+      setLocalRecordingMessage('Recording lokal aktif.');
+
+      targetSession.screenTrack.addEventListener('ended', () => {
+        void finishLocalRecording(targetSession);
+      }, { once: true });
+    } catch (error) {
+      const cancelled =
+        error instanceof DOMException && error.name === 'AbortError';
+
+      if (!cancelled) {
+        console.error('KOJAC local recording start failed', error);
+        setLocalRecordingMessage(
+          error instanceof Error
+            ? error.message
+            : 'Recording lokal belum dapat dimulai.',
+        );
+      }
+    } finally {
+      setLocalRecordingBusy(false);
+    }
+  };
+
+  const stopLocalRecording = async () => {
+    if (!localRecordingSession) return;
+    await finishLocalRecording(localRecordingSession);
+  };
+
+  const uploadLocalRecording = async () => {
+    if (!localRecordingResult || !classState || localUploadBusy) return;
+
+    setLocalUploadBusy(true);
+    setLocalRecordingMessage('');
+
+    try {
+      if (!uploadState.driveConnected) {
+        await connectBackgroundGoogleDrive();
+      }
+
+      await startBackgroundRecordingUpload({
+        file: localRecordingResult.file,
+        classId: classState.classId,
+        className: classState.className,
+        title: `KOJAC Live — ${classState.className}`,
+        description: 'Rekaman KOJAC Live Classroom.',
+        recordedAt: localRecordingResult.startedAt,
+        durationMinutes: Math.max(
+          1,
+          Math.round(localRecordingResult.durationSeconds / 60),
+        ),
+        isPublished: true,
+      });
+
+      await localRecordingResult.cleanup();
+      setLocalRecordingResult(null);
+      setLocalRecordingMessage(
+        'Recording berhasil diupload ke Google Drive dan masuk Rekaman Kelas.',
+      );
+    } catch (error) {
+      console.error('KOJAC local recording upload failed', error);
+      setLocalRecordingMessage(
+        error instanceof Error
+          ? error.message
+          : 'Upload recording belum berhasil.',
+      );
+    } finally {
+      setLocalUploadBusy(false);
+    }
+  };
+
   const endSession = async () => {
     const sessionId = classState?.sessionId;
     if (!sessionId || sessionBusy) return;
@@ -393,6 +538,10 @@ export function LiveClassroomPage() {
     setSessionBusy(true);
 
     try {
+      if (localRecordingSession) {
+        await finishLocalRecording(localRecordingSession);
+      }
+
       await endLiveClassSession(sessionId);
 
       try {
@@ -418,6 +567,15 @@ export function LiveClassroomPage() {
   };
 
   const closeMeeting = async () => {
+    if (localRecordingSession) {
+      const confirmed = window.confirm(
+        'Recording lokal masih aktif. Hentikan recording dan keluar dari kelas?',
+      );
+      if (!confirmed) return;
+
+      await finishLocalRecording(localRecordingSession);
+    }
+
     await markLeave();
     navigate(backTarget);
   };
@@ -636,6 +794,31 @@ export function LiveClassroomPage() {
             </button>
           )}
 
+          {classState.canModerate && (
+            <button
+              className={`live-local-recording-button ${localRecordingSession ? 'is-active' : ''}`}
+              type="button"
+              disabled={!meetingJoined || localRecordingBusy}
+              title={!meetingJoined ? 'Gabung ke meeting terlebih dahulu' : undefined}
+              onClick={() => {
+                if (localRecordingSession) {
+                  void stopLocalRecording();
+                } else {
+                  void beginLocalRecording();
+                }
+              }}
+            >
+              {localRecordingSession ? <Square size={13}/> : <Video size={15}/>}
+              {localRecordingBusy
+                ? 'Memproses…'
+                : !meetingJoined
+                  ? 'Gabung dulu'
+                  : localRecordingSession
+                    ? 'Stop Rekam'
+                    : 'Rekam Lokal'}
+            </button>
+          )}
+
           <div className="live-classroom-role">
             <ShieldCheck size={16}/>
             <span>{access.moderator ? 'Moderator' : 'Siswa'}</span>
@@ -691,8 +874,55 @@ export function LiveClassroomPage() {
         <span><Video size={14}/> Audio · Video · Screen Share · Chat</span>
         <span className="live-classroom-beta-note">
           Kehadiran otomatis aktif · toleransi terlambat {classState.lateGraceMinutes} menit
+          {localRecordingSession ? ' · REKAM LOKAL AKTIF' : ''}
         </span>
       </footer>
+
+      {classState.canModerate && (localRecordingResult || localRecordingMessage) && (
+        <aside className="live-local-recording-result" role="status">
+          <div className="live-local-recording-result-copy">
+            <strong>
+              {localRecordingResult
+                ? 'Recording Lokal Selesai'
+                : localRecordingSession
+                  ? 'Recording Lokal Aktif'
+                  : 'KOJAC Local Recording'}
+            </strong>
+            <span>{localRecordingMessage}</span>
+            {localRecordingResult && (
+              <small>
+                {Math.max(1, Math.round(localRecordingResult.durationSeconds / 60))} menit
+                {' · '}
+                {(localRecordingResult.bytes / 1024 / 1024).toFixed(1)} MB
+                {' · '}
+                {localRecordingResult.fileName}
+              </small>
+            )}
+          </div>
+
+          {localRecordingResult && (
+            <button
+              type="button"
+              disabled={localUploadBusy || uploadState.job?.status === 'uploading'}
+              onClick={() => void uploadLocalRecording()}
+            >
+              {localUploadBusy || uploadState.job?.status === 'uploading'
+                ? 'Mengupload…'
+                : 'Upload ke Google Drive'}
+            </button>
+          )}
+
+          {!localRecordingSession && !localRecordingResult && (
+            <button
+              type="button"
+              className="is-dismiss"
+              onClick={() => setLocalRecordingMessage('')}
+            >
+              Tutup
+            </button>
+          )}
+        </aside>
+      )}
 
       {attendanceOpen && classState.canModerate && (
         <div

@@ -1,0 +1,3 @@
+-- Production migration student_invoice_system_v1 is already APPLIED.
+-- Source reference only. DO NOT replay manually and DO NOT run supabase db push.
+-- Active official documents: Surat, Slip Honor, Invoice Pembayaran.

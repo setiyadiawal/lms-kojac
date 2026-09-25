@@ -1,0 +1,9 @@
+{
+  "name": "KOJAC Invoice Pembayaran V1.0.3 \u2014 RPC Contract Fix",
+  "fixes": [
+    "recipient_kind organization -> institution",
+    "payload id -> invoice_id",
+    "payload class_name_snapshot -> class_name"
+  ],
+  "database_changes": false
+}

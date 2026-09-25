@@ -1,0 +1,125 @@
+@page{size:A4;margin:0}
+.monthly-print-screen.monthly-rework-screen{min-height:100vh;background:#eee8e9;padding:26px}
+.monthly-print-toolbar{max-width:794px;margin:0 auto 16px;display:flex;justify-content:space-between;gap:12px}
+.monthly-print-toolbar a,.monthly-print-toolbar button{display:inline-flex;align-items:center;gap:7px;border:1px solid #d7c9cc;border-radius:10px;background:#fff;color:#5d464d;padding:10px 14px;text-decoration:none;font-size:13px;font-weight:800;cursor:pointer}
+.monthly-print-doc.monthly-rework-doc{display:grid;gap:28px;justify-content:center}
+
+.monthly-print-page.monthly-rework-page{
+  position:relative;width:794px;min-height:1123px;background:#fff;
+  padding:52px 58px 30px;box-sizing:border-box;overflow:hidden;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#21181b;display:flex;flex-direction:column;
+  border:1px solid #eadfe2;
+}
+.monthly-rework-page>*:not(.monthly-rework-corner):not(.monthly-rework-watermark){position:relative;z-index:2}
+.monthly-rework-corner{position:absolute;width:132px;height:132px;object-fit:cover;pointer-events:none;z-index:4;display:block}
+.monthly-rework-corner-tl{left:0;top:0}
+.monthly-rework-corner-br{right:0;bottom:0}
+.monthly-rework-watermark{
+  position:absolute;left:50%;top:52%;width:380px;height:380px;transform:translate(-50%,-50%);
+  background:url('/brand/kojac-symbol.png') center/contain no-repeat;opacity:.022;z-index:0;pointer-events:none
+}
+
+.monthly-rework-header{
+  display:grid;grid-template-columns:235px 1fr;align-items:center;gap:34px;
+  margin:4px 0 24px;padding:8px 0 18px;border-bottom:3px solid #8a1d31;
+}
+.monthly-rework-brand{display:flex;align-items:center;min-height:74px;padding-left:24px}
+.monthly-rework-brand img{display:block;width:190px;max-height:72px;object-fit:contain;object-position:left center}
+.monthly-rework-title{text-align:right;min-width:0}
+.monthly-rework-title h1{
+  margin:0 0 10px;color:#831d31;font-size:27px;line-height:1.08;letter-spacing:.012em;font-weight:900
+}
+.monthly-rework-doc-number{display:flex;justify-content:flex-end;align-items:baseline;gap:9px;color:#47373b}
+.monthly-rework-doc-number span{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#806970}
+.monthly-rework-doc-number strong{font-size:11.5px;font-weight:800;overflow-wrap:anywhere}
+
+.monthly-rework-identity{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  margin:0 0 22px;border:1px solid #dfcfd4;border-radius:10px;overflow:hidden;
+  background:rgba(250,247,248,.92)
+}
+.monthly-rework-identity>div{
+  display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:center;
+  min-height:50px;padding:11px 14px;border-bottom:1px solid #eadde0
+}
+.monthly-rework-identity>div:nth-child(odd){border-right:1px solid #eadde0}
+.monthly-rework-identity>div:nth-last-child(-n+2){border-bottom:0}
+.monthly-rework-identity span{font-size:11.5px;font-weight:800;color:#765e64}
+.monthly-rework-identity strong{font-size:12.5px;line-height:1.35;font-weight:750;color:#201619}
+.monthly-rework-status{display:inline-flex!important;width:max-content;padding:4px 9px;border-radius:999px;background:#efe2e5;color:#7d1b2d!important;text-transform:uppercase;font-size:10.5px!important;letter-spacing:.04em}
+
+.monthly-rework-section{margin:0 0 17px}
+.monthly-rework-section h2{
+  display:flex;align-items:center;gap:10px;margin:0 0 9px;color:#7e1b2e;
+  font-size:14.5px;line-height:1.2;font-weight:900;letter-spacing:.025em
+}
+.monthly-rework-section h2::before{content:"";width:5px;height:18px;border-radius:3px;background:#8a1d31;flex:0 0 auto}
+.monthly-rework-section h2::after{content:"";height:1px;background:#ddcbd0;flex:1}
+
+.monthly-rework-table{
+  width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;
+  font-size:11.5px;line-height:1.4;background:rgba(255,255,255,.96);
+  border:1px solid #c9b7bc;border-radius:7px;overflow:hidden
+}
+.monthly-rework-table th,.monthly-rework-table td{
+  padding:10px 11px;border-right:1px solid #d5c4c9;border-bottom:1px solid #d5c4c9;
+  vertical-align:middle;overflow-wrap:anywhere
+}
+.monthly-rework-table th:last-child,.monthly-rework-table td:last-child{border-right:0}
+.monthly-rework-table tr:last-child td{border-bottom:0}
+.monthly-rework-table th{
+  background:#f1e5e8;color:#6f1829;font-size:11px;font-weight:900;text-align:center;text-transform:uppercase;letter-spacing:.035em
+}
+.monthly-rework-table tbody tr:nth-child(even) td{background:rgba(250,247,248,.8)}
+.monthly-rework-summary-table td:nth-child(odd),.monthly-rework-honor-table td:nth-child(odd){width:27%;font-weight:850;color:#5e474d;background:#faf5f6}
+.monthly-rework-summary-table td:nth-child(even),.monthly-rework-honor-table td:nth-child(even){width:23%;font-weight:750}
+.monthly-rework-class-table th:nth-child(1){width:46%}
+.monthly-rework-class-table th:nth-child(2),.monthly-rework-class-table th:nth-child(3){width:16%}
+.monthly-rework-class-table th:nth-child(4){width:22%}
+.monthly-rework-class-table td:not(:first-child){text-align:center;font-weight:750}
+.monthly-rework-class-table td strong{display:block;font-size:11.8px}
+.monthly-rework-class-table td small{display:block;margin-top:2px;color:#78656a;font-size:9.8px}
+
+.monthly-rework-notes-section{margin-bottom:12px}
+.monthly-rework-notes{
+  min-height:64px;max-height:110px;overflow:hidden;border:1px solid #d1c0c5;border-radius:7px;
+  padding:11px 13px;font-size:11.5px;line-height:1.5;white-space:pre-wrap;background:rgba(250,247,248,.84)
+}
+
+.monthly-rework-footer{
+  margin-top:auto;padding:18px 120px 1px;text-align:center;display:grid;gap:3px;line-height:1.18
+}
+.monthly-rework-footer span{font-size:11.5px;font-weight:700;color:#57464a}
+.monthly-rework-footer strong{font-size:14.5px;color:#231a1c;font-weight:900}
+.monthly-rework-footer small{font-size:10.8px;color:#6a575c;font-weight:650}
+
+.monthly-rework-sessions-page{padding-top:52px}
+.monthly-rework-session-section{margin-bottom:20px}
+.monthly-rework-session-table{font-size:10.8px;line-height:1.42}
+.monthly-rework-session-table th,.monthly-rework-session-table td{padding:9px 10px;vertical-align:top}
+.monthly-rework-session-table th:nth-child(1){width:16%}
+.monthly-rework-session-table th:nth-child(2){width:23%}
+.monthly-rework-session-table th:nth-child(3){width:31%}
+.monthly-rework-session-table th:nth-child(4){width:30%}
+.monthly-rework-session-table td strong{display:block;font-size:11px}
+.monthly-rework-session-table td small{display:block;margin-top:3px;color:#6f5c61;font-size:9.8px}
+.monthly-rework-session-table tbody tr{break-inside:avoid;page-break-inside:avoid}
+
+@media print{
+  html,body,#root{margin:0!important;padding:0!important;width:210mm!important;background:#fff!important}
+  .sidebar,.mobile-nav-topbar,.monthly-print-toolbar{display:none!important}
+  .main{margin:0!important;padding:0!important}
+  .monthly-print-screen.monthly-rework-screen{padding:0!important;background:#fff!important}
+  .monthly-print-doc.monthly-rework-doc{display:block!important}
+  .monthly-print-page.monthly-rework-page{
+    width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;
+    border:0!important;break-after:page!important;page-break-after:always!important
+  }
+  .monthly-print-page.monthly-rework-page:last-child{break-after:auto!important;page-break-after:auto!important}
+  .monthly-rework-table,.monthly-rework-identity,.monthly-rework-notes{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media(max-width:850px){
+  .monthly-print-screen.monthly-rework-screen{padding:10px;overflow:auto}
+  .monthly-print-toolbar{min-width:700px}
+}

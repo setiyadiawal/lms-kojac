@@ -8,6 +8,7 @@ import {
   Home,
   Inbox,
   FileText,
+  ReceiptText,
   Languages,
   LogOut,
   Menu,
@@ -18,6 +19,7 @@ import {
   UploadCloud,
   UsersRound,
   Video,
+  WalletCards,
   X,
 } from 'lucide-react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -108,6 +110,8 @@ function AppNavigationContent({
           <span className="app-nav-section-label">SISWA</span>
           <NavigationLink to="/kelas-saya" label="Kelas Saya" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/tugas-saya" label="Tugas Saya" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/tagihan-saya" label="Tagihan Saya" icon={ReceiptText} onNavigate={onNavigate}/>
+          <NavigationLink to="/tagihan-saya" label="Tagihan Saya" icon={FileText} onNavigate={onNavigate}/>
           <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
         </div>
       )}
@@ -118,6 +122,8 @@ function AppNavigationContent({
           <NavigationLink to="/pengajar/dashboard" label="Dashboard Pengajar" icon={LayoutDashboard} onNavigate={onNavigate}/>
           <NavigationLink to="/kelas-mengajar" label="Kelas Mengajar" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/pengajar/tugas" label="Tugas Kelas" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/pengajar/honor" label="Honor Saya" icon={WalletCards} onNavigate={onNavigate}/>
+          <NavigationLink to="/pengajar/laporan-bulanan" label="Laporan Bulanan Saya" icon={FileText} onNavigate={onNavigate}/>
           <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
           <NavigationLink to="/pengajar/upload-video" label="Upload Video" icon={UploadCloud} onNavigate={onNavigate}/>
         </div>
@@ -133,6 +139,11 @@ function AppNavigationContent({
           <NavigationLink to="/manajemen/kritik-saran" label="Kritik & Saran Masuk" icon={Inbox} onNavigate={onNavigate}/>
           <NavigationLink to="/rekap-kelas" label="Rekap Kelas" icon={BarChart3} onNavigate={onNavigate}/>
           <NavigationLink to="/manajemen/laporan-pembelajaran" label="Laporan Pembelajaran" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/invoice" label="Invoice Pembayaran" icon={ReceiptText} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/honor" label="Pelaporan & Honor" icon={WalletCards} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/pembayaran-honor" label="Pembayaran Honor" icon={WalletCards} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/nomor-dokumen" label="Nomor Dokumen" icon={FileText} onNavigate={onNavigate}/>
+          <NavigationLink to="/manajemen/laporan-pengajar-bulanan" label="Laporan Bulanan Pengajar" icon={FileText} onNavigate={onNavigate}/>
         </div>
       )}
 
