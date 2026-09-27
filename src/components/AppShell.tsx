@@ -31,6 +31,38 @@ import '../notification-center.css';
 
 const TEACHING_ROLES = new Set<AppRole>(['pengajar', 'administrator', 'manager', 'co_founder', 'founder']);
 
+const NOTIFICATION_RETRY_DELAY_MS = 650;
+
+function isTransientNotificationNetworkError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+
+  const candidate = error as {
+    code?: string;
+    message?: string;
+    details?: string;
+    hint?: string;
+  };
+
+  const text = [
+    candidate.message,
+    candidate.details,
+    candidate.hint,
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return (!candidate.code || candidate.code.length === 0) && (
+    text.includes('failed to fetch') ||
+    text.includes('networkerror') ||
+    text.includes('network request failed') ||
+    text.includes('load failed')
+  );
+}
+
+function waitNotificationRetryDelay() {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, NOTIFICATION_RETRY_DELAY_MS);
+  });
+}
+
 const learningMenu = [
   { to: '/', label: 'Beranda', icon: Home, end: true },
   { to: '/belajar', label: 'Belajar', icon: BookOpen },
@@ -111,7 +143,6 @@ function AppNavigationContent({
           <NavigationLink to="/kelas-saya" label="Kelas Saya" icon={School} onNavigate={onNavigate}/>
           <NavigationLink to="/tugas-saya" label="Tugas Saya" icon={FileText} onNavigate={onNavigate}/>
           <NavigationLink to="/tagihan-saya" label="Tagihan Saya" icon={ReceiptText} onNavigate={onNavigate}/>
-          <NavigationLink to="/tagihan-saya" label="Tagihan Saya" icon={FileText} onNavigate={onNavigate}/>
           <NavigationLink to="/rekaman-kelas" label="Rekaman Kelas" icon={Video} onNavigate={onNavigate}/>
         </div>
       )}
@@ -168,23 +199,73 @@ function AppNavigationContent({
 }
 
 export function AppShell() {
-  const { profile, role, signOut } = useAuth();
+  const { user, profile, role, signOut } = useAuth();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [notificationUnread, setNotificationUnread] = useState(0);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const notificationMountedRef = useRef(false);
+  const notificationRequestRef = useRef<Promise<void> | null>(null);
+  const lastNotificationPathRef = useRef(location.pathname);
   const canAdmin = role ? USER_MANAGEMENT_ROLES.includes(role) : false;
 
-  const refreshNotificationUnread = useCallback(async () => {
-    const { data, error } = await supabase.rpc('get_my_unread_notification_count');
+  const refreshNotificationUnread = useCallback(() => {
+    if (!user) return Promise.resolve();
 
-    if (error) {
-      console.error('KOJAC unread notification count failed', error);
-      return;
+    if (notificationRequestRef.current) {
+      return notificationRequestRef.current;
     }
 
-    setNotificationUnread(typeof data === 'number' ? data : Number(data ?? 0));
+    const request = (async () => {
+      let result = await supabase.rpc('get_my_unread_notification_count');
+
+      if (!notificationMountedRef.current) return;
+
+      if (result.error && isTransientNotificationNetworkError(result.error)) {
+        await waitNotificationRetryDelay();
+
+        if (!notificationMountedRef.current) return;
+
+        result = await supabase.rpc('get_my_unread_notification_count');
+
+        if (!notificationMountedRef.current) return;
+
+        if (result.error && isTransientNotificationNetworkError(result.error)) {
+          console.warn(
+            'KOJAC unread notification count temporarily unavailable after one retry',
+            result.error.message,
+          );
+          return;
+        }
+      }
+
+      if (result.error) {
+        console.error('KOJAC unread notification count failed', result.error);
+        return;
+      }
+
+      setNotificationUnread(
+        typeof result.data === 'number'
+          ? result.data
+          : Number(result.data ?? 0),
+      );
+    })().finally(() => {
+      if (notificationRequestRef.current === request) {
+        notificationRequestRef.current = null;
+      }
+    });
+
+    notificationRequestRef.current = request;
+    return request;
+  }, [user]);
+
+  useEffect(() => {
+    notificationMountedRef.current = true;
+
+    return () => {
+      notificationMountedRef.current = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -205,9 +286,11 @@ export function AppShell() {
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('kojac:notifications-changed', onChanged);
     };
-  }, [refreshNotificationUnread, role]);
+  }, [refreshNotificationUnread]);
 
   useEffect(() => {
+    if (lastNotificationPathRef.current === location.pathname) return;
+    lastNotificationPathRef.current = location.pathname;
     void refreshNotificationUnread();
   }, [location.pathname, refreshNotificationUnread]);
 

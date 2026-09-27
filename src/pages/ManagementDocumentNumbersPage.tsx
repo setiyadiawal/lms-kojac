@@ -9,6 +9,7 @@ import {
   Settings2,
   ShieldCheck,
   Trash2,
+  X,
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -304,7 +305,7 @@ export function ManagementDocumentNumbersPage(){
                 <td><span className={`doc-status is-${row.status}`}>{row.status==='issued'?'Terbit':'Dibatalkan'}</span></td>
                 <td>
                   {MANUAL_DOCUMENT_TYPES.has(row.document_type)&&row.status==='issued'&&
-                    <button className="doc-icon danger" title="Batalkan nomor" onClick={()=>void voidNumber(row)} disabled={busy}>
+                    <button className="doc-icon danger" title="Batalkan nomor" aria-label={`Batalkan nomor ${row.document_number}`} onClick={()=>void voidNumber(row)} disabled={busy}>
                       <Trash2 size={14}/>
                     </button>}
                 </td>
@@ -315,9 +316,9 @@ export function ManagementDocumentNumbersPage(){
       }
     </section>
 
-    {editing&&<div className="doc-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setEditing(null);}}>
-      <section className="doc-modal">
-        <header><div><p className="eyebrow">PENGATURAN</p><h2>{editing.label}</h2></div></header>
+    {editing&&<div className="doc-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setEditing(null);}}>
+      <section className="doc-modal" role="dialog" aria-modal="true" aria-labelledby="doc-setting-modal-title">
+        <header><div><p className="eyebrow">PENGATURAN</p><h2 id="doc-setting-modal-title">{editing.label}</h2></div><button className="doc-modal-close" type="button" aria-label="Tutup pengaturan dokumen" onClick={()=>setEditing(null)}><X size={18}/></button></header>
         <div className="doc-form">
           <label><span>Nama</span><input value={editing.label} onChange={e=>setEditing({...editing,label:e.target.value})}/></label>
           <label><span>Kode</span><input value={editing.code} onChange={e=>setEditing({...editing,code:e.target.value.toUpperCase()})}/></label>

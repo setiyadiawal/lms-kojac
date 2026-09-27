@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import '../classroom.css';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import { APP_ROLE_LABEL, APP_ROLE_RANK, USER_MANAGEMENT_ROLES, type AppRole } from '../types';
@@ -170,26 +171,6 @@ const emptyClassForm: ClassForm = {
 
 const emptySubstituteForm: SubstituteForm = { teacher_id: '', starts_on: '', ends_on: '', note: '' };
 
-const modalBackdropStyle = {
-  position: 'fixed' as const,
-  inset: 0,
-  zIndex: 120,
-  display: 'grid',
-  placeItems: 'center',
-  padding: 20,
-  background: 'rgba(35,20,24,.58)',
-};
-
-const modalCardStyle = {
-  width: 'min(100%,760px)',
-  maxHeight: '92vh',
-  overflowY: 'auto' as const,
-  background: '#fff',
-  border: '1px solid #ead7da',
-  borderRadius: 18,
-  padding: 26,
-  boxShadow: '0 24px 70px rgba(45,18,24,.28)',
-};
 
 function isEmailNotVerifiedError(error: unknown) {
   if (!error || typeof error !== 'object') return false;
@@ -809,22 +790,22 @@ export function AdminPage() {
     return classes.filter((classRow) => isOpenForEnrollment(classRow) && !enrolled.has(classRow.id));
   }, [classes, detail]);
 
-  return <div className="page">
-    <div className="page-header">
-      <div>
-        <p className="eyebrow">ADMINISTRATION</p>
-        <h1 className="title-icon"><ShieldCheck/>User & Class Management</h1>
-        <p>Role, approval, program, kelas, dan enrollment dikontrol oleh database KOJAC.</p>
+  return <div className="page class-experience-page admin-management-page">
+    <div className="class-page-header admin-management-header">
+      <div className="class-page-header-copy">
+        <p className="eyebrow">MANAJEMEN KOJAC</p>
+        <h1 className="title-icon"><ShieldCheck/>Pengguna & Kelas</h1>
+        <p>Role, persetujuan akun, program, kelas, dan enrollment dikelola dalam administrasi KOJAC.</p>
       </div>
-      <button className="ghost-btn" type="button" onClick={()=>{
+      <button className="class-action-secondary" type="button" onClick={()=>{
         if (section === 'users') void loadUsers();
         else void loadCatalog();
       }}><RefreshCw size={16}/> Muat ulang</button>
     </div>
 
-    <div style={{ display:'flex', gap:8, marginBottom:18, flexWrap:'wrap' }}>
-      <button className={section === 'users' ? 'primary-btn' : 'ghost-btn'} type="button" onClick={()=>setSection('users')}><UsersRound size={16}/> Pengguna</button>
-      <button className={section === 'catalog' ? 'primary-btn' : 'ghost-btn'} type="button" onClick={()=>setSection('catalog')}><School size={16}/> Program & Kelas</button>
+    <div className="admin-management-tabs">
+      <button className={section === 'users' ? 'class-action-primary' : 'class-action-secondary'} type="button" onClick={()=>setSection('users')}><UsersRound size={16}/> Pengguna</button>
+      <button className={section === 'catalog' ? 'class-action-primary' : 'class-action-secondary'} type="button" onClick={()=>setSection('catalog')}><School size={16}/> Program & Kelas</button>
     </div>
 
     {section === 'users' ? <>
@@ -837,7 +818,7 @@ export function AdminPage() {
           <td><span className={`status ${user.is_blocked?'blocked':user.is_approved?'approved':'pending'}`}>{user.is_blocked?'Diblokir':user.is_approved?'Aktif':!user.email_verified?'Belum Verifikasi':'Menunggu Approval'}</span></td>
           <td><select value={user.role} disabled={busyId===user.user_id || choices.length===0 || !canChangeRole(user)} onChange={e=>void changeRole(user,e.target.value as AppRole)}>{Array.from(new Set([user.role,...choices])).map(r=><option key={r} value={r}>{APP_ROLE_LABEL[r]}</option>)}</select></td>
           <td><button className="mini" type="button" disabled={busyId===user.user_id || !canViewUserDetail(user)} title={canViewUserDetail(user) ? 'Lihat detail pengguna' : 'Anda tidak memiliki izin untuk melihat detail pengguna ini'} onClick={()=>void loadUserDetail(user)}><Eye size={15}/> Lihat Detail</button></td>
-          <td><div className="action-row">{user.email_verified && !user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini" type="button" style={{ borderColor:'#e4b6bc', color:'#8f2634', background:'#fff6f7' }} disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
+          <td><div className="action-row">{user.email_verified && !user.is_approved && !user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><Check size={15}/> Setujui</button>}{user.is_approved && !user.is_blocked && <button className="mini" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,false,true)}><X size={15}/> Blokir</button>}{user.is_blocked && <button className="mini ok" type="button" disabled={busyId===user.user_id} onClick={()=>void approval(user,true,false)}><UserRoundCog size={15}/> Aktifkan</button>}<button className="mini admin-danger-action" type="button" disabled={busyId===user.user_id || !canDeleteAccount(user)} title={canDeleteAccount(user) ? 'Hapus akun secara permanen' : 'Anda tidak memiliki izin untuk menghapus akun ini'} onClick={()=>openDeleteModal(user)}><Trash2 size={15}/> Hapus</button></div></td>
         </tr>)}</tbody></table></div>}
       </div>
     </> : <>
@@ -874,16 +855,16 @@ export function AdminPage() {
       </>}
     </>}
 
-    {detailTarget && <div role="presentation" style={modalBackdropStyle} onMouseDown={(event)=>{ if (event.currentTarget===event.target) closeUserDetail(); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="user-detail-title" style={modalCardStyle}>
-        <div style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'start' }}>
-          <div><p className="eyebrow">USER DETAIL</p><h2 id="user-detail-title" style={{ margin:'5px 0 6px' }}>{detailTarget.full_name || 'Tanpa nama'}</h2><p style={{ margin:0, color:'var(--muted)' }}>{APP_ROLE_LABEL[detailTarget.role]}</p></div>
+    {detailTarget && <div role="presentation" className="admin-modal-backdrop" onMouseDown={(event)=>{ if (event.currentTarget===event.target) closeUserDetail(); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="user-detail-title" className="admin-modal">
+        <div className="admin-modal-header">
+          <div><p className="eyebrow">DETAIL PENGGUNA</p><h2 id="user-detail-title" style={{ margin:'5px 0 6px' }}>{detailTarget.full_name || 'Tanpa nama'}</h2><p style={{ margin:0, color:'var(--muted)' }}>{APP_ROLE_LABEL[detailTarget.role]}</p></div>
           <button className="ghost-btn" type="button" onClick={closeUserDetail}><X size={17}/> Tutup</button>
         </div>
         {detailMessage && <div className="notice" style={{ marginTop:16 }}>{detailMessage}</div>}
         {detailLoading ? <div className="table-empty">Memuat detail pengguna…</div> : detail ? <div style={{ display:'grid', gap:18, marginTop:20 }}>
           <section>
-            <h3 style={{ margin:'0 0 10px' }}>Profile</h3>
+            <h3 style={{ margin:'0 0 10px' }}>Profil</h3>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:10 }}>
               <div className="table-card" style={{ padding:14 }}><small>Nama Lengkap</small><strong style={{ display:'block', marginTop:5 }}>{detail.profile.full_name || '—'}</strong></div>
               <div className="table-card" style={{ padding:14 }}><small>Nama Panggilan</small><strong style={{ display:'block', marginTop:5 }}>{detail.profile.nickname || '—'}</strong></div>
@@ -892,11 +873,11 @@ export function AdminPage() {
             </div>
           </section>
           <section>
-            <h3 style={{ margin:'0 0 10px' }}>Account & Access</h3>
+            <h3 style={{ margin:'0 0 10px' }}>Akun & Akses</h3>
             <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
-              <span className={`status ${detail.account.email_verified?'approved':'pending'}`}>{detail.account.email_verified?'Email Verified':'Belum Verifikasi'}</span>
-              <span className={`status ${detail.account.is_approved?'approved':'pending'}`}>{detail.account.is_approved?'Approved':'Belum Approval'}</span>
-              <span className={`status ${detail.account.is_blocked?'blocked':'approved'}`}>{detail.account.is_blocked?'Blocked':'Active'}</span>
+              <span className={`status ${detail.account.email_verified?'approved':'pending'}`}>{detail.account.email_verified?'Email Terverifikasi':'Belum Terverifikasi'}</span>
+              <span className={`status ${detail.account.is_approved?'approved':'pending'}`}>{detail.account.is_approved?'Disetujui':'Menunggu Persetujuan'}</span>
+              <span className={`status ${detail.account.is_blocked?'blocked':'approved'}`}>{detail.account.is_blocked?'Diblokir':'Aktif'}</span>
               <span className="status pending">{APP_ROLE_LABEL[detail.role]}</span>
             </div>
           </section>
@@ -934,9 +915,9 @@ export function AdminPage() {
       </section>
     </div>}
 
-    {programEditorOpen && <div role="presentation" style={modalBackdropStyle} onMouseDown={(event)=>{ if (event.currentTarget===event.target && !programSaving) setProgramEditorOpen(false); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="program-editor-title" style={{ ...modalCardStyle, width:'min(100%,560px)' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'start' }}><div><p className="eyebrow">PROGRAM</p><h2 id="program-editor-title" style={{ margin:'5px 0 0' }}>{editingProgram?'Edit Program':'Buat Program'}</h2></div><button className="ghost-btn" type="button" disabled={programSaving} onClick={()=>setProgramEditorOpen(false)}><X size={17}/> Tutup</button></div>
+    {programEditorOpen && <div role="presentation" className="admin-modal-backdrop" onMouseDown={(event)=>{ if (event.currentTarget===event.target && !programSaving) setProgramEditorOpen(false); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="program-editor-title" className="admin-modal is-compact">
+        <div className="admin-modal-header"><div><p className="eyebrow">PROGRAM</p><h2 id="program-editor-title" style={{ margin:'5px 0 0' }}>{editingProgram?'Edit Program':'Buat Program'}</h2></div><button className="ghost-btn" type="button" disabled={programSaving} onClick={()=>setProgramEditorOpen(false)}><X size={17}/> Tutup</button></div>
         <form onSubmit={(event)=>{ event.preventDefault(); void saveProgram(); }} style={{ display:'grid', gap:14, marginTop:20 }}>
           <label>Kode Program<input value={programForm.code} disabled={programSaving} onChange={(event)=>setProgramForm(current=>({...current,code:event.target.value}))} placeholder="SP-N4" /></label>
           <label>Nama Program<input value={programForm.name} disabled={programSaving} onChange={(event)=>setProgramForm(current=>({...current,name:event.target.value}))} placeholder="Semi Privat 0–N4/JFT A2" /></label>
@@ -947,9 +928,9 @@ export function AdminPage() {
       </section>
     </div>}
 
-    {classEditorOpen && <div role="presentation" style={modalBackdropStyle} onMouseDown={(event)=>{ if (event.currentTarget===event.target && !classSaving && !substituteSaving) setClassEditorOpen(false); }}>
-      <section role="dialog" aria-modal="true" aria-labelledby="class-editor-title" style={{ ...modalCardStyle, width:'min(100%,760px)' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', gap:12, alignItems:'start' }}><div><p className="eyebrow">CLASS</p><h2 id="class-editor-title" style={{ margin:'5px 0 0' }}>{editingClass?'Edit Kelas':'Buat Kelas'}</h2></div><button className="ghost-btn" type="button" disabled={classSaving || substituteSaving} onClick={()=>setClassEditorOpen(false)}><X size={17}/> Tutup</button></div>
+    {classEditorOpen && <div role="presentation" className="admin-modal-backdrop" onMouseDown={(event)=>{ if (event.currentTarget===event.target && !classSaving && !substituteSaving) setClassEditorOpen(false); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="class-editor-title" className="admin-modal is-wide">
+        <div className="admin-modal-header"><div><p className="eyebrow">KELAS</p><h2 id="class-editor-title" style={{ margin:'5px 0 0' }}>{editingClass?'Edit Kelas':'Buat Kelas'}</h2></div><button className="ghost-btn" type="button" disabled={classSaving || substituteSaving} onClick={()=>setClassEditorOpen(false)}><X size={17}/> Tutup</button></div>
         <form onSubmit={(event)=>{ event.preventDefault(); void saveClass(); }} style={{ display:'grid', gap:14, marginTop:20 }}>
           <label>Program<select value={classForm.program_id} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,program_id:event.target.value}))}><option value="">Pilih program</option>{programs.map(program=><option key={program.id} value={program.id}>{program.name}{program.is_active?'':' (Nonaktif)'}</option>)}</select></label>
           <div style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) minmax(0,2fr)', gap:12 }}><label>Kode Kelas<input value={classForm.code} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,code:event.target.value}))} placeholder="SP-N4-A" /></label><label>Nama Kelas<input value={classForm.name} disabled={classSaving} onChange={(event)=>setClassForm(current=>({...current,name:event.target.value}))} placeholder="SP-N4 Malam A" /></label></div>
@@ -985,17 +966,17 @@ export function AdminPage() {
 
     {deleteTarget && <div
       role="presentation"
-      style={modalBackdropStyle}
+      className="admin-modal-backdrop"
       onMouseDown={(event)=>{ if (event.currentTarget === event.target) closeDeleteModal(); }}
     >
-      <section role="dialog" aria-modal="true" aria-labelledby="delete-account-title" style={{ ...modalCardStyle, width:'min(100%,520px)' }}>
-        <div style={{ width:46, height:46, borderRadius:14, display:'grid', placeItems:'center', background:'#fff0f2', color:'#962d3b', marginBottom:14 }}><AlertTriangle size={23}/></div>
+      <section role="dialog" aria-modal="true" aria-labelledby="delete-account-title" className="admin-modal is-delete">
+        <div className="admin-delete-icon"><AlertTriangle size={23}/></div>
         <p className="eyebrow">TINDAKAN PERMANEN</p>
         <h2 id="delete-account-title" style={{ margin:'5px 0 10px', fontSize:25 }}>Hapus akun?</h2>
         <p style={{ margin:'0 0 14px', color:'var(--muted)', lineHeight:1.6 }}>
           Akun <strong style={{ color:'var(--ink)' }}>{deleteTarget.full_name || 'Tanpa nama'}</strong> ({APP_ROLE_LABEL[deleteTarget.role]}) akan dihapus secara permanen.
         </p>
-        <div style={{ padding:'12px 14px', border:'1px solid #efc9cf', background:'#fff7f8', borderRadius:11, color:'#792532', lineHeight:1.55, fontSize:13 }}>
+        <div className="admin-delete-warning">
           Semua data belajar, progress, feedback, dan enrollment milik akun ini akan dihapus. History administratif yang relevan tetap dipertahankan tanpa referensi aktif ke akun yang sudah dihapus. Tindakan ini tidak dapat dibatalkan.
         </div>
 
@@ -1012,7 +993,7 @@ export function AdminPage() {
           />
           <div style={{ display:'flex', justifyContent:'flex-end', gap:9, marginTop:4 }}>
             <button className="ghost-btn" type="button" disabled={busyId===deleteTarget.user_id} onClick={closeDeleteModal}>Batal</button>
-            <button type="submit" disabled={deleteConfirmation !== 'HAPUS' || busyId===deleteTarget.user_id} style={{ border:0, borderRadius:10, padding:'10px 14px', fontWeight:800, background:'#962d3b', color:'#fff' }}>
+            <button className="admin-delete-confirm-button" type="submit" disabled={deleteConfirmation !== 'HAPUS' || busyId===deleteTarget.user_id}>
               {busyId===deleteTarget.user_id ? 'Menghapus...' : 'Hapus Akun'}
             </button>
           </div>

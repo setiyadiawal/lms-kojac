@@ -26,7 +26,7 @@ type FixedChoiceKind =
   | 'onyomi-kanji'
   | 'kunyomi-kanji';
 
-type TypingKind = 'typing-meaning' | 'typing-onyomi' | 'typing-kunyomi';
+type TypingKind = 'typing-vocabulary-reading';
 type VocabularyKind = 'vocab-word-reading' | 'vocab-reading-word' | 'vocab-word-meaning';
 type QuestionKind = FixedChoiceKind | TypingKind | VocabularyKind | 'matching';
 type QuizCount = 5 | 10 | 15 | 20 | 25 | 30 | 40 | 50 | 'all';
@@ -80,7 +80,7 @@ const QUIZ_MODES: Array<{ mode: QuizMode; title: string; description: string }> 
   { mode: 'kanji-kunyomi', title: 'Kanji → Kunyomi', description: 'Pilih 訓読み yang benar.' },
   { mode: 'onyomi-kanji', title: 'Onyomi → Kanji', description: 'Pilih Kanji dari 音読み yang unik.' },
   { mode: 'kunyomi-kanji', title: 'Kunyomi → Kanji', description: 'Pilih Kanji dari 訓読み yang unik.' },
-  { mode: 'typing', title: 'Ketik Jawaban', description: 'Ketik arti, Onyomi, atau Kunyomi.' },
+  { mode: 'typing', title: 'Ketik Cara Baca', description: 'Ketik cara baca kosakata yang menggunakan Kanji.' },
   { mode: 'vocabulary', title: 'Kosakata Kanji', description: 'Latih Kanji melalui kosakata nyata.' },
   { mode: 'matching', title: 'Matching', description: 'Cocokkan Kanji dengan arti.' },
   { mode: 'mixed', title: 'Campuran', description: 'Gabungkan berbagai tipe soal Kanji.' },
@@ -324,47 +324,21 @@ function buildFixedQuestion(kind: FixedChoiceKind, item: KanjiItem, pool: KanjiI
   };
 }
 
-function typingKindsForItem(item: KanjiItem): TypingKind[] {
-  const kinds: TypingKind[] = [];
-  if (item.meaning.trim()) kinds.push('typing-meaning');
-  if (item.onyomi.length) kinds.push('typing-onyomi');
-  if (item.kunyomi.length) kinds.push('typing-kunyomi');
-  return kinds;
-}
+function buildTypingVocabularyQuestion(candidate: VocabularyCandidate): QuizQuestion | null {
+  const word = candidate.example.word.trim();
+  const reading = candidate.example.reading.trim();
+  if (!word || !reading || !word.includes(candidate.item.prompt)) return null;
 
-function buildTypingQuestion(item: KanjiItem, forcedKind?: TypingKind): QuizQuestion | null {
-  const available = typingKindsForItem(item);
-  if (!available.length) return null;
-  const kind = forcedKind && available.includes(forcedKind) ? forcedKind : shuffle(available)[0];
-
-  if (kind === 'typing-meaning') {
-    return {
-      id: `${item.id}-${kind}`,
-      itemId: item.id,
-      kind,
-      instruction: 'Ketik salah satu arti yang benar.',
-      prompt: item.prompt,
-      promptTone: 'kanji',
-      correctAnswer: item.meaning,
-      correctDisplay: item.meaning,
-      validAnswers: meaningAnswers(item.meaning),
-      answerTone: 'meaning',
-      options: [],
-    };
-  }
-
-  const readings = kind === 'typing-onyomi' ? item.onyomi : item.kunyomi;
-  if (!readings.length) return null;
   return {
-    id: `${item.id}-${kind}`,
-    itemId: item.id,
-    kind,
-    instruction: kind === 'typing-onyomi' ? 'Ketik salah satu Onyomi yang benar.' : 'Ketik salah satu Kunyomi yang benar.',
-    prompt: item.prompt,
-    promptTone: 'kanji',
-    correctAnswer: readings[0],
-    correctDisplay: readings.join(' / '),
-    validAnswers: allReadingAnswers(readings),
+    id: `${candidate.id}-typing-vocabulary-reading`,
+    itemId: candidate.item.id,
+    kind: 'typing-vocabulary-reading',
+    instruction: 'Ketik cara baca kosakata berikut.',
+    prompt: word,
+    promptTone: 'vocabulary',
+    correctAnswer: reading,
+    correctDisplay: reading,
+    validAnswers: [normalizeReading(reading)],
     answerTone: 'reading',
     options: [],
   };
@@ -562,11 +536,21 @@ function mixedBuildersForItem(item: KanjiItem, items: KanjiItem[], vocabPool: Vo
   for (const kind of fixedKinds) {
     if (fixedEligible(kind, item, items)) builders.push(() => buildFixedQuestion(kind, item, items));
   }
-  if (typingKindsForItem(item).length) builders.push(() => buildTypingQuestion(item));
-
-  const itemVocabulary = vocabPool.filter((candidate) => candidate.item.id === item.id && vocabularySubKinds(candidate, vocabPool).length > 0);
+  const itemVocabulary = vocabPool.filter((candidate) => (
+    candidate.item.id === item.id
+    && vocabularySubKinds(candidate, vocabPool).length > 0
+  ));
   if (itemVocabulary.length) {
     builders.push(() => buildVocabularyQuestion(shuffle(itemVocabulary)[0], vocabPool));
+
+    const typingVocabulary = itemVocabulary.filter((candidate) => (
+      candidate.example.word.trim()
+      && candidate.example.reading.trim()
+      && candidate.example.word.includes(item.prompt)
+    ));
+    if (typingVocabulary.length) {
+      builders.push(() => buildTypingVocabularyQuestion(shuffle(typingVocabulary)[0]));
+    }
   }
 
   return builders;
@@ -611,7 +595,11 @@ function buildEligibleItemsByMode(items: KanjiItem[]) {
 
   result.set(
     'typing',
-    items.filter((item) => typingKindsForItem(item).length > 0),
+    eligibleVocabularyCandidates(items).filter((candidate) => (
+      candidate.example.word.trim()
+      && candidate.example.reading.trim()
+      && candidate.example.word.includes(candidate.item.prompt)
+    )),
   );
 
   result.set('matching', uniqueMeaningItems(items));
@@ -627,7 +615,6 @@ function buildEligibleItemsByMode(items: KanjiItem[]) {
     'mixed',
     items.filter((item) => (
       fixedKinds.some((mode) => fixedEligible(mode, item, items))
-      || typingKindsForItem(item).length > 0
       || vocabularyItemIds.has(item.id)
     )),
   );
@@ -659,9 +646,7 @@ function quizModeLabel(mode: QuizMode) {
 
 function questionKindLabel(kind: QuestionKind) {
   if (kind === 'matching') return 'Matching';
-  if (kind === 'typing-meaning') return 'Ketik: Kanji → Arti';
-  if (kind === 'typing-onyomi') return 'Ketik: Kanji → Onyomi';
-  if (kind === 'typing-kunyomi') return 'Ketik: Kanji → Kunyomi';
+  if (kind === 'typing-vocabulary-reading') return 'Ketik: Kosakata → Reading';
   if (kind === 'vocab-word-reading') return 'Kosakata → Reading';
   if (kind === 'vocab-reading-word') return 'Reading → Kosakata';
   if (kind === 'vocab-word-meaning') return 'Kosakata → Arti';
@@ -820,9 +805,9 @@ export function KanjiQuiz({
       setQuestions(randomizeQuestionOptions(nextQuestions));
       setMatchingRounds([]);
     } else if (mode === 'typing') {
-      const deck = shuffle(eligible as KanjiItem[]).slice(0, targetSize);
+      const deck = shuffle(eligible as VocabularyCandidate[]).slice(0, targetSize);
       const nextQuestions = deck
-        .map((item) => buildTypingQuestion(item))
+        .map((candidate) => buildTypingVocabularyQuestion(candidate))
         .filter((question): question is QuizQuestion => Boolean(question));
       if (!nextQuestions.length) return;
       setQuestions(randomizeQuestionOptions(nextQuestions));

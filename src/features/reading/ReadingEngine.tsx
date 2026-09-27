@@ -9,10 +9,12 @@ import {
   Languages,
   ListChecks,
   RotateCcw,
+  Volume2,
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getGrammarPattern } from '../grammar/grammarData';
+import { speakJapanese, stopJapaneseSpeech } from '../hiragana/useHiragana';
 import { randomizeQuestionOptions } from '../quiz/optionRandomization';
 import type { ReadingItem, ReadingParagraph } from './readingData';
 import { getReadingProgressStatus, type ReadingProgress } from './useReadingProgress';
@@ -46,6 +48,12 @@ function renderParagraph(paragraph: ReadingParagraph, showFurigana: boolean) {
       <rt>{segment.reading}</rt>
     </ruby>;
   });
+}
+
+function readingSpeechText(reading: ReadingItem) {
+  return reading.passage
+    .map((paragraph) => paragraph.map((segment) => segment.text).join(''))
+    .join(' ');
 }
 
 function createReadingSessionId() {
@@ -142,6 +150,12 @@ export function ReadingEngine({
     return questions.filter((question) => answers[question.id] !== question.correctAnswer);
   }, [answers, questions, reviewMode]);
   const activeReviewQuestion = reviewQuestions[reviewIndex];
+
+  useEffect(() => {
+    return () => {
+      stopJapaneseSpeech();
+    };
+  }, [reading.id]);
 
   useEffect(() => {
     if (!exitDialogOpen) return;
@@ -409,6 +423,14 @@ export function ReadingEngine({
           </div>
         </div>
         <div className="reading-support-toggles" aria-label="Bantuan membaca">
+          <button
+            className="reading-audio-action"
+            type="button"
+            onClick={() => speakJapanese(readingSpeechText(reading))}
+            disabled={typeof window !== 'undefined' && !('speechSynthesis' in window)}
+          >
+            <Volume2 size={15} /> Dengarkan Bacaan
+          </button>
           <button
             className={showFurigana ? 'active' : ''}
             type="button"

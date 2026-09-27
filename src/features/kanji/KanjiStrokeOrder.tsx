@@ -18,7 +18,7 @@ type StrokeDelayStyle = CSSProperties & {
 };
 
 const KANJIVG_RELEASE = 'r20250816';
-const KANJIVG_BASE = `https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@${KANJIVG_RELEASE}/kanji`;
+const KANJIVG_BASE = `https://raw.githubusercontent.com/KanjiVG/kanjivg/${KANJIVG_RELEASE}/kanji`;
 const CACHE_PREFIX = `kojac:kanjivg:${KANJIVG_RELEASE}`;
 const STROKE_STEP_MS = 720;
 const HOLD_MS = 1100;
@@ -114,7 +114,7 @@ function parseKanjiVG(character: string, svgText: string): KanjiStrokeData {
   return { character, strokes };
 }
 
-async function fetchKanjiStrokeData(character: string, signal: AbortSignal) {
+async function fetchKanjiStrokeData(character: string) {
   const cached = memoryCache.get(character);
   if (cached) return cached;
 
@@ -134,9 +134,8 @@ async function fetchKanjiStrokeData(character: string, signal: AbortSignal) {
 
   let response: Response;
   try {
-    response = await fetch(`${KANJIVG_BASE}/${filename}`, { signal });
+    response = await fetch(`${KANJIVG_BASE}/${filename}`, { cache: 'force-cache' });
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') throw error;
     throw new Error('Data urutan goresan tidak dapat diambil. Periksa koneksi internet.');
   }
 
@@ -168,16 +167,15 @@ export function KanjiStrokeOrder({ character, expectedStrokeCount }: { character
   const [replayKey, setReplayKey] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
     let active = true;
 
     setLoading(true);
     setData(null);
     setError(null);
 
-    void fetchKanjiStrokeData(character, controller.signal)
+    void fetchKanjiStrokeData(character)
       .then((result) => {
-        if (!active || controller.signal.aborted) return;
+        if (!active) return;
 
         if (expectedStrokeCount > 0 && result.strokes.length !== expectedStrokeCount) {
           setError(`Data sumber memiliki ${result.strokes.length} goresan, sementara data KOJAC mencatat ${expectedStrokeCount}. Animasi dinonaktifkan agar tidak menampilkan urutan yang meragukan.`);
@@ -190,14 +188,15 @@ export function KanjiStrokeOrder({ character, expectedStrokeCount }: { character
         setReplayKey((value) => value + 1);
       })
       .catch((reason: unknown) => {
-        if (!active || controller.signal.aborted) return;
+        if (!active) return;
         setError(reason instanceof Error ? reason.message : 'Data urutan goresan belum tersedia.');
         setLoading(false);
       });
 
     return () => {
+      // Do not abort a healthy shared CDN request when the detail modal changes.
+      // The response may still populate browser cache; stale UI updates are ignored.
       active = false;
-      controller.abort();
     };
   }, [character, expectedStrokeCount]);
 

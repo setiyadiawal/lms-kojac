@@ -319,7 +319,7 @@ export function ManagementInvoicesPage() {
 
     {formOpen && <div className="invoice-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.currentTarget===e.target)setFormOpen(false)}}>
       <section className="invoice-modal" role="dialog" aria-modal="true" aria-label="Buat Invoice">
-        <header><div><p className="eyebrow">DRAFT INVOICE</p><h2>Buat / Edit Invoice</h2></div><button onClick={()=>setFormOpen(false)}>×</button></header>
+        <header><div><p className="eyebrow">DRAFT INVOICE</p><h2>Buat / Edit Invoice</h2></div><button type="button" aria-label="Tutup editor invoice" onClick={()=>setFormOpen(false)}>×</button></header>
         <div className="invoice-form-grid">
           <label><span>Penerima</span><select value={draft.recipient_kind} onChange={e=>setDraft(c=>({...c,recipient_kind:e.target.value as RecipientKind}))}><option value="student">Siswa</option><option value="institution">Lembaga</option></select></label>
           {draft.recipient_kind==='student' && <label><span>Pilih Siswa</span><select value={draft.recipient_user_id} onChange={e=>selectStudent(e.target.value)}><option value="">Pilih siswa</option>{(setup?.students??[]).map(s=><option key={s.user_id} value={s.user_id}>{s.name}</option>)}</select></label>}

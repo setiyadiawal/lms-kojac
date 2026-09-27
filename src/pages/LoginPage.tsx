@@ -9,7 +9,8 @@ import {
   Layers3,
   Trophy,
 } from 'lucide-react';
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { Navigate, useNavigate } from 'react-router-dom';
 import {
   getVerifyEmailRedirectUrl,
@@ -148,6 +149,33 @@ export function LoginPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!birthDatePickerOpen) return;
+
+    const root = document.documentElement;
+    const body = document.body;
+    const previousRootOverflow = root.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyPaddingRight = body.style.paddingRight;
+    const scrollbarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+
+    root.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+
+    function handleDatePickerKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setBirthDatePickerOpen(false);
+    }
+
+    window.addEventListener('keydown', handleDatePickerKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleDatePickerKeyDown);
+      root.style.overflow = previousRootOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.paddingRight = previousBodyPaddingRight;
+    };
+  }, [birthDatePickerOpen]);
 
   if (!loading && user) return <Navigate to="/" replace />;
 
@@ -414,7 +442,7 @@ export function LoginPage() {
                 <CalendarDays size={18} aria-hidden="true"/>
               </button>
 
-              {birthDatePickerOpen && (
+              {birthDatePickerOpen && createPortal(
                 <div className="kojac-date-picker-layer">
                   <button
                     type="button"
@@ -569,7 +597,7 @@ export function LoginPage() {
                     </div>
                   </div>
                 </div>
-              )}
+              , document.body)}
             </div>
 
             <div className="auth-field">

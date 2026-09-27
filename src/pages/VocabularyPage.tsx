@@ -2,6 +2,7 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, BookOpen, ChevronRight, Search, Shuffle, SlidersHorizontal, Speaker } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { speakJapanese } from '../features/hiragana/useHiragana';
+import { useLearningEntryScrollTop } from '../features/learning/useLearningEntryScrollTop';
 import { VocabularyQuiz } from '../features/vocabulary/VocabularyQuiz';
 import {
   type VocabularyChapter,
@@ -13,6 +14,7 @@ import {
   useVocabulary,
 } from '../features/vocabulary/useVocabulary';
 import '../features/vocabulary/vocabulary.css';
+import '../features/learning/material-ui.css';
 
 type VocabularyTab = 'study' | 'flashcard' | 'quiz';
 type VocabularyProgressFilter = 'all' | 'unlearned' | 'learning' | 'mastered' | 'due';
@@ -272,6 +274,7 @@ function vocabularyTableStyle(preferences: VocabularyDisplayPreferences): Vocabu
 
 export function VocabularyPage() {
   const { chapterNumber: chapterParam } = useParams<{ chapterNumber?: string }>();
+  useLearningEntryScrollTop(chapterParam ?? 'vocabulary-index');
   const { chapters, loading, error, uncategorizedCount, recordReview } = useVocabulary();
   const parsedChapter = chapterParam ? Number(chapterParam) : null;
   const chapterNumber = parsedChapter !== null && Number.isInteger(parsedChapter) && parsedChapter > 0

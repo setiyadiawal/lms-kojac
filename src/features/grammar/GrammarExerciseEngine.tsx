@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { speakJapanese } from '../hiragana/useHiragana';
 import { randomizeBalancedOptionSets } from '../quiz/optionRandomization';
+import { useQuizSounds } from '../quiz/useQuizSounds';
 import type { GrammarChapter, GrammarPattern } from './grammarData';
 import type { GrammarExercise, GrammarExerciseType } from './grammarExercises';
 import './grammar-exercise.css';
@@ -365,6 +366,7 @@ export function GrammarExerciseEngine({
   onBackToPracticeMenu,
   onOpenNextPattern,
 }: GrammarExerciseEngineProps) {
+  const { playCorrect, playIncorrect } = useQuizSounds();
   const [runtimeExercises, setRuntimeExercises] = useState(() => prepareRuntimeExercises(exercises));
   const sessionPatterns = useMemo(
     () => scope === 'chapter' ? chapterPatterns : pattern ? [pattern] : [],
@@ -553,6 +555,9 @@ export function GrammarExerciseEngine({
   const submitAnswer = () => {
     if (!canSubmit || hasCompletedCurrent) return;
     const correct = validAnswers.includes(normalizeAnswer(currentAnswer));
+
+    if (correct) playCorrect();
+    else playIncorrect();
 
     setRecords((current) => {
       const existing = current[exercise.id];

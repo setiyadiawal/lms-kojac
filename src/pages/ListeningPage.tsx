@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ArrowLeft, ChevronRight, Clock, Headphones, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GRAMMAR_CHAPTERS } from '../features/grammar/grammarData';
+import { useLearningEntryScrollTop } from '../features/learning/useLearningEntryScrollTop';
 import { ListeningEngine } from '../features/listening/ListeningEngine';
 import {
   LISTENING_ITEMS,
@@ -11,6 +12,7 @@ import {
 } from '../features/listening/listeningData';
 import { getListeningProgressStats, useListeningProgress } from '../features/listening/useListeningProgress';
 import '../features/listening/listening.css';
+import '../features/learning/material-ui.css';
 
 const TYPE_LABEL: Record<ListeningKind, string> = {
   dialogue: 'Dialog',
@@ -33,6 +35,7 @@ const LISTENING_CHAPTERS = GRAMMAR_CHAPTERS
 export function ListeningPage() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [selectedListeningId, setSelectedListeningId] = useState<string | null>(null);
+  useLearningEntryScrollTop(selectedListeningId ? `listening:${selectedListeningId}` : selectedChapter ? `listening-chapter:${selectedChapter}` : 'listening-index');
   const {
     progressByListeningId,
     loading: progressLoading,

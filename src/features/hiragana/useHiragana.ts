@@ -138,15 +138,38 @@ export function useHiragana() {
   return { items: combined, stats, loading, error, reload: load, recordReview };
 }
 
-export function speakJapanese(text: string) {
-  if (!('speechSynthesis' in window)) return false;
+export function stopJapaneseSpeech() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
+}
+
+export function speakJapanese(text: string) {
+  if (
+    typeof window === 'undefined'
+    || !('speechSynthesis' in window)
+    || typeof SpeechSynthesisUtterance === 'undefined'
+  ) return false;
+
+  const cleanText = text.trim();
+  if (!cleanText) return false;
+
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  if (synth.paused) synth.resume();
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
   utterance.lang = 'ja-JP';
   utterance.rate = 0.78;
-  const voices = window.speechSynthesis.getVoices();
-  const japanese = voices.find((voice) => voice.lang.toLowerCase().startsWith('ja'));
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  const voices = synth.getVoices();
+  const japanese = voices.find((voice) => voice.lang.toLowerCase() === 'ja-jp')
+    ?? voices.find((voice) => voice.lang.toLowerCase().startsWith('ja'));
   if (japanese) utterance.voice = japanese;
-  window.speechSynthesis.speak(utterance);
+
+  // Keep speak() in the original click stack. Android Chrome can require a
+  // direct user gesture for speech/media playback.
+  synth.speak(utterance);
   return true;
 }

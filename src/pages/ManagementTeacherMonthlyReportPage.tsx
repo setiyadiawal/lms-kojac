@@ -46,7 +46,7 @@ const rupiah=new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maxi
 function monthNow(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function fmtDate(v:string){const d=new Date(`${v}T00:00:00+07:00`);return new Intl.DateTimeFormat('id-ID',{day:'2-digit',month:'short',year:'numeric',timeZone:'Asia/Jakarta'}).format(d);}
 function duration(m:number){const h=Math.floor((m||0)/60),r=(m||0)%60;return h?(r?`${h} jam ${r} menit`:`${h} jam`):`${r} menit`;}
-function statusLabel(s:string){if(s==='approved')return 'Approved';if(s==='revision')return 'Perlu Revisi';return 'Menunggu Review';}
+function statusLabel(s:string){if(s==='approved')return 'Disetujui';if(s==='revision')return 'Perlu Revisi';return 'Menunggu Review';}
 
 export function ManagementTeacherMonthlyReportPage(){
   const {role,loading:authLoading}=useAuth();

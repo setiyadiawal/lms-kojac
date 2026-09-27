@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ArrowLeft, BookOpen, ChevronRight, Clock, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getGrammarPattern } from '../features/grammar/grammarData';
+import { useLearningEntryScrollTop } from '../features/learning/useLearningEntryScrollTop';
 import { ReadingEngine } from '../features/reading/ReadingEngine';
 import {
   READING_CHAPTERS,
@@ -19,11 +20,13 @@ import {
 } from '../features/reading/useReadingProgress';
 import '../features/reading/reading.css';
 import '../features/reading/reading-progress.css';
+import '../features/learning/material-ui.css';
 
 export function ReadingPage() {
   const [selectedChapter, setSelectedChapter] = useState<number | null>(null);
   const [selectedReadingId, setSelectedReadingId] = useState<string | null>(null);
   const [progressFilter, setProgressFilter] = useState<ReadingProgressFilter>('all');
+  useLearningEntryScrollTop(selectedReadingId ? `reading:${selectedReadingId}` : selectedChapter ? `reading-chapter:${selectedChapter}` : 'reading-index');
   const { progressByReadingId, loading: progressLoading, error: progressError, recordCompletion } = useReadingProgress();
 
   const selectedReading = selectedReadingId ? getReadingItem(selectedReadingId) : undefined;

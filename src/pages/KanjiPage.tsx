@@ -2,12 +2,14 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, BookOpen, ChevronRight, Lightbulb, Search, Speaker, X } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { speakJapanese } from '../features/hiragana/useHiragana';
+import { useLearningEntryScrollTop } from '../features/learning/useLearningEntryScrollTop';
 import { KanjiFlashcard } from '../features/kanji/KanjiFlashcard';
 import { KanjiQuiz } from '../features/kanji/KanjiQuiz';
 import { KanjiStrokeOrder } from '../features/kanji/KanjiStrokeOrder';
 import { KanjiWritingPractice } from '../features/kanji/KanjiWritingPractice';
 import { hasKanjiReview, isKanjiDue, type KanjiItem, type KanjiLevel, type KanjiRelated, useKanji } from '../features/kanji/useKanji';
 import '../features/kanji/kanji.css';
+import '../features/learning/material-ui.css';
 
 const LEVELS: Array<{ level: KanjiLevel; label: string; active: boolean }> = [
   { level: 'N5', label: 'Dasar', active: true },
@@ -41,6 +43,7 @@ function matchesKanjiProgress(item: KanjiItem, filter: KanjiProgressFilter, nowM
 
 export function KanjiPage() {
   const { level: levelParam } = useParams();
+  useLearningEntryScrollTop(levelParam ?? 'kanji-index');
   if (!levelParam) return <KanjiLevelIndex />;
 
   const normalized = levelParam.toUpperCase();

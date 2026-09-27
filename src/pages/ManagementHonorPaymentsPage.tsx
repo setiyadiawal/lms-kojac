@@ -298,11 +298,11 @@ export function ManagementHonorPaymentsPage(){
         </div>}
     </section>
 
-    {selected&&<div className="honor-payment-modal-backdrop" onMouseDown={e=>{if(e.currentTarget===e.target&&!busy)setSelected(null);}}>
-      <section className="honor-payment-modal">
+    {selected&&<div className="honor-payment-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.currentTarget===e.target&&!busy)setSelected(null);}}>
+      <section className="honor-payment-modal" role="dialog" aria-modal="true" aria-labelledby="honor-payment-modal-title">
         <header>
-          <div><p className="eyebrow">PEMBAYARAN HONOR</p><h2>{selected.teacher_name}</h2><span>{selected.slip_number||'Slip belum bernomor'}</span></div>
-          <button type="button" onClick={()=>!busy&&setSelected(null)}><X size={20}/></button>
+          <div><p className="eyebrow">PEMBAYARAN HONOR</p><h2 id="honor-payment-modal-title">{selected.teacher_name}</h2><span>{selected.slip_number||'Slip belum bernomor'}</span></div>
+          <button type="button" aria-label="Tutup pembayaran honor" onClick={()=>!busy&&setSelected(null)}><X size={20}/></button>
         </header>
 
         <div className="honor-payment-modal-total">

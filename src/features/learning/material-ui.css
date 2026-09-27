@@ -1,0 +1,152 @@
+:root{
+  --kojac-japanese-ui-font:"UD Digi Kyokasho NK-R","UD Digi Kyokasho N-R","Yu Kyokasho",YuKyokasho,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --kojac-japanese-reading-font:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP","Yu Mincho",serif;
+}
+
+.vocabulary-page .vocab-breadcrumb,
+.kanji-page .kanji-breadcrumb,
+.grammar-page .grammar-breadcrumb,
+.reading-page .reading-breadcrumb,
+.listening-page .listening-breadcrumb{
+  margin-bottom:18px;
+  font-size:12px;
+}
+
+.vocabulary-page .vocab-header,
+.kanji-page .kanji-main-header,
+.kanji-page .kanji-study-header,
+.grammar-page .grammar-header,
+.reading-page .reading-page-header,
+.listening-page .listening-page-header{
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:22px;
+}
+
+.vocabulary-page .vocab-header h1{
+  margin:3px 0 9px;
+  font-size:42px;
+  line-height:1.08;
+}
+.vocabulary-page .vocab-header h1>span{
+  display:block;
+  margin:3px 0 0;
+  color:var(--maroon);
+  font-size:22px;
+  font-weight:800;
+}
+
+.kanji-page .kanji-heading-jp,
+.kanji-page .kanji-card-char,
+.kanji-page .kanji-detail-char,
+.kanji-page .kanji-example-main strong{
+  font-family:var(--kojac-japanese-ui-font);
+}
+
+.kanji-page .kanji-main-header h1,
+.kanji-page .kanji-study-header h1,
+.grammar-page .grammar-header h1,
+.reading-page .reading-page-header h1,
+.listening-page .listening-page-header h1{
+  margin:3px 0 9px;
+}
+
+.kanji-page .kanji-heading-jp,
+.grammar-page .grammar-header h1>span,
+.reading-page .reading-page-header h1>span,
+.listening-page .listening-page-header h1>span{
+  font-size:42px;
+  line-height:1.1;
+}
+
+.kanji-page .kanji-main-header h1>span:last-child,
+.kanji-page .kanji-study-header h1>span:last-child,
+.grammar-page .grammar-header h1>small,
+.reading-page .reading-page-header h1>small,
+.listening-page .listening-page-header h1>small{
+  display:block;
+  margin-top:3px;
+  color:var(--maroon);
+  font-size:22px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.grammar-page .grammar-example-japanese{
+  font-family:var(--kojac-japanese-ui-font);
+  font-size:clamp(19px,2vw,23px);
+  line-height:1.8;
+}
+
+.reading-page .reading-passage-header h2,
+.reading-page .reading-passage-text{
+  font-family:var(--kojac-japanese-reading-font);
+}
+.reading-page .reading-passage-text{
+  max-width:800px;
+  font-size:clamp(20px,2.05vw,25px);
+  line-height:2;
+}
+
+.listening-page .listening-transcript-turn p{
+  font-family:var(--kojac-japanese-ui-font);
+  font-size:18px;
+  line-height:1.85;
+}
+
+.reading-back-list,
+.listening-back-list{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:40px;
+  margin:0 0 10px;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  color:var(--maroon);
+  font-size:11px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.reading-back-list:hover,
+.listening-back-list:hover{
+  background:#fff7f8;
+}
+
+.reading-audio-action{
+  border-color:#d5aeb4!important;
+  background:#fff7f8!important;
+  color:var(--maroon)!important;
+}
+
+@media(max-width:760px){
+  .vocabulary-page .vocab-header h1,
+  .kanji-page .kanji-heading-jp,
+  .grammar-page .grammar-header h1>span,
+  .reading-page .reading-page-header h1>span,
+  .listening-page .listening-page-header h1>span{
+    font-size:36px;
+  }
+
+  .vocabulary-page .vocab-header h1>span,
+  .kanji-page .kanji-main-header h1>span:last-child,
+  .kanji-page .kanji-study-header h1>span:last-child,
+  .grammar-page .grammar-header h1>small,
+  .reading-page .reading-page-header h1>small,
+  .listening-page .listening-page-header h1>small{
+    font-size:19px;
+  }
+
+  .reading-page .reading-passage-text{
+    font-size:20px;
+    line-height:1.95;
+  }
+
+  .listening-page .listening-transcript-turn p{
+    font-size:17px;
+  }
+}

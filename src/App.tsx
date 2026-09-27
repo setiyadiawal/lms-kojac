@@ -31,7 +31,6 @@ import { ManagementTeachersPage } from './pages/ManagementTeachersPage';
 import { ManagementTeachingReportsPage } from './pages/ManagementTeachingReportsPage';
 import { ManagementInvoicesPage } from './pages/ManagementInvoicesPage';
 import { MyInvoicesPage } from './pages/MyInvoicesPage';
-import { InvoicePrintPage } from './pages/InvoicePrintPage';
 import { ManagementDashboardPage } from './pages/ManagementDashboardPage';
 import { InvoiceDetailPage } from './pages/InvoiceDetailPage';
 import { ManagementHonorPage } from './pages/ManagementHonorPage';
@@ -73,7 +72,6 @@ export default function App() {
       <Route path="tugas-saya" element={<StudentAssignmentsPage />} />
       <Route path="tagihan-saya" element={<MyInvoicesPage />} />
       <Route path="invoice/:invoiceId" element={<InvoiceDetailPage />} />
-      <Route path="tagihan-saya" element={<MyInvoicesPage />} />
       <Route path="rekaman-kelas" element={<ClassRecordingsPage />} />
       <Route path="pengajar/upload-video" element={<UploadClassRecordingPage />} />
       <Route path="pengajar/dashboard" element={<TeacherDashboardPage />} />
@@ -112,7 +110,6 @@ export default function App() {
       <Route path="latihan/sesi" element={<CrossChapterPractice />} />
       <Route path="jlpt" element={<JlptSimulationPage />} />
       <Route path="progress" element={<ProgressPage />} />
-      <Route path="invoice/:invoiceId" element={<InvoicePrintPage />} />
       <Route path="honor/slip/:payrollId" element={<HonorSlipPage />} />
       <Route path="honor/kwitansi/:payrollId" element={<HonorReceiptPage />} />
       <Route path="laporan-pengajar-bulanan/:reportId" element={<TeacherMonthlyReportPrintPage />} />

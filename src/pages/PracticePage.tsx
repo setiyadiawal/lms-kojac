@@ -18,6 +18,7 @@ import {
 import { useStudentProgressDetail } from '../features/progress/useStudentProgressDetail';
 import { CrossChapterPractice } from '../features/practice/CrossChapterPractice';
 import './practice-page.css';
+import { useLearningEntryScrollTop } from '../features/learning/useLearningEntryScrollTop';
 
 type PracticeModule = {
   key: DashboardModuleKey;
@@ -104,6 +105,7 @@ function formatDue(value: string) {
 }
 
 export function PracticePage() {
+  useLearningEntryScrollTop('practice-index');
   const {
     modules,
     loading,

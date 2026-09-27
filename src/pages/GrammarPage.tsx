@@ -33,6 +33,7 @@ import {
 } from '../features/grammar/useGrammarProgress';
 import '../features/grammar/grammar.css';
 import '../features/grammar/grammar-progress.css';
+import '../features/learning/material-ui.css';
 
 type LevelFilter = 'ALL' | GrammarJlptLevel;
 type ProgressFilter = 'all' | 'unseen' | 'learning' | 'mastered' | 'due';

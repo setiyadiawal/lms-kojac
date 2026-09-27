@@ -156,6 +156,20 @@ function RecordingViewer({
     }
   }, []);
 
+  const closeViewer = useCallback(async () => {
+    const viewer = viewerRef.current;
+
+    if (viewer && document.fullscreenElement === viewer) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // Unmount tetap aman; browser akan melepas fullscreen element.
+      }
+    }
+
+    onClose();
+  }, [onClose]);
+
   useEffect(() => {
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -178,7 +192,7 @@ function RecordingViewer({
       }
 
       if (event.key === 'Escape' && !document.fullscreenElement) {
-        onClose();
+        void closeViewer();
       }
     };
 
@@ -190,7 +204,7 @@ function RecordingViewer({
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [onClose, toggleFullscreen]);
+  }, [closeViewer, toggleFullscreen]);
 
   return (
     <div
@@ -200,7 +214,7 @@ function RecordingViewer({
       aria-label={`Rekaman ${row.title}`}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget && !document.fullscreenElement) {
-          onClose();
+          void closeViewer();
         }
       }}
     >
@@ -231,7 +245,7 @@ function RecordingViewer({
               className="class-recording-viewer-close"
               aria-label="Tutup rekaman"
               title="Tutup (Esc)"
-              onClick={onClose}
+              onClick={() => void closeViewer()}
             >
               <X size={20}/>
             </button>
@@ -245,7 +259,6 @@ function RecordingViewer({
               title={row.title}
               loading="eager"
               allow="autoplay; encrypted-media; fullscreen"
-              allowFullScreen
             />
             <div
               className="class-recording-drive-popout-mask"
@@ -860,7 +873,11 @@ export function ClassRecordingsPage() {
       )}
 
       {viewer && (
-        <RecordingViewer row={viewer} onClose={() => setViewer(null)}/>
+        <RecordingViewer
+          key={viewer.recording_id}
+          row={viewer}
+          onClose={() => setViewer(null)}
+        />
       )}
     </div>
   );
