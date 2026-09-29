@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import '../class-recordings.css';
+import { getRecordingPlaybackSource, type RecordingPlaybackSource } from '../features/recordings/playbackSource';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -139,7 +140,37 @@ function RecordingViewer({
   onClose: () => void;
 }) {
   const viewerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [playbackState, setPlaybackState] = useState<
+    | { status: 'loading' }
+    | { status: 'r2'; source: RecordingPlaybackSource }
+    | { status: 'drive' }
+    | { status: 'error' }
+  >({ status: 'loading' });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setPlaybackState({ status: 'loading' });
+
+    void getRecordingPlaybackSource(row.recording_id)
+      .then((source) => {
+        if (cancelled) return;
+        setPlaybackState(source
+          ? { status: 'r2', source }
+          : { status: 'drive' });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error('KOJAC recording playback source resolution failed', error);
+        setPlaybackState({ status: 'error' });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [row.recording_id]);
 
   const toggleFullscreen = useCallback(async () => {
     const viewer = viewerRef.current;
@@ -158,6 +189,7 @@ function RecordingViewer({
 
   const closeViewer = useCallback(async () => {
     const viewer = viewerRef.current;
+    videoRef.current?.pause();
 
     if (viewer && document.fullscreenElement === viewer) {
       try {
@@ -236,8 +268,7 @@ function RecordingViewer({
               title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen (F)'}
               onClick={() => void toggleFullscreen()}
             >
-              {isFullscreen ? <Minimize2 size={19}/> : <Maximize2 size={19}/>}
-              <span>{isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen'}</span>
+              {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
             </button>
 
             <button
@@ -254,16 +285,42 @@ function RecordingViewer({
 
         <div className="class-recording-viewer-stage">
           <div className="class-recording-video-shell">
-            <iframe
-              src={drivePreviewUrl(row.drive_file_id)}
-              title={row.title}
-              loading="eager"
-              allow="autoplay; encrypted-media; fullscreen"
-            />
-            <div
-              className="class-recording-drive-popout-mask"
-              aria-hidden="true"
-            />
+            {playbackState.status === 'loading' && (
+              <div className="class-recording-playback-state" role="status">
+                Menyiapkan rekaman…
+              </div>
+            )}
+
+            {playbackState.status === 'r2' && (
+              <video
+                ref={videoRef}
+                src={playbackState.source.url}
+                controls
+                playsInline
+                preload="metadata"
+              />
+            )}
+
+            {playbackState.status === 'drive' && (
+              <>
+                <iframe
+                  src={drivePreviewUrl(row.drive_file_id)}
+                  title={row.title}
+                  loading="eager"
+                  allow="autoplay; encrypted-media; fullscreen"
+                />
+                <div
+                  className="class-recording-drive-popout-mask"
+                  aria-hidden="true"
+                />
+              </>
+            )}
+
+            {playbackState.status === 'error' && (
+              <div className="class-recording-playback-state is-error" role="alert">
+                Sumber rekaman belum dapat disiapkan. Tutup lalu coba lagi.
+              </div>
+            )}
           </div>
         </div>
 
@@ -273,11 +330,6 @@ function RecordingViewer({
             {row.duration_minutes && (
               <span><Clock3 size={15}/>{row.duration_minutes} menit</span>
             )}
-          </div>
-
-          <div className="class-recording-viewer-shortcuts" aria-hidden="true">
-            <span><kbd>F</kbd> Fullscreen</span>
-            <span><kbd>Esc</kbd> Tutup</span>
           </div>
         </footer>
 

@@ -110,51 +110,55 @@
   z-index:1300;
   display:grid;
   place-items:center;
-  padding:24px;
+  padding:20px;
   overflow:auto;
   overscroll-behavior:contain;
   background:rgba(24,18,19,.92);
   backdrop-filter:blur(8px);
 }
 .class-recording-viewer{
-  width:min(1280px,100%);
-  max-height:calc(100dvh - 48px);
+  width:min(980px,100%);
+  max-height:calc(100dvh - 40px);
   display:flex;
   flex-direction:column;
   overflow-x:hidden;
   overflow-y:auto;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:20px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;
   background:#171314;
   color:#fff;
-  box-shadow:0 32px 100px rgba(0,0,0,.58);
+  box-shadow:0 28px 90px rgba(0,0,0,.56);
 }
 .class-recording-viewer-header{
   flex:0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:14px;
-  min-height:64px;
-  padding:12px 14px 12px 18px;
-  border-bottom:1px solid rgba(255,255,255,.09);
-  background:#1d1819;
+  gap:12px;
+  min-height:58px;
+  padding:9px 10px 9px 15px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:#1c1718;
 }
-.class-recording-viewer-heading{min-width:0}
+.class-recording-viewer-heading{
+  flex:1 1 auto;
+  min-width:0;
+}
 .class-recording-viewer-heading span,
 .class-recording-viewer-heading strong{display:block}
 .class-recording-viewer-heading span{
-  color:#cbbfc1;
-  font-size:9px;
+  color:#c7bbbd;
+  font-size:8.5px;
   font-weight:850;
   letter-spacing:.08em;
   text-transform:uppercase;
 }
 .class-recording-viewer-heading strong{
-  margin-top:4px;
+  display:-webkit-box;
+  margin-top:3px;
   overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
   font-size:15px;
   line-height:1.25;
 }
@@ -162,44 +166,47 @@
   flex:0 0 auto;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:7px;
 }
 .class-recording-viewer-action,
 .class-recording-viewer-close{
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  padding:0;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:7px;
-  height:38px;
   border:1px solid rgba(255,255,255,.14);
   border-radius:10px;
   background:rgba(255,255,255,.07);
   color:#fff;
 }
-.class-recording-viewer-action{
-  padding:0 11px;
-  font-size:9.5px;
-  font-weight:800;
-}
-.class-recording-viewer-close{width:38px;padding:0}
 .class-recording-viewer-action:hover,
 .class-recording-viewer-close:hover{background:rgba(255,255,255,.13)}
+.class-recording-viewer-action:focus-visible,
+.class-recording-viewer-close:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:2px;
+}
 
 .class-recording-viewer-stage{
   flex:0 0 auto;
+  width:100%;
   min-height:0;
   overflow:hidden;
-  background:transparent;
+  background:#000;
 }
 .class-recording-video-shell{
   position:relative;
-  width:min(100%,calc((100dvh - 170px) * 16 / 9));
+  width:100%;
   max-width:100%;
   aspect-ratio:16/9;
-  margin-inline:auto;
+  margin:0;
   background:#000;
 }
-.class-recording-video-shell iframe{
+.class-recording-video-shell iframe,
+.class-recording-video-shell video{
   position:absolute;
   inset:0;
   display:block;
@@ -207,6 +214,25 @@
   height:100%;
   border:0;
   background:#000;
+}
+.class-recording-video-shell video{
+  object-fit:contain;
+}
+.class-recording-playback-state{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  color:#d9ced0;
+  background:#000;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+.class-recording-playback-state.is-error{
+  color:#f1d8dd;
 }
 .class-recording-drive-popout-mask{
   position:absolute;
@@ -224,17 +250,15 @@
   flex:0 0 auto;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  min-height:48px;
-  padding:10px 16px;
-  border-top:1px solid rgba(255,255,255,.09);
-  background:#1d1819;
+  min-height:44px;
+  padding:8px 14px;
+  border-top:1px solid rgba(255,255,255,.08);
+  background:#1c1718;
 }
 .class-recording-viewer-meta{
   display:flex;
   flex-wrap:wrap;
-  gap:8px 14px;
+  gap:7px 14px;
   color:#d1c5c7;
   font-size:9.5px;
 }
@@ -243,114 +267,126 @@
   align-items:center;
   gap:5px;
 }
-.class-recording-viewer-shortcuts{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  color:#a99c9e;
-  font-size:8.5px;
-}
-.class-recording-viewer-shortcuts span{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-}
-.class-recording-viewer-shortcuts kbd{
-  min-width:23px;
-  padding:3px 5px;
-  border:1px solid rgba(255,255,255,.15);
-  border-bottom-width:2px;
-  border-radius:5px;
-  background:rgba(255,255,255,.07);
-  color:#fff;
-  font:inherit;
-  font-weight:850;
-  text-align:center;
-}
 .class-recording-viewer-description{
   flex:0 0 auto;
-  max-height:96px;
+  max-height:78px;
   overflow:auto;
-  padding:10px 16px 13px;
-  border-top:1px solid rgba(255,255,255,.07);
+  padding:8px 14px 11px;
+  border-top:1px solid rgba(255,255,255,.06);
   background:#191516;
 }
 .class-recording-viewer-description strong{
   display:block;
   color:#d8cdd0;
-  font-size:9px;
+  font-size:8.5px;
   text-transform:uppercase;
   letter-spacing:.07em;
 }
 .class-recording-viewer-description p{
-  margin:5px 0 0;
+  margin:4px 0 0;
   color:#bfb2b4;
   font-size:9.5px;
-  line-height:1.55;
+  line-height:1.5;
 }
 
 .class-recording-viewer:fullscreen{
+  position:relative;
   width:100vw;
   max-width:none;
   height:100dvh;
   max-height:none;
+  margin:0;
   overflow:hidden;
   border:0;
   border-radius:0;
+  background:#000;
+  box-shadow:none;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-header{
+  position:absolute;
+  top:0;
+  right:0;
+  left:0;
+  z-index:5;
+  min-height:0;
+  justify-content:flex-end;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left));
+  border:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.68),rgba(0,0,0,0));
+  pointer-events:none;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-heading{display:none}
+.class-recording-viewer:fullscreen .class-recording-viewer-header-actions{
+  margin-left:auto;
+  pointer-events:auto;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-action,
+.class-recording-viewer:fullscreen .class-recording-viewer-close{
+  flex-basis:44px;
+  width:44px;
+  height:44px;
+  background:rgba(20,16,17,.74);
+  backdrop-filter:blur(6px);
 }
 .class-recording-viewer:fullscreen .class-recording-viewer-stage{
   flex:1 1 auto;
+  width:100%;
+  height:100%;
+  min-height:0;
   display:grid;
   place-items:center;
-  background:#080707;
+  overflow:hidden;
+  background:#000;
 }
 .class-recording-viewer:fullscreen .class-recording-video-shell{
-  width:min(100%,calc((100dvh - 112px) * 16 / 9));
+  width:min(100vw,calc(100dvh * 16 / 9));
+  max-width:100%;
+  height:min(100dvh,calc(100vw * 9 / 16));
+  max-height:100%;
+  aspect-ratio:16/9;
+  margin:0;
 }
+.class-recording-viewer:fullscreen .class-recording-viewer-footer,
 .class-recording-viewer:fullscreen .class-recording-viewer-description{display:none}
 
 @media(max-width:900px){
   .class-recording-viewer-backdrop{padding:12px}
-  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:16px}
-  .class-recording-viewer-shortcuts{display:none}
+  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:15px}
   .class-recording-drive-popout-mask{width:58px;height:68px}
 }
 
 @media(max-width:760px){
   .class-recording-viewer-backdrop{
-    place-items:start center;
-    padding:0;
+    place-items:center;
+    padding:8px;
     background:rgba(24,18,19,.96);
   }
   .class-recording-viewer{
     width:100%;
     height:auto;
-    max-height:100dvh;
-    border:0;
-    border-radius:0;
+    max-height:calc(100dvh - 16px);
+    border-radius:14px;
     background:#171314;
   }
   .class-recording-viewer-header{
-    min-height:58px;
-    padding:9px 10px 9px 13px;
+    min-height:54px;
+    padding:7px 8px 7px 12px;
   }
   .class-recording-viewer-heading strong{
-    max-width:calc(100vw - 120px);
-    font-size:13px;
+    font-size:13.5px;
+    line-height:1.22;
   }
   .class-recording-viewer-heading span{font-size:8px}
   .class-recording-viewer-header-actions{gap:6px}
   .class-recording-viewer-action,
   .class-recording-viewer-close{
-    width:38px;
-    height:38px;
-    padding:0;
+    flex-basis:44px;
+    width:44px;
+    height:44px;
   }
-  .class-recording-viewer-action span{display:none}
   .class-recording-viewer-stage{
     flex:0 0 auto;
     width:100%;
-    background:transparent;
   }
   .class-recording-video-shell{
     width:100%;
@@ -363,38 +399,30 @@
     height:56px;
   }
   .class-recording-viewer-footer{
-    min-height:48px;
-    padding:9px 12px;
+    min-height:42px;
+    padding:7px 11px;
   }
   .class-recording-viewer-meta{
     width:100%;
-    justify-content:space-between;
-    gap:7px 10px;
+    gap:6px 10px;
     font-size:9px;
   }
   .class-recording-viewer-description{
-    max-height:112px;
-    padding:9px 12px 12px;
+    max-height:76px;
+    padding:7px 11px 10px;
   }
 }
 
 @media(max-width:480px){
-  .class-recording-viewer-heading strong{max-width:calc(100vw - 112px)}
-  .class-recording-viewer-action,
-  .class-recording-viewer-close{
-    width:36px;
-    height:36px;
-  }
-  .class-recording-viewer-meta{justify-content:flex-start}
-  .class-recording-viewer-meta span{width:100%}
+  .class-recording-viewer-backdrop{padding:6px}
+  .class-recording-viewer{max-height:calc(100dvh - 12px);border-radius:12px}
+  .class-recording-viewer-heading strong{font-size:13px}
+  .class-recording-viewer-meta{gap:5px 10px}
 }
 
 @media(max-height:650px) and (min-width:761px){
   .class-recording-viewer-backdrop{padding:10px}
   .class-recording-viewer{max-height:calc(100dvh - 20px)}
-  .class-recording-video-shell{
-    width:min(100%,calc((100dvh - 116px) * 16 / 9));
-  }
   .class-recording-viewer-description{display:none}
 }
 
