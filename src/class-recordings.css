@@ -1,4 +1,4 @@
-/* KOJAC LMS v1.2 — Class Recordings */
+/* KOJAC LMS v1.2 窶・Class Recordings */
 .class-recordings-page{padding-bottom:60px}
 .class-recordings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
 .class-recordings-header h1{margin:4px 0 8px;font-size:31px;letter-spacing:-.035em}
@@ -113,32 +113,32 @@
   padding:20px;
   overflow:auto;
   overscroll-behavior:contain;
-  background:rgba(24,18,19,.92);
-  backdrop-filter:blur(8px);
+  background:rgba(20,14,16,.94);
+  backdrop-filter:blur(10px);
 }
 .class-recording-viewer{
-  width:min(980px,100%);
+  width:min(1020px,100%);
   max-height:calc(100dvh - 40px);
   display:flex;
   flex-direction:column;
   overflow-x:hidden;
   overflow-y:auto;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:16px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;
   background:#171314;
   color:#fff;
-  box-shadow:0 28px 90px rgba(0,0,0,.56);
+  box-shadow:0 30px 90px rgba(0,0,0,.58),0 0 0 1px rgba(94,24,36,.12);
 }
 .class-recording-viewer-header{
   flex:0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  min-height:58px;
-  padding:9px 10px 9px 15px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background:#1c1718;
+  gap:14px;
+  min-height:60px;
+  padding:10px 11px 10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(180deg,#21191b 0%,#1a1516 100%);
 }
 .class-recording-viewer-heading{
   flex:1 1 auto;
@@ -147,20 +147,21 @@
 .class-recording-viewer-heading span,
 .class-recording-viewer-heading strong{display:block}
 .class-recording-viewer-heading span{
-  color:#c7bbbd;
+  color:#bcaeb1;
   font-size:8.5px;
   font-weight:850;
-  letter-spacing:.08em;
+  letter-spacing:.1em;
   text-transform:uppercase;
 }
 .class-recording-viewer-heading strong{
   display:-webkit-box;
-  margin-top:3px;
+  margin-top:4px;
   overflow:hidden;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
+  color:#fff;
   font-size:15px;
-  line-height:1.25;
+  line-height:1.28;
 }
 .class-recording-viewer-header-actions{
   flex:0 0 auto;
@@ -177,16 +178,23 @@
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:10px;
-  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:11px;
+  background:rgba(255,255,255,.065);
   color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease;
 }
 .class-recording-viewer-action:hover,
-.class-recording-viewer-close:hover{background:rgba(255,255,255,.13)}
+.class-recording-viewer-close:hover{
+  border-color:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12);
+}
+.class-recording-viewer-action:active,
+.class-recording-viewer-close:active{transform:translateY(1px)}
 .class-recording-viewer-action:focus-visible,
 .class-recording-viewer-close:focus-visible{
-  outline:2px solid #fff;
+  outline:2px solid #f2cbd2;
   outline-offset:2px;
 }
 
@@ -195,7 +203,7 @@
   width:100%;
   min-height:0;
   overflow:hidden;
-  background:#000;
+  background:#050405;
 }
 .class-recording-video-shell{
   position:relative;
@@ -203,7 +211,9 @@
   max-width:100%;
   aspect-ratio:16/9;
   margin:0;
-  background:#000;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(83,23,34,.18),transparent 45%),
+    #050405;
 }
 .class-recording-video-shell iframe,
 .class-recording-video-shell video{
@@ -215,9 +225,7 @@
   border:0;
   background:#000;
 }
-.class-recording-video-shell video{
-  object-fit:contain;
-}
+.class-recording-video-shell video{object-fit:contain}
 .class-recording-playback-state{
   position:absolute;
   inset:0;
@@ -226,14 +234,12 @@
   place-items:center;
   padding:24px;
   color:#d9ced0;
-  background:#000;
+  background:#050405;
   font-size:13px;
   font-weight:700;
   text-align:center;
 }
-.class-recording-playback-state.is-error{
-  color:#f1d8dd;
-}
+.class-recording-playback-state.is-error{color:#f1d8dd}
 .class-recording-drive-popout-mask{
   position:absolute;
   top:0;
@@ -251,15 +257,15 @@
   display:flex;
   align-items:center;
   min-height:44px;
-  padding:8px 14px;
-  border-top:1px solid rgba(255,255,255,.08);
-  background:#1c1718;
+  padding:8px 15px;
+  border-top:1px solid rgba(255,255,255,.065);
+  background:#1a1516;
 }
 .class-recording-viewer-meta{
   display:flex;
   flex-wrap:wrap;
   gap:7px 14px;
-  color:#d1c5c7;
+  color:#cabdc0;
   font-size:9.5px;
 }
 .class-recording-viewer-meta span{
@@ -267,26 +273,27 @@
   align-items:center;
   gap:5px;
 }
+.class-recording-viewer-meta svg{color:#c9959f}
 .class-recording-viewer-description{
   flex:0 0 auto;
   max-height:78px;
   overflow:auto;
-  padding:8px 14px 11px;
-  border-top:1px solid rgba(255,255,255,.06);
-  background:#191516;
+  padding:8px 15px 11px;
+  border-top:1px solid rgba(255,255,255,.055);
+  background:#181415;
 }
 .class-recording-viewer-description strong{
   display:block;
   color:#d8cdd0;
   font-size:8.5px;
   text-transform:uppercase;
-  letter-spacing:.07em;
+  letter-spacing:.08em;
 }
 .class-recording-viewer-description p{
   margin:4px 0 0;
-  color:#bfb2b4;
+  color:#bcaeb1;
   font-size:9.5px;
-  line-height:1.5;
+  line-height:1.55;
 }
 
 .class-recording-viewer:fullscreen{
@@ -312,7 +319,7 @@
   justify-content:flex-end;
   padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left));
   border:0;
-  background:linear-gradient(to bottom,rgba(0,0,0,.68),rgba(0,0,0,0));
+  background:linear-gradient(to bottom,rgba(0,0,0,.7),rgba(0,0,0,0));
   pointer-events:none;
 }
 .class-recording-viewer:fullscreen .class-recording-viewer-heading{display:none}
@@ -325,8 +332,9 @@
   flex-basis:44px;
   width:44px;
   height:44px;
-  background:rgba(20,16,17,.74);
-  backdrop-filter:blur(6px);
+  border-color:rgba(255,255,255,.16);
+  background:rgba(20,16,17,.76);
+  backdrop-filter:blur(8px);
 }
 .class-recording-viewer:fullscreen .class-recording-viewer-stage{
   flex:1 1 auto;
@@ -351,7 +359,7 @@
 
 @media(max-width:900px){
   .class-recording-viewer-backdrop{padding:12px}
-  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:15px}
+  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:16px}
   .class-recording-drive-popout-mask{width:58px;height:68px}
 }
 
@@ -359,7 +367,7 @@
   .class-recording-viewer-backdrop{
     place-items:center;
     padding:8px;
-    background:rgba(24,18,19,.96);
+    background:rgba(20,14,16,.97);
   }
   .class-recording-viewer{
     width:100%;
@@ -482,5 +490,467 @@
 @media(max-width:760px){
   .class-recording-library-toolbar{
     grid-template-columns:1fr;
+  }
+}
+
+/* KOJAC custom R2 video player — Phase 2 visual polish */
+.class-recording-custom-player{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(90,26,39,.16),transparent 43%),
+    linear-gradient(180deg,#0b0809 0%,#030203 100%);
+  color:#fff;
+  isolation:isolate;
+}
+.class-recording-custom-player::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  z-index:2;
+  height:42%;
+  pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.34),transparent);
+}
+.class-recording-custom-player video{
+  z-index:1;
+  cursor:pointer;
+  object-fit:contain;
+}
+.class-recording-player-loading{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  color:#fff;
+  background:rgba(0,0,0,.1);
+}
+.class-recording-player-loading svg{
+  width:32px;
+  height:32px;
+  padding:6px;
+  border-radius:999px;
+  background:rgba(23,15,17,.68);
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+  animation:class-recording-player-spin .9s linear infinite;
+}
+@keyframes class-recording-player-spin{
+  to{transform:rotate(360deg)}
+}
+.class-recording-player-center-play{
+  position:absolute;
+  top:50%;
+  left:50%;
+  z-index:5;
+  width:68px;
+  height:68px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:999px;
+  background:rgba(111,25,39,.94);
+  color:#fff;
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.42),
+    0 0 0 7px rgba(91,21,34,.12);
+  transition:transform .16s ease,background-color .16s ease,box-shadow .16s ease;
+}
+.class-recording-player-center-play:hover{
+  transform:translate(-50%,-50%) scale(1.045);
+  background:var(--maroon);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.46),
+    0 0 0 8px rgba(111,25,39,.15);
+}
+.class-recording-player-center-play:active{
+  transform:translate(-50%,-50%) scale(.98);
+}
+.class-recording-player-center-play:focus-visible{
+  outline:2px solid #f4ccd3;
+  outline-offset:4px;
+}
+.class-recording-player-error{
+  position:absolute;
+  inset:0;
+  z-index:7;
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  gap:11px;
+  padding:24px 20px 92px;
+  background:rgba(5,3,4,.9);
+  color:#f7e7ea;
+  text-align:center;
+}
+.class-recording-player-error strong{
+  max-width:320px;
+  font-size:13px;
+  line-height:1.45;
+}
+.class-recording-player-error button{
+  min-height:38px;
+  padding:8px 14px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  background:var(--maroon);
+  color:#fff;
+  box-shadow:0 8px 22px rgba(0,0,0,.25);
+  font:inherit;
+  font-size:10.5px;
+  font-weight:850;
+  transition:background-color .16s ease,transform .16s ease;
+}
+.class-recording-player-error button:hover{background:var(--maroon-dark)}
+.class-recording-player-error button:active{transform:translateY(1px)}
+.class-recording-player-error button:focus-visible{
+  outline:2px solid #f4ccd3;
+  outline-offset:3px;
+}
+
+.class-recording-player-controls{
+  position:absolute;
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:6;
+  display:grid;
+  gap:8px;
+  padding:34px 14px 11px;
+  background:
+    linear-gradient(to top,rgba(0,0,0,.94) 0%,rgba(0,0,0,.72) 46%,rgba(0,0,0,.24) 76%,transparent 100%);
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .2s ease,visibility .2s ease;
+}
+.class-recording-player-controls.is-hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.class-recording-player-timeline-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+}
+.class-recording-player-time{
+  min-width:50px;
+  color:#f5eef0;
+  font-size:11px;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  font-weight:760;
+  line-height:1;
+  letter-spacing:.012em;
+  white-space:nowrap;
+  text-shadow:0 1px 3px rgba(0,0,0,.58);
+}
+.class-recording-player-time:last-child{text-align:right}
+.class-recording-player-timeline,
+.class-recording-player-volume{
+  --range-thumb-size:12px;
+  --range-track-size:4px;
+  --range-rest:rgba(255,255,255,.24);
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-appearance:none;
+  appearance:none;
+  background-color:transparent;
+  background-image:linear-gradient(var(--range-rest),var(--range-rest));
+  background-position:center;
+  background-size:calc(100% - var(--range-thumb-size)) var(--range-track-size);
+  background-repeat:no-repeat;
+  color-scheme:dark;
+  cursor:pointer;
+}
+.class-recording-player-timeline{
+  width:100%;
+  min-width:0;
+  height:24px;
+}
+.class-recording-player-volume{
+  width:80px;
+  height:22px;
+}
+
+.class-recording-player-timeline::-webkit-slider-runnable-track,
+.class-recording-player-volume::-webkit-slider-runnable-track{
+  height:var(--range-track-size);
+  border:0;
+  border-radius:999px;
+  background:transparent;
+}
+.class-recording-player-timeline::-webkit-slider-thumb,
+.class-recording-player-volume::-webkit-slider-thumb{
+  width:var(--range-thumb-size);
+  height:var(--range-thumb-size);
+  margin-top:calc((var(--range-track-size) - var(--range-thumb-size)) / 2);
+  -webkit-appearance:none;
+  appearance:none;
+  box-sizing:border-box;
+  border:1px solid rgba(255,255,255,.78);
+  border-radius:999px;
+  background:var(--maroon);
+  box-shadow:0 1px 4px rgba(0,0,0,.48);
+}
+.class-recording-player-timeline::-moz-range-track,
+.class-recording-player-volume::-moz-range-track,
+.class-recording-player-timeline::-moz-range-progress,
+.class-recording-player-volume::-moz-range-progress{
+  height:var(--range-track-size);
+  border:0;
+  border-radius:999px;
+  background:transparent;
+}
+.class-recording-player-timeline::-moz-range-thumb,
+.class-recording-player-volume::-moz-range-thumb{
+  width:var(--range-thumb-size);
+  height:var(--range-thumb-size);
+  box-sizing:border-box;
+  border:1px solid rgba(255,255,255,.78);
+  border-radius:999px;
+  background:var(--maroon);
+  box-shadow:0 1px 4px rgba(0,0,0,.48);
+}
+.class-recording-player-timeline:hover,
+.class-recording-player-volume:hover{
+  --range-rest:rgba(255,255,255,.32);
+}
+.class-recording-player-timeline:hover::-webkit-slider-thumb,
+.class-recording-player-volume:hover::-webkit-slider-thumb,
+.class-recording-player-timeline:hover::-moz-range-thumb,
+.class-recording-player-volume:hover::-moz-range-thumb{
+  background:var(--maroon-dark);
+}
+.class-recording-player-timeline:disabled,
+.class-recording-player-volume:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+}
+
+.class-recording-player-actions-row{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.class-recording-player-actions-group{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.class-recording-player-actions-group.is-right{
+  justify-content:flex-end;
+  gap:7px;
+}
+.class-recording-player-control{
+  position:relative;
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+  padding:0;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+  line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  transition:background-color .15s ease,border-color .15s ease,transform .15s ease;
+}
+.class-recording-player-control svg{display:block}
+.class-recording-player-control:hover:not(:disabled){
+  border-color:rgba(255,255,255,.21);
+  background:rgba(255,255,255,.125);
+}
+.class-recording-player-control:active:not(:disabled){transform:translateY(1px)}
+.class-recording-player-control:disabled{
+  cursor:not-allowed;
+  opacity:.4;
+}
+.class-recording-player-actions-row > .class-recording-player-actions-group:first-child > .class-recording-player-control:first-child{
+  border-color:rgba(255,255,255,.2);
+  background:var(--maroon);
+  box-shadow:0 5px 16px rgba(72,13,24,.25);
+}
+.class-recording-player-actions-row > .class-recording-player-actions-group:first-child > .class-recording-player-control:first-child:hover:not(:disabled){
+  background:var(--maroon-dark);
+}
+.class-recording-player-control:focus-visible,
+.class-recording-player-speed:focus-visible,
+.class-recording-player-timeline:focus-visible,
+.class-recording-player-volume:focus-visible{
+  outline:2px solid #e8aeb8;
+  outline-offset:2px;
+}
+.class-recording-player-control.is-skip small{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-39%);
+  color:#fff;
+  font-size:7.25px;
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+.class-recording-player-speed{
+  height:40px;
+  min-width:62px;
+  padding:0 7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:#20191b;
+  color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  font:inherit;
+  font-size:10px;
+  font-weight:800;
+  line-height:1;
+  text-align:center;
+  cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease;
+}
+.class-recording-player-speed:hover:not(:disabled){
+  border-color:rgba(255,255,255,.2);
+  background:#2a2023;
+}
+.class-recording-player-speed:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+}
+
+.class-recording-custom-player:fullscreen{
+  position:relative;
+  inset:auto;
+  width:100vw;
+  height:100dvh;
+  overflow:hidden;
+  background:#000;
+}
+.class-recording-custom-player:fullscreen video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.class-recording-custom-player:fullscreen .class-recording-player-controls{
+  padding-top:42px;
+  padding-right:max(16px,env(safe-area-inset-right));
+  padding-bottom:max(14px,env(safe-area-inset-bottom));
+  padding-left:max(16px,env(safe-area-inset-left));
+}
+
+@media(max-width:760px){
+  .class-recording-player-controls{
+    gap:6px;
+    padding:26px 8px 8px;
+  }
+  .class-recording-player-timeline-row{gap:8px}
+  .class-recording-player-time{
+    min-width:42px;
+    font-size:9.75px;
+  }
+  .class-recording-player-actions-row{gap:8px}
+  .class-recording-player-actions-group{gap:5px}
+  .class-recording-player-control{
+    flex-basis:40px;
+    width:40px;
+    height:40px;
+    border-radius:9px;
+  }
+  .class-recording-player-volume{
+    display:block;
+    width:54px;
+    height:40px;
+  }
+  .class-recording-player-speed{
+    height:40px;
+    min-width:58px;
+    padding:0 5px;
+    border-radius:9px;
+    font-size:9.75px;
+  }
+  .class-recording-player-center-play{
+    width:62px;
+    height:62px;
+  }
+  .class-recording-player-error{padding:18px 14px 82px}
+}
+
+@media(max-width:400px){
+  .class-recording-player-controls{
+    gap:5px;
+    padding-right:6px;
+    padding-left:6px;
+  }
+  .class-recording-player-timeline-row{gap:6px}
+  .class-recording-player-time{
+    min-width:40px;
+    font-size:9.25px;
+  }
+  .class-recording-player-actions-row{gap:6px}
+  .class-recording-player-actions-group{gap:3px}
+  .class-recording-player-volume{
+    width:48px;
+    height:40px;
+  }
+  .class-recording-player-control{
+    flex-basis:40px;
+    width:40px;
+    height:40px;
+  }
+  .class-recording-player-speed{
+    height:40px;
+    min-width:56px;
+    padding:0 4px;
+    font-size:9px;
+  }
+  .class-recording-player-center-play{
+    width:58px;
+    height:58px;
+  }
+}
+
+@media(max-height:500px) and (orientation:landscape){
+  .class-recording-player-controls{
+    gap:4px;
+    padding-top:22px;
+    padding-bottom:max(6px,env(safe-area-inset-bottom));
+  }
+  .class-recording-player-control{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+  }
+  .class-recording-player-speed{height:38px}
+}
+
+@media(hover:hover){
+  .class-recording-player-center-play:hover{
+    transform:translate(-50%,-50%) scale(1.045);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .class-recording-player-loading svg{animation:none}
+  .class-recording-player-center-play,
+  .class-recording-player-control,
+  .class-recording-player-error button,
+  .class-recording-player-controls,
+  .class-recording-viewer-action,
+  .class-recording-viewer-close{
+    transition:none;
   }
 }

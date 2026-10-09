@@ -18,6 +18,7 @@ import {
 import { Navigate } from 'react-router-dom';
 import '../class-recordings.css';
 import { getRecordingPlaybackSource, type RecordingPlaybackSource } from '../features/recordings/playbackSource';
+import { RecordingVideoPlayer } from '../features/recordings/RecordingVideoPlayer';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../state/AuthContext';
 import type { AppRole } from '../types';
@@ -140,7 +141,6 @@ function RecordingViewer({
   onClose: () => void;
 }) {
   const viewerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [playbackState, setPlaybackState] = useState<
     | { status: 'loading' }
@@ -187,19 +187,24 @@ function RecordingViewer({
     }
   }, []);
 
-  const closeViewer = useCallback(async () => {
+  const closeViewer = useCallback(() => {
     const viewer = viewerRef.current;
-    videoRef.current?.pause();
+    const fullscreenElement = document.fullscreenElement;
+    const shouldExitFullscreen = Boolean(
+      viewer
+      && fullscreenElement
+      && viewer.contains(fullscreenElement),
+    );
 
-    if (viewer && document.fullscreenElement === viewer) {
-      try {
-        await document.exitFullscreen();
-      } catch {
-        // Unmount tetap aman; browser akan melepas fullscreen element.
-      }
-    }
-
+    // Tutup viewer adalah authoritative action. Jangan menunggu Fullscreen API
+    // sebelum parent state di-reset dan player di-unmount.
     onClose();
+
+    if (shouldExitFullscreen && document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => {
+        // Jika element sudah ter-unmount, browser dapat melepas fullscreen sendiri.
+      });
+    }
   }, [onClose]);
 
   useEffect(() => {
@@ -217,7 +222,7 @@ function RecordingViewer({
         || target?.tagName === 'TEXTAREA'
         || target?.tagName === 'SELECT';
 
-      if (event.key.toLowerCase() === 'f' && !isTyping) {
+      if (event.key.toLowerCase() === 'f' && !isTyping && playbackState.status === 'drive') {
         event.preventDefault();
         void toggleFullscreen();
         return;
@@ -236,7 +241,7 @@ function RecordingViewer({
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [closeViewer, toggleFullscreen]);
+  }, [closeViewer, playbackState.status, toggleFullscreen]);
 
   return (
     <div
@@ -261,15 +266,17 @@ function RecordingViewer({
           </div>
 
           <div className="class-recording-viewer-header-actions">
-            <button
-              type="button"
-              className="class-recording-viewer-action"
-              aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
-              title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen (F)'}
-              onClick={() => void toggleFullscreen()}
-            >
-              {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
-            </button>
+            {playbackState.status === 'drive' && (
+              <button
+                type="button"
+                className="class-recording-viewer-action"
+                aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+                title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen (F)'}
+                onClick={() => void toggleFullscreen()}
+              >
+                {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
+              </button>
+            )}
 
             <button
               type="button"
@@ -292,12 +299,9 @@ function RecordingViewer({
             )}
 
             {playbackState.status === 'r2' && (
-              <video
-                ref={videoRef}
-                src={playbackState.source.url}
-                controls
-                playsInline
-                preload="metadata"
+              <RecordingVideoPlayer
+                source={playbackState.source}
+                title={row.title}
               />
             )}
 

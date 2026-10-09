@@ -1,0 +1,2343 @@
+
+==================================================
+FILE: .\src\pages\ClassRecordingsPage.tsx
+==================================================
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import {
+  AlertCircle,
+  CalendarDays,
+  Clock3,
+  Edit3,
+  Film,
+  Maximize2,
+  Minimize2,
+  Play,
+  RefreshCw,
+  Save,
+  School,
+  Trash2,
+  Video,
+  X,
+} from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import '../class-recordings.css';
+import { getRecordingPlaybackSource, type RecordingPlaybackSource } from '../features/recordings/playbackSource';
+import { RecordingVideoPlayer } from '../features/recordings/RecordingVideoPlayer';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../state/AuthContext';
+import type { AppRole } from '../types';
+
+type StudentRecordingRow = {
+  recording_id: string;
+  class_id: string;
+  class_name: string;
+  class_code: string | null;
+  title: string;
+  description: string;
+  drive_file_id: string;
+  recorded_at: string;
+  duration_minutes: number | null;
+};
+
+type TeacherRecordingRow = StudentRecordingRow & {
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+type TeachingClassRow = {
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  class_status: 'planned' | 'active' | 'completed' | 'cancelled';
+  program_name: string | null;
+};
+
+type RecordingForm = {
+  title: string;
+  description: string;
+  driveLink: string;
+  recordedAt: string;
+  duration: string;
+  isPublished: boolean;
+};
+
+const TEACHING_ROLES = new Set<AppRole>([
+  'pengajar',
+  'administrator',
+  'manager',
+  'co_founder',
+  'founder',
+]);
+
+const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{10,200}$/;
+
+function localDateTimeInput(value = new Date()) {
+  const adjusted = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
+  return adjusted.toISOString().slice(0, 16);
+}
+
+function emptyForm(): RecordingForm {
+  return {
+    title: '',
+    description: '',
+    driveLink: '',
+    recordedAt: localDateTimeInput(),
+    duration: '',
+    isPublished: true,
+  };
+}
+
+function extractDriveFileId(value: string) {
+  const trimmed = value.trim();
+  if (DRIVE_ID_PATTERN.test(trimmed)) return trimmed;
+
+  try {
+    const url = new URL(trimmed);
+    const fromQuery = url.searchParams.get('id');
+    if (fromQuery && DRIVE_ID_PATTERN.test(fromQuery)) return fromQuery;
+
+    const fileMatch = url.pathname.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+    if (fileMatch?.[1] && DRIVE_ID_PATTERN.test(fileMatch[1])) return fileMatch[1];
+
+    const dMatch = url.pathname.match(/\/d\/([A-Za-z0-9_-]+)/);
+    if (dMatch?.[1] && DRIVE_ID_PATTERN.test(dMatch[1])) return dMatch[1];
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function drivePreviewUrl(fileId: string) {
+  return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/preview`;
+}
+
+function driveThumbnailUrl(fileId: string) {
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w960`;
+}
+
+function driveViewUrl(fileId: string) {
+  return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/view`;
+}
+
+function formatDateTime(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return ' E;
+
+  return new Intl.DateTimeFormat('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function toLocalInput(value: string) {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return localDateTimeInput();
+  return localDateTimeInput(date);
+}
+
+function RecordingViewer({
+  row,
+  onClose,
+}: {
+  row: StudentRecordingRow;
+  onClose: () => void;
+}) {
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [playbackState, setPlaybackState] = useState<
+    | { status: 'loading' }
+    | { status: 'r2'; source: RecordingPlaybackSource }
+    | { status: 'drive' }
+    | { status: 'error' }
+  >({ status: 'loading' });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    setPlaybackState({ status: 'loading' });
+
+    void getRecordingPlaybackSource(row.recording_id)
+      .then((source) => {
+        if (cancelled) return;
+        setPlaybackState(source
+          ? { status: 'r2', source }
+          : { status: 'drive' });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error('KOJAC recording playback source resolution failed', error);
+        setPlaybackState({ status: 'error' });
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [row.recording_id]);
+
+  const toggleFullscreen = useCallback(async () => {
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await viewer.requestFullscreen();
+      }
+    } catch (error) {
+      console.error('KOJAC recording fullscreen failed', error);
+    }
+  }, []);
+
+  const closeViewer = useCallback(async () => {
+    const viewer = viewerRef.current;
+    if (viewer && document.fullscreenElement && viewer.contains(document.fullscreenElement)) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // Unmount tetap aman; browser akan melepas fullscreen element.
+      }
+    }
+
+    onClose();
+  }, [onClose]);
+
+  useEffect(() => {
+    const oldOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === viewerRef.current);
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isTyping =
+        target?.tagName === 'INPUT'
+        || target?.tagName === 'TEXTAREA'
+        || target?.tagName === 'SELECT';
+
+      if (event.key.toLowerCase() === 'f' && !isTyping && playbackState.status === 'drive') {
+        event.preventDefault();
+        void toggleFullscreen();
+        return;
+      }
+
+      if (event.key === 'Escape' && !document.fullscreenElement) {
+        void closeViewer();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = oldOverflow;
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [closeViewer, playbackState.status, toggleFullscreen]);
+
+  return (
+    <div
+      className="class-recording-viewer-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Rekaman ${row.title}`}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !document.fullscreenElement) {
+          void closeViewer();
+        }
+      }}
+    >
+      <div
+        ref={viewerRef}
+        className={`class-recording-viewer ${isFullscreen ? 'is-fullscreen' : ''}`}
+      >
+        <header className="class-recording-viewer-header">
+          <div className="class-recording-viewer-heading">
+            <span>{row.class_name}</span>
+            <strong>{row.title}</strong>
+          </div>
+
+          <div className="class-recording-viewer-header-actions">
+            {playbackState.status === 'drive' && (
+              <button
+                type="button"
+                className="class-recording-viewer-action"
+                aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+                title={isFullscreen ? 'Keluar Fullscreen' : 'Fullscreen (F)'}
+                onClick={() => void toggleFullscreen()}
+              >
+                {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="class-recording-viewer-close"
+              aria-label="Tutup rekaman"
+              title="Tutup (Esc)"
+              onClick={() => void closeViewer()}
+            >
+              <X size={20}/>
+            </button>
+          </div>
+        </header>
+
+        <div className="class-recording-viewer-stage">
+          <div className="class-recording-video-shell">
+            {playbackState.status === 'loading' && (
+              <div className="class-recording-playback-state" role="status">
+                Menyiapkan rekaman…
+              </div>
+            )}
+
+            {playbackState.status === 'r2' && (
+              <RecordingVideoPlayer
+                source={playbackState.source}
+                title={row.title}
+              />
+            )}
+
+            {playbackState.status === 'drive' && (
+              <>
+                <iframe
+                  src={drivePreviewUrl(row.drive_file_id)}
+                  title={row.title}
+                  loading="eager"
+                  allow="autoplay; encrypted-media; fullscreen"
+                />
+                <div
+                  className="class-recording-drive-popout-mask"
+                  aria-hidden="true"
+                />
+              </>
+            )}
+
+            {playbackState.status === 'error' && (
+              <div className="class-recording-playback-state is-error" role="alert">
+                Sumber rekaman belum dapat disiapkan. Tutup lalu coba lagi.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <footer className="class-recording-viewer-footer">
+          <div className="class-recording-viewer-meta">
+            <span><CalendarDays size={15}/>{formatDateTime(row.recorded_at)}</span>
+            {row.duration_minutes && (
+              <span><Clock3 size={15}/>{row.duration_minutes} menit</span>
+            )}
+          </div>
+        </footer>
+
+        {row.description && (
+          <div className="class-recording-viewer-description">
+            <strong>Materi</strong>
+            <p>{row.description}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ClassRecordingsPage() {
+  const { role, loading: authLoading } = useAuth();
+  const canTeach = Boolean(role && TEACHING_ROLES.has(role));
+
+  const [studentRows, setStudentRows] = useState<StudentRecordingRow[]>([]);
+  const [teacherRows, setTeacherRows] = useState<TeacherRecordingRow[]>([]);
+  const [teachingClasses, setTeachingClasses] = useState<TeachingClassRow[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState('');
+  const [studentClassFilter, setStudentClassFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [viewer, setViewer] = useState<StudentRecordingRow | null>(null);
+
+  const [form, setForm] = useState<RecordingForm>(emptyForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [recordingsLoading, setRecordingsLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(false);
+  const [formMessage, setFormMessage] = useState('');
+
+  const loadStudentRecordings = useCallback(async () => {
+    if (role !== 'siswa') return;
+
+    setLoading(true);
+    setError(false);
+
+    const { data, error: loadError } = await supabase.rpc('get_my_class_recordings');
+
+    if (loadError) {
+      console.error('KOJAC class recordings load failed', loadError);
+      setStudentRows([]);
+      setError(true);
+    } else {
+      setStudentRows((data ?? []) as StudentRecordingRow[]);
+    }
+
+    setLoading(false);
+  }, [role]);
+
+  const loadTeachingClasses = useCallback(async () => {
+    if (!canTeach) return;
+
+    setLoading(true);
+    setError(false);
+
+    const { data, error: loadError } = await supabase.rpc('get_my_teaching_classes');
+
+    if (loadError) {
+      console.error('KOJAC teaching classes for recordings failed', loadError);
+      setTeachingClasses([]);
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    const rows = (data ?? []) as TeachingClassRow[];
+    setTeachingClasses(rows);
+    setSelectedClassId((current) => {
+      if (current && rows.some((row) => row.class_id === current)) return current;
+      return rows.find((row) => row.class_status === 'active')?.class_id
+        ?? rows[0]?.class_id
+        ?? '';
+    });
+    setLoading(false);
+  }, [canTeach]);
+
+  const loadTeacherRecordings = useCallback(async (classId: string) => {
+    if (!classId || !canTeach) {
+      setTeacherRows([]);
+      return;
+    }
+
+    setRecordingsLoading(true);
+    setError(false);
+
+    const { data, error: loadError } = await supabase.rpc('get_teaching_class_recordings', {
+      p_class_id: classId,
+    });
+
+    if (loadError) {
+      console.error('KOJAC teaching recordings load failed', loadError);
+      setTeacherRows([]);
+      setError(true);
+    } else {
+      setTeacherRows((data ?? []) as TeacherRecordingRow[]);
+    }
+
+    setRecordingsLoading(false);
+  }, [canTeach]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (role === 'siswa') void loadStudentRecordings();
+    else if (canTeach) void loadTeachingClasses();
+  }, [authLoading, role, canTeach, loadStudentRecordings, loadTeachingClasses]);
+
+  useEffect(() => {
+    if (canTeach && selectedClassId) {
+      void loadTeacherRecordings(selectedClassId);
+      setEditingId(null);
+      setForm(emptyForm());
+      setFormMessage('');
+    }
+  }, [canTeach, selectedClassId, loadTeacherRecordings]);
+
+  const studentClasses = useMemo(() => {
+    const unique = new Map<string, { id: string; name: string; code: string | null }>();
+
+    studentRows.forEach((row) => {
+      if (!unique.has(row.class_id)) {
+        unique.set(row.class_id, {
+          id: row.class_id,
+          name: row.class_name,
+          code: row.class_code,
+        });
+      }
+    });
+
+    return [...unique.values()];
+  }, [studentRows]);
+
+  const visibleStudentRows = useMemo(
+    () => studentClassFilter === 'all'
+      ? studentRows
+      : studentRows.filter((row) => row.class_id === studentClassFilter),
+    [studentRows, studentClassFilter],
+  );
+
+  const startEdit = (row: TeacherRecordingRow) => {
+    setEditingId(row.recording_id);
+    setForm({
+      title: row.title,
+      description: row.description,
+      driveLink: driveViewUrl(row.drive_file_id),
+      recordedAt: toLocalInput(row.recorded_at),
+      duration: row.duration_minutes ? String(row.duration_minutes) : '',
+      isPublished: row.is_published,
+    });
+    setFormMessage('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setForm(emptyForm());
+    setFormMessage('');
+  };
+
+  const saveRecording = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const fileId = extractDriveFileId(form.driveLink);
+    if (!selectedClassId) {
+      setFormMessage('Pilih kelas terlebih dahulu.');
+      return;
+    }
+    if (!form.title.trim()) {
+      setFormMessage('Judul rekaman wajib diisi.');
+      return;
+    }
+    if (!fileId) {
+      setFormMessage('Link Google Drive atau File ID tidak valid.');
+      return;
+    }
+
+    const recordedAt = new Date(form.recordedAt);
+    if (!Number.isFinite(recordedAt.getTime())) {
+      setFormMessage('Tanggal rekaman tidak valid.');
+      return;
+    }
+
+    const duration = form.duration.trim() ? Number(form.duration) : null;
+    if (duration !== null && (!Number.isInteger(duration) || duration < 1 || duration > 1440)) {
+      setFormMessage('Durasi harus 1 E440 menit.');
+      return;
+    }
+
+    setSaving(true);
+    setFormMessage('');
+
+    const result = editingId
+      ? await supabase.rpc('update_class_recording', {
+          p_recording_id: editingId,
+          p_title: form.title.trim(),
+          p_description: form.description,
+          p_drive_file_id: fileId,
+          p_recorded_at: recordedAt.toISOString(),
+          p_duration_minutes: duration,
+          p_is_published: form.isPublished,
+        })
+      : await supabase.rpc('create_class_recording', {
+          p_class_id: selectedClassId,
+          p_title: form.title.trim(),
+          p_description: form.description,
+          p_drive_file_id: fileId,
+          p_recorded_at: recordedAt.toISOString(),
+          p_duration_minutes: duration,
+          p_is_published: form.isPublished,
+        });
+
+    if (result.error) {
+      console.error('KOJAC save class recording failed', result.error);
+      setFormMessage('Rekaman belum dapat disimpan. Periksa data lalu coba lagi.');
+      setSaving(false);
+      return;
+    }
+
+    setSaving(false);
+    resetForm();
+    await loadTeacherRecordings(selectedClassId);
+  };
+
+  const deleteRecording = async (row: TeacherRecordingRow) => {
+    const confirmed = window.confirm(
+      `Hapus "${row.title}" dari daftar Rekaman Kelas?\n\nFile asli di Google Drive tidak akan dihapus.`,
+    );
+
+    if (!confirmed) return;
+
+    const { error: deleteError } = await supabase.rpc('delete_class_recording', {
+      p_recording_id: row.recording_id,
+    });
+
+    if (deleteError) {
+      console.error('KOJAC delete class recording failed', deleteError);
+      return;
+    }
+
+    if (editingId === row.recording_id) resetForm();
+    await loadTeacherRecordings(selectedClassId);
+  };
+
+  if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
+
+  if (role !== 'siswa' && !canTeach) {
+    return <Navigate to="/" replace />;
+  }
+
+  const activeRows: StudentRecordingRow[] = role === 'siswa'
+    ? visibleStudentRows
+    : teacherRows;
+
+  const normalizedSearch = searchQuery.trim().toLocaleLowerCase('id-ID');
+  const displayRows = [...activeRows]
+    .filter((row) => {
+      if (!normalizedSearch) return true;
+
+      return [
+        row.title,
+        row.class_name,
+        row.description,
+      ].some((value) => value.toLocaleLowerCase('id-ID').includes(normalizedSearch));
+    })
+    .sort((a, b) => {
+      const aTime = new Date(a.recorded_at).getTime();
+      const bTime = new Date(b.recorded_at).getTime();
+
+      return sortOrder === 'newest'
+        ? bTime - aTime
+        : aTime - bTime;
+    });
+
+  return (
+    <div className="page class-recordings-page">
+      <header className="class-recordings-header">
+        <div>
+          <p className="eyebrow">KOJAC LMS</p>
+          <h1 className="title-icon"><Video/>Rekaman Kelas</h1>
+          <p>
+            {role === 'siswa'
+              ? 'Tonton kembali rekaman kelas KOJAC yang tersedia untuk kelas Anda.'
+              : 'Kelola dan publikasikan rekaman Google Drive untuk siswa pada kelas Anda.'}
+          </p>
+        </div>
+      </header>
+
+      {role === 'siswa' ? (
+        studentClasses.length > 1 && (
+          <section className="class-recording-filter panel">
+            <label htmlFor="recording-class-filter">Kelas</label>
+            <select
+              id="recording-class-filter"
+              value={studentClassFilter}
+              onChange={(event) => setStudentClassFilter(event.target.value)}
+            >
+              <option value="all">Semua Kelas</option>
+              {studentClasses.map((row) => (
+                <option value={row.id} key={row.id}>
+                  {row.name}{row.code ? `  E${row.code}` : ''}
+                </option>
+              ))}
+            </select>
+          </section>
+        )
+      ) : (
+        <>
+          <section className="class-recording-filter panel">
+            <label htmlFor="teacher-recording-class">Kelas</label>
+            <select
+              id="teacher-recording-class"
+              value={selectedClassId}
+              onChange={(event) => setSelectedClassId(event.target.value)}
+            >
+              {teachingClasses.map((row) => (
+                <option value={row.class_id} key={row.class_id}>
+                  {row.program_name || 'Program KOJAC'}  E{row.class_name}
+                </option>
+              ))}
+            </select>
+          </section>
+
+          {editingId && (
+            <section className="class-recording-form panel class-recording-edit-form">
+              <div className="class-recording-section-heading">
+                <div>
+                  <p className="eyebrow">EDIT REKAMAN</p>
+                  <h2>Perbarui Rekaman</h2>
+                </div>
+                <button className="class-recording-secondary" type="button" onClick={resetForm}>
+                  Batal Edit
+                </button>
+              </div>
+
+              <form onSubmit={saveRecording}>
+                <div className="class-recording-form-grid">
+                  <label>
+                    Judul Rekaman
+                    <input
+                      maxLength={160}
+                      value={form.title}
+                      disabled={saving}
+                      placeholder="Contoh: Bab 12  EBentuk て"
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        title: event.target.value,
+                      }))}
+                    />
+                  </label>
+
+                  <label>
+                    Tanggal & Jam Kelas
+                    <input
+                      type="datetime-local"
+                      value={form.recordedAt}
+                      disabled={saving}
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        recordedAt: event.target.value,
+                      }))}
+                    />
+                  </label>
+
+                  <label className="is-wide">
+                    Link Google Drive / File ID
+                    <input
+                      value={form.driveLink}
+                      disabled={saving}
+                      placeholder="https://drive.google.com/file/d/.../view"
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        driveLink: event.target.value,
+                      }))}
+                    />
+                  </label>
+
+                  <label>
+                    Durasi (menit)
+                    <input
+                      type="number"
+                      min={1}
+                      max={1440}
+                      value={form.duration}
+                      disabled={saving}
+                      placeholder="120"
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        duration: event.target.value,
+                      }))}
+                    />
+                  </label>
+
+                  <label className="class-recording-publish-toggle">
+                    <input
+                      type="checkbox"
+                      checked={form.isPublished}
+                      disabled={saving}
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        isPublished: event.target.checked,
+                      }))}
+                    />
+                    <span>
+                      <strong>Publikasikan ke siswa</strong>
+                      <small>Matikan jika rekaman belum siap ditonton.</small>
+                    </span>
+                  </label>
+
+                  <label className="is-wide">
+                    Deskripsi
+                    <textarea
+                      rows={4}
+                      maxLength={5000}
+                      value={form.description}
+                      disabled={saving}
+                      placeholder="Ringkasan materi pada pertemuan ini…"
+                      onChange={(event) => setForm((current) => ({
+                        ...current,
+                        description: event.target.value,
+                      }))}
+                    />
+                  </label>
+                </div>
+
+                {formMessage && (
+                  <div className="class-recording-form-message" role="status">
+                    {formMessage}
+                  </div>
+                )}
+
+                <div className="class-recording-form-actions">
+                  <button className="class-recording-primary" type="submit" disabled={saving}>
+                    <Save size={16}/>
+                    {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
+                  </button>
+                </div>
+              </form>
+            </section>
+          )}
+        </>
+      )}
+
+      <section className="class-recording-library-toolbar panel">
+        <label className="class-recording-search-field">
+          <span>Cari Rekaman</span>
+          <input
+            type="search"
+            value={searchQuery}
+            placeholder="Cari judul, kelas, atau materi…"
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+        </label>
+
+        <label>
+          <span>Urutkan</span>
+          <select
+            value={sortOrder}
+            onChange={(event) => setSortOrder(event.target.value as 'newest' | 'oldest')}
+          >
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+        </label>
+      </section>
+
+      {loading || recordingsLoading ? (
+        <div className="class-recording-loading-grid" aria-label="Memuat rekaman">
+          {[0, 1, 2].map((item) => <div className="class-recording-skeleton" key={item}/>)}
+        </div>
+      ) : error ? (
+        <section className="class-recording-state" role="alert">
+          <AlertCircle size={30}/>
+          <h2>Rekaman belum dapat dimuat.</h2>
+          <p>Silakan coba lagi.</p>
+          <button
+            type="button"
+            className="class-recording-secondary"
+            onClick={() => {
+              if (role === 'siswa') void loadStudentRecordings();
+              else if (selectedClassId) void loadTeacherRecordings(selectedClassId);
+            }}
+          >
+            <RefreshCw size={15}/>Coba Lagi
+          </button>
+        </section>
+      ) : role !== 'siswa' && teachingClasses.length === 0 ? (
+        <section className="class-recording-state">
+          <School size={30}/>
+          <h2>Belum ada kelas mengajar.</h2>
+          <p>Rekaman dapat ditambahkan setelah akun Anda terhubung ke kelas.</p>
+        </section>
+      ) : displayRows.length === 0 ? (
+        <section className="class-recording-state">
+          <Film size={30}/>
+          <h2>Belum ada rekaman kelas.</h2>
+          <p>
+            {activeRows.length === 0
+              ? (role === 'siswa'
+                  ? 'Rekaman yang dipublikasikan pengajar akan muncul di sini.'
+                  : 'Belum ada rekaman pada kelas ini.')
+              : 'Tidak ada rekaman yang sesuai dengan filter atau pencarian.'}
+          </p>
+        </section>
+      ) : (
+        <section>
+          <div className="class-recording-section-heading">
+            <div>
+              <p className="eyebrow">DAFTAR REKAMAN</p>
+              <h2>{role === 'siswa' ? 'Rekaman Tersedia' : 'Rekaman pada Kelas Ini'}</h2>
+            </div>
+            <span>{displayRows.length} rekaman</span>
+          </div>
+
+          <div className="class-recording-grid">
+            {displayRows.map((row) => {
+              const teacherRow = role === 'siswa' ? null : row as TeacherRecordingRow;
+
+              return (
+                <article className="class-recording-card" key={row.recording_id}>
+                  <div className="class-recording-cover">
+                    <img
+                      className="class-recording-thumbnail"
+                      src={driveThumbnailUrl(row.drive_file_id)}
+                      alt=""
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <div className="class-recording-cover-icon"><Play size={28}/></div>
+                    <span>REKAMAN KELAS</span>
+                  </div>
+
+                  <div className="class-recording-card-body">
+                    <div className="class-recording-card-topline">
+                      <span>{row.class_name}</span>
+                      {teacherRow && (
+                        <span className={`class-recording-status ${teacherRow.is_published ? 'is-published' : 'is-hidden'}`}>
+                          {teacherRow.is_published ? 'Dipublikasikan' : 'Disembunyikan'}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3>{row.title}</h3>
+
+                    <div className="class-recording-meta">
+                      <span><CalendarDays size={14}/>{formatDateTime(row.recorded_at)}</span>
+                      {row.duration_minutes && (
+                        <span><Clock3 size={14}/>{row.duration_minutes} menit</span>
+                      )}
+                    </div>
+
+                    {row.description && <p>{row.description}</p>}
+
+                    <div className="class-recording-actions">
+                      <button
+                        type="button"
+                        className="class-recording-primary"
+                        onClick={() => setViewer(row)}
+                      >
+                        <Play size={15}/>Tonton
+                      </button>
+
+                      {teacherRow && (
+                        <>
+                          <button
+                            type="button"
+                            className="class-recording-secondary"
+                            onClick={() => startEdit(teacherRow)}
+                          >
+                            <Edit3 size={15}/>Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="class-recording-danger"
+                            onClick={() => void deleteRecording(teacherRow)}
+                          >
+                            <Trash2 size={15}/>Hapus
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {viewer && (
+        <RecordingViewer
+          key={viewer.recording_id}
+          row={viewer}
+          onClose={() => setViewer(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+==================================================
+FILE: .\src\features\recordings\RecordingVideoPlayer.tsx
+==================================================
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  LoaderCircle,
+  Maximize2,
+  Minimize2,
+  Pause,
+  Play,
+  RotateCcw,
+  RotateCw,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
+import type { RecordingPlaybackSource } from './playbackSource';
+
+type RecordingVideoPlayerProps = {
+  source: RecordingPlaybackSource;
+  title: string;
+};
+
+const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 2] as const;
+
+function formatMediaTime(value: number, forceHours = false) {
+  if (!Number.isFinite(value) || value < 0) return forceHours ? '00:00:00' : '00:00';
+
+  const totalSeconds = Math.floor(value);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (forceHours || hours > 0) {
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+
+  return target.isContentEditable
+    || target.tagName === 'INPUT'
+    || target.tagName === 'TEXTAREA'
+    || target.tagName === 'SELECT'
+    || target.tagName === 'BUTTON';
+}
+
+export function RecordingVideoPlayer({ source, title }: RecordingVideoPlayerProps) {
+const playerRef = useRef<HTMLDivElement>(null);
+const videoRef = useRef<HTMLVideoElement>(null);
+const playbackIntentRef = useRef(0);
+const desiredPlayingRef = useRef(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [muted, setMuted] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const metadataReady = Number.isFinite(duration) && duration > 0;
+  const forceHours = duration >= 3600;
+
+  const syncDuration = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const nextDuration = Number.isFinite(video.duration) && video.duration > 0
+      ? video.duration
+      : 0;
+    setDuration(nextDuration);
+    setCurrentTime(Number.isFinite(video.currentTime) ? video.currentTime : 0);
+  }, []);
+
+const requestPlay = useCallback(async () => {
+  const video = videoRef.current;
+  if (!video || hasError) return;
+
+  desiredPlayingRef.current = true;
+  const intent = ++playbackIntentRef.current;
+
+  try {
+    await video.play();
+  } catch (error) {
+    const isExpectedCancellation =
+      error instanceof DOMException
+      && error.name === 'AbortError'
+      && playbackIntentRef.current !== intent;
+
+    if (isExpectedCancellation) {
+      return;
+    }
+
+    desiredPlayingRef.current = false;
+    console.error('KOJAC video playback failed', error);
+    setHasError(true);
+    setIsLoading(false);
+  }
+}, [hasError]);
+
+const requestPause = useCallback(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  desiredPlayingRef.current = false;
+  playbackIntentRef.current += 1;
+  video.pause();
+}, []);
+
+const togglePlay = useCallback(() => {
+  const video = videoRef.current;
+  if (!video || hasError) return;
+
+  if (desiredPlayingRef.current || !video.paused) {
+    requestPause();
+    return;
+  }
+
+  void requestPlay();
+}, [hasError, requestPause, requestPlay]);
+
+  const skipBy = useCallback((seconds: number) => {
+    const video = videoRef.current;
+    if (!video || !Number.isFinite(video.duration) || video.duration <= 0) return;
+
+    const nextTime = Math.min(video.duration, Math.max(0, video.currentTime + seconds));
+    video.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.muted) {
+      video.muted = false;
+      if (video.volume === 0) video.volume = 1;
+      return;
+    }
+
+    if (video.volume === 0) {
+      video.volume = 1;
+      video.muted = false;
+      return;
+    }
+
+    video.muted = true;
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    try {
+      if (document.fullscreenElement === player) {
+        await document.exitFullscreen();
+      } else {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        await player.requestFullscreen();
+      }
+    } catch (error) {
+      console.error('KOJAC video fullscreen failed', error);
+    }
+  }, []);
+
+const retryPlayback = useCallback(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  desiredPlayingRef.current = false;
+  playbackIntentRef.current += 1;
+
+  setHasError(false);
+  setIsLoading(true);
+  setHasStarted(false);
+  setIsPlaying(false);
+  setCurrentTime(0);
+
+  video.load();
+}, []);
+
+useEffect(() => {
+  const video = videoRef.current;
+  if (!video) return;
+
+  desiredPlayingRef.current = false;
+  playbackIntentRef.current += 1;
+
+  setIsPlaying(false);
+  setHasStarted(false);
+  setIsLoading(true);
+  setHasError(false);
+  setCurrentTime(0);
+  setDuration(0);
+  setPlaybackRate(1);
+  setMuted(false);
+  setVolume(1);
+
+  video.playbackRate = 1;
+  video.muted = false;
+  video.volume = 1;
+  video.load();
+
+  return () => {
+    desiredPlayingRef.current = false;
+    playbackIntentRef.current += 1;
+    video.pause();
+  };
+}, [source.url]);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === playerRef.current);
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isEditableTarget(event.target)) return;
+
+      switch (event.key.toLowerCase()) {
+        case ' ':
+        case 'k':
+          event.preventDefault();
+          void togglePlay();
+          break;
+        case 'arrowleft':
+          event.preventDefault();
+          skipBy(-10);
+          break;
+        case 'arrowright':
+          event.preventDefault();
+          skipBy(10);
+          break;
+        case 'm':
+          event.preventDefault();
+          toggleMute();
+          break;
+        case 'f':
+          event.preventDefault();
+          void toggleFullscreen();
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [skipBy, toggleFullscreen, toggleMute, togglePlay]);
+
+  const currentDisplay = formatMediaTime(currentTime, forceHours);
+  const durationDisplay = formatMediaTime(duration, forceHours);
+
+  return (
+    <div
+      ref={playerRef}
+      className={`class-recording-custom-player ${isFullscreen ? 'is-player-fullscreen' : ''}`}
+      role="group"
+      aria-label={`Pemutar video ${title}`}
+    >
+      <video
+        ref={videoRef}
+        src={source.url}
+        controls={false}
+        playsInline
+        preload="metadata"
+        aria-label={title}
+        onClick={() => void togglePlay()}
+        onLoadStart={() => {
+          setIsLoading(true);
+          setHasError(false);
+        }}
+        onLoadedMetadata={() => {
+          syncDuration();
+          setIsLoading(false);
+        }}
+        onDurationChange={syncDuration}
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime || 0)}
+onPlay={() => {
+  desiredPlayingRef.current = true;
+  setIsPlaying(true);
+  setHasStarted(true);
+  setHasError(false);
+}}
+        onPause={() => {
+          desiredPlayingRef.current = false;
+          setIsPlaying(false);
+        }}
+        onPlaying={() => setIsLoading(false)}
+        onCanPlay={() => setIsLoading(false)}
+        onWaiting={() => setIsLoading(true)}
+        onSeeking={() => setIsLoading(true)}
+        onSeeked={() => setIsLoading(false)}
+onEnded={() => {
+  desiredPlayingRef.current = false;
+  setIsPlaying(false);
+  setCurrentTime(videoRef.current?.duration || duration);
+}}
+        onVolumeChange={(event) => {
+          setMuted(event.currentTarget.muted);
+          setVolume(event.currentTarget.volume);
+        }}
+        onRateChange={(event) => setPlaybackRate(event.currentTarget.playbackRate)}
+        onError={() => {
+          setIsPlaying(false);
+          setIsLoading(false);
+          setHasError(true);
+        }}
+      />
+
+      {isLoading && !hasError && (
+        <div className="class-recording-player-loading" role="status" aria-label="Video sedang dimuat">
+          <LoaderCircle size={30} aria-hidden="true"/>
+        </div>
+      )}
+
+      {!hasStarted && !isLoading && !hasError && (
+        <button
+          type="button"
+          className="class-recording-player-center-play"
+          aria-label="Putar video"
+          title="Putar"
+          onClick={() => void togglePlay()}
+        >
+          <Play size={34} fill="currentColor" aria-hidden="true"/>
+        </button>
+      )}
+
+      {hasError && (
+        <div className="class-recording-player-error" role="alert">
+          <strong>Video tidak dapat diputar.</strong>
+          <button type="button" onClick={retryPlayback}>Coba lagi</button>
+        </div>
+      )}
+
+      <div className="class-recording-player-controls" role="group" aria-label="Kontrol video">
+        <div className="class-recording-player-timeline-row">
+          <span className="class-recording-player-time" aria-label={`Waktu saat ini ${currentDisplay}`}>
+            {currentDisplay}
+          </span>
+          <input
+            className="class-recording-player-timeline"
+            type="range"
+            min={0}
+            max={metadataReady ? duration : 1}
+            step={0.1}
+            value={metadataReady ? Math.min(currentTime, duration) : 0}
+            disabled={!metadataReady || hasError}
+            aria-label="Posisi video"
+            aria-valuemin={0}
+            aria-valuemax={metadataReady ? duration : 0}
+            aria-valuenow={metadataReady ? Math.min(currentTime, duration) : 0}
+            aria-valuetext={`${currentDisplay} dari ${durationDisplay}`}
+            onChange={(event) => {
+              const video = videoRef.current;
+              if (!video || !metadataReady) return;
+              const nextTime = Number(event.currentTarget.value);
+              if (!Number.isFinite(nextTime)) return;
+              video.currentTime = nextTime;
+              setCurrentTime(nextTime);
+            }}
+          />
+          <span className="class-recording-player-time" aria-label={`Durasi ${durationDisplay}`}>
+            {durationDisplay}
+          </span>
+        </div>
+
+        <div className="class-recording-player-actions-row">
+          <div className="class-recording-player-actions-group">
+            <button
+              type="button"
+              className="class-recording-player-control"
+              aria-label={isPlaying ? 'Jeda video' : 'Putar video'}
+              title={isPlaying ? 'Pause (Space / K)' : 'Play (Space / K)'}
+              onClick={() => void togglePlay()}
+              disabled={hasError}
+            >
+              {isPlaying ? <Pause size={20} fill="currentColor"/> : <Play size={20} fill="currentColor"/>}
+            </button>
+
+            <button
+              type="button"
+              className="class-recording-player-control is-skip"
+              aria-label="Mundur 10 detik"
+              title="Mundur 10 detik (ↁE"
+              onClick={() => skipBy(-10)}
+              disabled={!metadataReady || hasError}
+            >
+              <RotateCcw size={20}/><small>10</small>
+            </button>
+
+            <button
+              type="button"
+              className="class-recording-player-control is-skip"
+              aria-label="Maju 10 detik"
+              title="Maju 10 detik (ↁE"
+              onClick={() => skipBy(10)}
+              disabled={!metadataReady || hasError}
+            >
+              <RotateCw size={20}/><small>10</small>
+            </button>
+          </div>
+
+          <div className="class-recording-player-actions-group is-right">
+            <button
+              type="button"
+              className="class-recording-player-control"
+              aria-label={muted || volume === 0 ? 'Aktifkan suara' : 'Bisukan suara'}
+              title={muted || volume === 0 ? 'Aktifkan suara (M)' : 'Bisukan suara (M)'}
+              onClick={toggleMute}
+              disabled={hasError}
+            >
+              {muted || volume === 0 ? <VolumeX size={20}/> : <Volume2 size={20}/>} 
+            </button>
+
+            <input
+              className="class-recording-player-volume"
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={volume}
+              disabled={hasError}
+              aria-label="Volume"
+              aria-valuemin={0}
+              aria-valuemax={1}
+              aria-valuenow={volume}
+              onChange={(event) => {
+                const video = videoRef.current;
+                if (!video) return;
+                const nextVolume = Number(event.currentTarget.value);
+                if (!Number.isFinite(nextVolume)) return;
+                video.volume = Math.min(1, Math.max(0, nextVolume));
+                if (video.volume > 0 && video.muted) video.muted = false;
+              }}
+            />
+
+            <select
+              className="class-recording-player-speed"
+              aria-label="Kecepatan pemutaran"
+              title="Kecepatan pemutaran"
+              value={playbackRate}
+              disabled={hasError}
+              onChange={(event) => {
+                const video = videoRef.current;
+                if (!video) return;
+                const nextRate = Number(event.currentTarget.value);
+                if (!SPEED_OPTIONS.includes(nextRate as (typeof SPEED_OPTIONS)[number])) return;
+                video.playbackRate = nextRate;
+              }}
+            >
+              {SPEED_OPTIONS.map((rate) => (
+                <option key={rate} value={rate}>{rate}ÁE/option>
+              ))}
+            </select>
+
+            <button
+              type="button"
+              className="class-recording-player-control"
+              aria-label={isFullscreen ? 'Keluar fullscreen' : 'Fullscreen'}
+              title={isFullscreen ? 'Keluar Fullscreen (F)' : 'Fullscreen (F)'}
+              onClick={() => void toggleFullscreen()}
+            >
+              {isFullscreen ? <Minimize2 size={20}/> : <Maximize2 size={20}/>}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+==================================================
+FILE: .\src\class-recordings.css
+==================================================
+/* KOJAC LMS v1.2 窶・Class Recordings */
+.class-recordings-page{padding-bottom:60px}
+.class-recordings-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.class-recordings-header h1{margin:4px 0 8px;font-size:31px;letter-spacing:-.035em}
+.class-recordings-header p:not(.eyebrow){margin:0;max-width:760px;color:var(--muted);line-height:1.55}
+.class-recording-filter{display:grid;grid-template-columns:90px minmax(0,1fr);align-items:center;gap:10px;margin-bottom:14px;padding:15px}
+.class-recording-filter label{font-size:10.5px;font-weight:850;color:#54484a}
+.class-recording-filter select{width:100%;min-height:41px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.class-recording-form{margin-bottom:25px;padding:20px}
+.class-recording-section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:15px}
+.class-recording-section-heading h2{margin:4px 0 0;font-size:21px}
+.class-recording-section-heading>span{color:var(--muted);font-size:10.5px;font-weight:750}
+.class-recording-form form{margin:0}
+.class-recording-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.class-recording-form-grid label{display:block;margin:0;color:#514547;font-size:10.5px;font-weight:800}
+.class-recording-form-grid label.is-wide{grid-column:1/-1}
+.class-recording-form-grid input:not([type="checkbox"]),.class-recording-form-grid textarea{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit}
+.class-recording-form-grid input:not([type="checkbox"]){min-height:41px;padding:8px 10px}
+.class-recording-form-grid textarea{padding:10px 11px;resize:vertical;line-height:1.5}
+.class-recording-publish-toggle{display:flex!important;align-items:center;gap:9px;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fcfafb}
+.class-recording-publish-toggle input{width:17px;height:17px;margin:0;flex:0 0 auto}
+.class-recording-publish-toggle strong,.class-recording-publish-toggle small{display:block}
+.class-recording-publish-toggle strong{font-size:10.5px}
+.class-recording-publish-toggle small{margin-top:2px;color:var(--muted);font-size:8.5px;font-weight:600}
+.class-recording-form-message{margin-top:10px;padding:9px 11px;border-radius:9px;background:#fff8f9;color:#70424a;font-size:10.5px}
+.class-recording-form-actions{display:flex;justify-content:flex-end;margin-top:13px}
+.class-recording-primary,.class-recording-secondary,.class-recording-danger{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:8px 11px;border-radius:9px;font-size:10px;font-weight:850}
+.class-recording-primary{border:1px solid var(--maroon);background:var(--maroon);color:#fff}
+.class-recording-primary:hover{background:var(--maroon-dark)}
+.class-recording-secondary{border:1px solid var(--line);background:#fff;color:var(--maroon)}
+.class-recording-secondary:hover{background:#fff8f9}
+.class-recording-danger{border:1px solid #efd1d4;background:#fff8f8;color:#9a303b}
+.class-recording-danger:hover{background:#fff0f1}
+.class-recording-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.class-recording-card{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(57,27,32,.03)}
+.class-recording-cover{position:relative;aspect-ratio:16/8.3;display:grid;place-items:center;background:linear-gradient(145deg,#4d121a,#7a1f2b 60%,#a04956);color:#fff}
+.class-recording-cover::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 75% 20%,rgba(255,255,255,.15),transparent 38%)}
+.class-recording-cover-icon{position:relative;z-index:1;width:58px;height:58px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);border-radius:999px;background:rgba(255,255,255,.14);backdrop-filter:blur(6px)}
+.class-recording-cover>span{position:absolute;left:12px;bottom:10px;z-index:1;font-size:8px;font-weight:900;letter-spacing:.13em;opacity:.9}
+.class-recording-card-body{padding:15px}
+.class-recording-card-topline{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--maroon);font-size:9px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
+.class-recording-status{padding:4px 7px;border-radius:999px;letter-spacing:0;text-transform:none}
+.class-recording-status.is-published{background:#e8f6ed;color:#25683c}
+.class-recording-status.is-hidden{background:#eee9ea;color:#695c5e}
+.class-recording-card h3{margin:7px 0 8px;font-size:16px;line-height:1.3}
+.class-recording-meta{display:flex;flex-wrap:wrap;gap:7px 12px;color:var(--muted);font-size:9.5px}
+.class-recording-meta span{display:inline-flex;align-items:center;gap:5px}
+.class-recording-card-body>p{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;margin:11px 0 0;color:#625557;font-size:10.5px;line-height:1.55}
+.class-recording-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.class-recording-loading-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.class-recording-skeleton{height:285px;border-radius:16px;background:linear-gradient(90deg,#f0e9ea,#faf7f7,#f0e9ea);background-size:200% 100%;animation:dashboard-shimmer 1.2s infinite}
+.class-recording-state{display:grid;place-items:center;gap:7px;padding:42px 22px;border:1px solid var(--line);border-radius:16px;background:#fff;text-align:center;color:var(--muted)}
+.class-recording-state svg{color:var(--maroon)}
+.class-recording-state h2{margin:2px 0 0;color:var(--ink);font-size:18px}
+.class-recording-state p{margin:0;max-width:520px;font-size:10.5px;line-height:1.5}
+@media(max-width:1100px){
+  .class-recording-grid,
+  .class-recording-loading-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:760px){
+  .class-recording-filter{
+    grid-template-columns:1fr;
+  }
+
+  .class-recording-form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .class-recording-form-grid label.is-wide{
+    grid-column:auto;
+  }
+
+  .class-recording-grid,
+  .class-recording-loading-grid{
+    grid-template-columns:1fr;
+  }
+
+  .class-recording-section-heading{
+    flex-direction:column;
+  }
+}
+
+@media(max-width:480px){
+  .class-recordings-header h1{
+    font-size:27px;
+  }
+
+  .class-recording-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .class-recording-actions button{
+    width:100%;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .class-recording-skeleton{
+    animation:none;
+  }
+}
+/* Viewer */
+.class-recording-viewer-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:1300;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  overflow:auto;
+  overscroll-behavior:contain;
+  background:rgba(20,14,16,.94);
+  backdrop-filter:blur(10px);
+}
+.class-recording-viewer{
+  width:min(1020px,100%);
+  max-height:calc(100dvh - 40px);
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:18px;
+  background:#171314;
+  color:#fff;
+  box-shadow:0 30px 90px rgba(0,0,0,.58),0 0 0 1px rgba(94,24,36,.12);
+}
+.class-recording-viewer-header{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  min-height:60px;
+  padding:10px 11px 10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:linear-gradient(180deg,#21191b 0%,#1a1516 100%);
+}
+.class-recording-viewer-heading{
+  flex:1 1 auto;
+  min-width:0;
+}
+.class-recording-viewer-heading span,
+.class-recording-viewer-heading strong{display:block}
+.class-recording-viewer-heading span{
+  color:#bcaeb1;
+  font-size:8.5px;
+  font-weight:850;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.class-recording-viewer-heading strong{
+  display:-webkit-box;
+  margin-top:4px;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  color:#fff;
+  font-size:15px;
+  line-height:1.28;
+}
+.class-recording-viewer-header-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.class-recording-viewer-action,
+.class-recording-viewer-close{
+  flex:0 0 42px;
+  width:42px;
+  height:42px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:11px;
+  background:rgba(255,255,255,.065);
+  color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease;
+}
+.class-recording-viewer-action:hover,
+.class-recording-viewer-close:hover{
+  border-color:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.12);
+}
+.class-recording-viewer-action:active,
+.class-recording-viewer-close:active{transform:translateY(1px)}
+.class-recording-viewer-action:focus-visible,
+.class-recording-viewer-close:focus-visible{
+  outline:2px solid #f2cbd2;
+  outline-offset:2px;
+}
+
+.class-recording-viewer-stage{
+  flex:0 0 auto;
+  width:100%;
+  min-height:0;
+  overflow:hidden;
+  background:#050405;
+}
+.class-recording-video-shell{
+  position:relative;
+  width:100%;
+  max-width:100%;
+  aspect-ratio:16/9;
+  margin:0;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(83,23,34,.18),transparent 45%),
+    #050405;
+}
+.class-recording-video-shell iframe,
+.class-recording-video-shell video{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#000;
+}
+.class-recording-video-shell video{object-fit:contain}
+.class-recording-playback-state{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  color:#d9ced0;
+  background:#050405;
+  font-size:13px;
+  font-weight:700;
+  text-align:center;
+}
+.class-recording-playback-state.is-error{color:#f1d8dd}
+.class-recording-drive-popout-mask{
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:3;
+  width:72px;
+  height:84px;
+  background:#000;
+  pointer-events:auto;
+  user-select:none;
+}
+
+.class-recording-viewer-footer{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  min-height:44px;
+  padding:8px 15px;
+  border-top:1px solid rgba(255,255,255,.065);
+  background:#1a1516;
+}
+.class-recording-viewer-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px 14px;
+  color:#cabdc0;
+  font-size:9.5px;
+}
+.class-recording-viewer-meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.class-recording-viewer-meta svg{color:#c9959f}
+.class-recording-viewer-description{
+  flex:0 0 auto;
+  max-height:78px;
+  overflow:auto;
+  padding:8px 15px 11px;
+  border-top:1px solid rgba(255,255,255,.055);
+  background:#181415;
+}
+.class-recording-viewer-description strong{
+  display:block;
+  color:#d8cdd0;
+  font-size:8.5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.class-recording-viewer-description p{
+  margin:4px 0 0;
+  color:#bcaeb1;
+  font-size:9.5px;
+  line-height:1.55;
+}
+
+.class-recording-viewer:fullscreen{
+  position:relative;
+  width:100vw;
+  max-width:none;
+  height:100dvh;
+  max-height:none;
+  margin:0;
+  overflow:hidden;
+  border:0;
+  border-radius:0;
+  background:#000;
+  box-shadow:none;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-header{
+  position:absolute;
+  top:0;
+  right:0;
+  left:0;
+  z-index:5;
+  min-height:0;
+  justify-content:flex-end;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left));
+  border:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.7),rgba(0,0,0,0));
+  pointer-events:none;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-heading{display:none}
+.class-recording-viewer:fullscreen .class-recording-viewer-header-actions{
+  margin-left:auto;
+  pointer-events:auto;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-action,
+.class-recording-viewer:fullscreen .class-recording-viewer-close{
+  flex-basis:44px;
+  width:44px;
+  height:44px;
+  border-color:rgba(255,255,255,.16);
+  background:rgba(20,16,17,.76);
+  backdrop-filter:blur(8px);
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-stage{
+  flex:1 1 auto;
+  width:100%;
+  height:100%;
+  min-height:0;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  background:#000;
+}
+.class-recording-viewer:fullscreen .class-recording-video-shell{
+  width:min(100vw,calc(100dvh * 16 / 9));
+  max-width:100%;
+  height:min(100dvh,calc(100vw * 9 / 16));
+  max-height:100%;
+  aspect-ratio:16/9;
+  margin:0;
+}
+.class-recording-viewer:fullscreen .class-recording-viewer-footer,
+.class-recording-viewer:fullscreen .class-recording-viewer-description{display:none}
+
+@media(max-width:900px){
+  .class-recording-viewer-backdrop{padding:12px}
+  .class-recording-viewer{max-height:calc(100dvh - 24px);border-radius:16px}
+  .class-recording-drive-popout-mask{width:58px;height:68px}
+}
+
+@media(max-width:760px){
+  .class-recording-viewer-backdrop{
+    place-items:center;
+    padding:8px;
+    background:rgba(20,14,16,.97);
+  }
+  .class-recording-viewer{
+    width:100%;
+    height:auto;
+    max-height:calc(100dvh - 16px);
+    border-radius:14px;
+    background:#171314;
+  }
+  .class-recording-viewer-header{
+    min-height:54px;
+    padding:7px 8px 7px 12px;
+  }
+  .class-recording-viewer-heading strong{
+    font-size:13.5px;
+    line-height:1.22;
+  }
+  .class-recording-viewer-heading span{font-size:8px}
+  .class-recording-viewer-header-actions{gap:6px}
+  .class-recording-viewer-action,
+  .class-recording-viewer-close{
+    flex-basis:44px;
+    width:44px;
+    height:44px;
+  }
+  .class-recording-viewer-stage{
+    flex:0 0 auto;
+    width:100%;
+  }
+  .class-recording-video-shell{
+    width:100%;
+    max-width:100%;
+    aspect-ratio:16/9;
+    margin:0;
+  }
+  .class-recording-drive-popout-mask{
+    width:48px;
+    height:56px;
+  }
+  .class-recording-viewer-footer{
+    min-height:42px;
+    padding:7px 11px;
+  }
+  .class-recording-viewer-meta{
+    width:100%;
+    gap:6px 10px;
+    font-size:9px;
+  }
+  .class-recording-viewer-description{
+    max-height:76px;
+    padding:7px 11px 10px;
+  }
+}
+
+@media(max-width:480px){
+  .class-recording-viewer-backdrop{padding:6px}
+  .class-recording-viewer{max-height:calc(100dvh - 12px);border-radius:12px}
+  .class-recording-viewer-heading strong{font-size:13px}
+  .class-recording-viewer-meta{gap:5px 10px}
+}
+
+@media(max-height:650px) and (min-width:761px){
+  .class-recording-viewer-backdrop{padding:10px}
+  .class-recording-viewer{max-height:calc(100dvh - 20px)}
+  .class-recording-viewer-description{display:none}
+}
+
+/* Rekaman Kelas library controls */
+.class-recording-library-toolbar{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 190px;
+  gap:12px;
+  margin-bottom:18px;
+  padding:14px 15px;
+}
+.class-recording-library-toolbar label{
+  display:grid;
+  gap:6px;
+  color:#514547;
+  font-size:9.5px;
+  font-weight:850;
+}
+.class-recording-library-toolbar input,
+.class-recording-library-toolbar select{
+  width:100%;
+  min-height:41px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
+}
+.class-recording-cover{
+  overflow:hidden;
+}
+.class-recording-thumbnail{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  background:#4d121a;
+}
+.class-recording-cover::after{
+  z-index:1;
+  background:
+    linear-gradient(to top,rgba(28,10,13,.72),rgba(28,10,13,.06) 55%),
+    radial-gradient(circle at 75% 20%,rgba(255,255,255,.13),transparent 38%);
+}
+.class-recording-cover-icon{
+  z-index:2;
+}
+.class-recording-cover>span{
+  z-index:2;
+}
+.class-recording-edit-form{
+  border-left:3px solid var(--maroon);
+}
+@media(max-width:760px){
+  .class-recording-library-toolbar{
+    grid-template-columns:1fr;
+  }
+}
+
+/* KOJAC custom R2 video player  EPhase 2 visual polish */
+.class-recording-custom-player{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(90,26,39,.16),transparent 43%),
+    linear-gradient(180deg,#0b0809 0%,#030203 100%);
+  color:#fff;
+  isolation:isolate;
+}
+.class-recording-custom-player::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  z-index:2;
+  height:42%;
+  pointer-events:none;
+  background:linear-gradient(to top,rgba(0,0,0,.34),transparent);
+}
+.class-recording-custom-player video{
+  z-index:1;
+  cursor:pointer;
+  object-fit:contain;
+}
+.class-recording-player-loading{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  color:#fff;
+  background:rgba(0,0,0,.1);
+}
+.class-recording-player-loading svg{
+  width:32px;
+  height:32px;
+  padding:6px;
+  border-radius:999px;
+  background:rgba(23,15,17,.68);
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+  animation:class-recording-player-spin .9s linear infinite;
+}
+@keyframes class-recording-player-spin{
+  to{transform:rotate(360deg)}
+}
+.class-recording-player-center-play{
+  position:absolute;
+  top:50%;
+  left:50%;
+  z-index:5;
+  width:68px;
+  height:68px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:999px;
+  background:rgba(111,25,39,.94);
+  color:#fff;
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.42),
+    0 0 0 7px rgba(91,21,34,.12);
+  transition:transform .16s ease,background-color .16s ease,box-shadow .16s ease;
+}
+.class-recording-player-center-play:hover{
+  transform:translate(-50%,-50%) scale(1.045);
+  background:var(--maroon);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.46),
+    0 0 0 8px rgba(111,25,39,.15);
+}
+.class-recording-player-center-play:active{
+  transform:translate(-50%,-50%) scale(.98);
+}
+.class-recording-player-center-play:focus-visible{
+  outline:2px solid #f4ccd3;
+  outline-offset:4px;
+}
+.class-recording-player-error{
+  position:absolute;
+  inset:0;
+  z-index:7;
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  gap:11px;
+  padding:24px 20px 92px;
+  background:rgba(5,3,4,.9);
+  color:#f7e7ea;
+  text-align:center;
+}
+.class-recording-player-error strong{
+  max-width:320px;
+  font-size:13px;
+  line-height:1.45;
+}
+.class-recording-player-error button{
+  min-height:38px;
+  padding:8px 14px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  background:var(--maroon);
+  color:#fff;
+  box-shadow:0 8px 22px rgba(0,0,0,.25);
+  font:inherit;
+  font-size:10.5px;
+  font-weight:850;
+  transition:background-color .16s ease,transform .16s ease;
+}
+.class-recording-player-error button:hover{background:var(--maroon-dark)}
+.class-recording-player-error button:active{transform:translateY(1px)}
+.class-recording-player-error button:focus-visible{
+  outline:2px solid #f4ccd3;
+  outline-offset:3px;
+}
+
+.class-recording-player-controls{
+  position:absolute;
+  right:0;
+  bottom:0;
+  left:0;
+  z-index:6;
+  display:grid;
+  gap:8px;
+  padding:34px 14px 11px;
+  background:
+    linear-gradient(to top,rgba(0,0,0,.94) 0%,rgba(0,0,0,.72) 46%,rgba(0,0,0,.24) 76%,transparent 100%);
+}
+.class-recording-player-timeline-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+}
+.class-recording-player-time{
+  min-width:50px;
+  color:#f5eef0;
+  font-size:11px;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  font-weight:760;
+  line-height:1;
+  letter-spacing:.012em;
+  white-space:nowrap;
+  text-shadow:0 1px 3px rgba(0,0,0,.58);
+}
+.class-recording-player-time:last-child{text-align:right}
+.class-recording-player-timeline,
+.class-recording-player-volume{
+  margin:0;
+  accent-color:var(--maroon);
+  color-scheme:dark;
+  cursor:pointer;
+}
+.class-recording-player-timeline{
+  width:100%;
+  min-width:0;
+  height:24px;
+}
+.class-recording-player-volume{
+  width:80px;
+  height:22px;
+}
+.class-recording-player-timeline:hover,
+.class-recording-player-volume:hover{accent-color:var(--maroon-dark)}
+.class-recording-player-timeline:disabled,
+.class-recording-player-volume:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+}
+
+.class-recording-player-actions-row{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.class-recording-player-actions-group{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.class-recording-player-actions-group.is-right{
+  justify-content:flex-end;
+  gap:7px;
+}
+.class-recording-player-control{
+  position:relative;
+  flex:0 0 40px;
+  width:40px;
+  height:40px;
+  padding:0;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:rgba(255,255,255,.07);
+  color:#fff;
+  line-height:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  transition:background-color .15s ease,border-color .15s ease,transform .15s ease;
+}
+.class-recording-player-control svg{display:block}
+.class-recording-player-control:hover:not(:disabled){
+  border-color:rgba(255,255,255,.21);
+  background:rgba(255,255,255,.125);
+}
+.class-recording-player-control:active:not(:disabled){transform:translateY(1px)}
+.class-recording-player-control:disabled{
+  cursor:not-allowed;
+  opacity:.4;
+}
+.class-recording-player-actions-row > .class-recording-player-actions-group:first-child > .class-recording-player-control:first-child{
+  border-color:rgba(255,255,255,.2);
+  background:var(--maroon);
+  box-shadow:0 5px 16px rgba(72,13,24,.25);
+}
+.class-recording-player-actions-row > .class-recording-player-actions-group:first-child > .class-recording-player-control:first-child:hover:not(:disabled){
+  background:var(--maroon-dark);
+}
+.class-recording-player-control:focus-visible,
+.class-recording-player-speed:focus-visible,
+.class-recording-player-timeline:focus-visible,
+.class-recording-player-volume:focus-visible{
+  outline:2px solid #e8aeb8;
+  outline-offset:2px;
+}
+.class-recording-player-control.is-skip small{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-39%);
+  color:#fff;
+  font-size:7.25px;
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);
+}
+.class-recording-player-speed{
+  height:40px;
+  min-width:62px;
+  padding:0 7px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:#20191b;
+  color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  font:inherit;
+  font-size:10px;
+  font-weight:800;
+  line-height:1;
+  text-align:center;
+  cursor:pointer;
+  transition:background-color .15s ease,border-color .15s ease;
+}
+.class-recording-player-speed:hover:not(:disabled){
+  border-color:rgba(255,255,255,.2);
+  background:#2a2023;
+}
+.class-recording-player-speed:disabled{
+  cursor:not-allowed;
+  opacity:.42;
+}
+
+.class-recording-custom-player:fullscreen{
+  position:relative;
+  inset:auto;
+  width:100vw;
+  height:100dvh;
+  overflow:hidden;
+  background:#000;
+}
+.class-recording-custom-player:fullscreen video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.class-recording-custom-player:fullscreen .class-recording-player-controls{
+  padding-top:42px;
+  padding-right:max(16px,env(safe-area-inset-right));
+  padding-bottom:max(14px,env(safe-area-inset-bottom));
+  padding-left:max(16px,env(safe-area-inset-left));
+}
+
+@media(max-width:760px){
+  .class-recording-player-controls{
+    gap:6px;
+    padding:26px 8px 8px;
+  }
+  .class-recording-player-timeline-row{gap:8px}
+  .class-recording-player-time{
+    min-width:42px;
+    font-size:9.75px;
+  }
+  .class-recording-player-actions-row{gap:8px}
+  .class-recording-player-actions-group{gap:5px}
+  .class-recording-player-control{
+    flex-basis:40px;
+    width:40px;
+    height:40px;
+    border-radius:9px;
+  }
+  .class-recording-player-volume{display:none}
+  .class-recording-player-speed{
+    height:40px;
+    min-width:58px;
+    padding:0 5px;
+    border-radius:9px;
+    font-size:9.75px;
+  }
+  .class-recording-player-center-play{
+    width:62px;
+    height:62px;
+  }
+  .class-recording-player-error{padding:18px 14px 82px}
+}
+
+@media(max-width:400px){
+  .class-recording-player-controls{
+    gap:5px;
+    padding-right:6px;
+    padding-left:6px;
+  }
+  .class-recording-player-timeline-row{gap:6px}
+  .class-recording-player-time{
+    min-width:40px;
+    font-size:9.25px;
+  }
+  .class-recording-player-actions-row{gap:6px}
+  .class-recording-player-actions-group{gap:3px}
+  .class-recording-player-control{
+    flex-basis:40px;
+    width:40px;
+    height:40px;
+  }
+  .class-recording-player-speed{
+    height:40px;
+    min-width:56px;
+    padding:0 4px;
+    font-size:9px;
+  }
+  .class-recording-player-center-play{
+    width:58px;
+    height:58px;
+  }
+}
+
+@media(max-height:500px) and (orientation:landscape){
+  .class-recording-player-controls{
+    gap:4px;
+    padding-top:22px;
+    padding-bottom:max(6px,env(safe-area-inset-bottom));
+  }
+  .class-recording-player-control{
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+  }
+  .class-recording-player-speed{height:38px}
+}
+
+@media(hover:hover){
+  .class-recording-player-center-play:hover{
+    transform:translate(-50%,-50%) scale(1.045);
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .class-recording-player-loading svg{animation:none}
+  .class-recording-player-center-play,
+  .class-recording-player-control,
+  .class-recording-player-error button,
+  .class-recording-viewer-action,
+  .class-recording-viewer-close{
+    transition:none;
+  }
+}
+
+==================================================
+FILE: .\src\features\recordings\playbackSource.ts
+==================================================
+import { supabase } from '../../lib/supabase';
+
+export type RecordingPlaybackSource = {
+  url: string;
+  type: string;
+  expiresAt: string;
+};
+
+type PlaybackSourceResponse = {
+  available?: boolean;
+  source?: RecordingPlaybackSource;
+  error?: string;
+};
+
+export async function getRecordingPlaybackSource(
+  recordingId: string,
+): Promise<RecordingPlaybackSource | null> {
+  const { data, error } = await supabase.functions.invoke<PlaybackSourceResponse>(
+    'recording-playback-source',
+    {
+      body: { recording_id: recordingId },
+    },
+  );
+
+  if (error) {
+    throw new Error(error.message || 'Sumber pemutaran rekaman belum tersedia.');
+  }
+
+  if (!data?.available || !data.source?.url) {
+    return null;
+  }
+
+  return data.source;
+}
+ M src/class-recordings.css
+ M src/pages/ClassRecordingsPage.tsx
+?? KOJAC-player-current.txt
+?? src/features/recordings/RecordingVideoPlayer.tsx
