@@ -44,6 +44,20 @@ function isEditableTarget(target: EventTarget | null) {
     || target.tagName === 'BUTTON';
 }
 
+type LockableScreenOrientation = {
+  lock?: (orientation: 'landscape') => Promise<void>;
+  unlock?: () => void;
+};
+
+function getLockableScreenOrientation() {
+  return (screen as Screen & { orientation?: LockableScreenOrientation }).orientation ?? null;
+}
+
+function isTouchEnvironment() {
+  return navigator.maxTouchPoints > 0
+    || window.matchMedia('(pointer: coarse)').matches;
+}
+
 export function RecordingVideoPlayer({ source, title }: RecordingVideoPlayerProps) {
 const playerRef = useRef<HTMLDivElement>(null);
 const videoRef = useRef<HTMLVideoElement>(null);
@@ -157,6 +171,30 @@ const togglePlay = useCallback(() => {
     video.muted = true;
   }, []);
 
+  const requestLandscapeOrientation = useCallback(async () => {
+    if (!isTouchEnvironment()) return;
+
+    const orientation = getLockableScreenOrientation();
+    if (typeof orientation?.lock !== 'function') return;
+
+    try {
+      await orientation.lock('landscape');
+    } catch {
+      // Orientation locking is optional. Fullscreen must remain usable if unsupported/rejected.
+    }
+  }, []);
+
+  const unlockScreenOrientation = useCallback(() => {
+    const orientation = getLockableScreenOrientation();
+    if (typeof orientation?.unlock !== 'function') return;
+
+    try {
+      orientation.unlock();
+    } catch {
+      // Orientation unlock is best-effort and must never block fullscreen exit/cleanup.
+    }
+  }, []);
+
   const toggleFullscreen = useCallback(async () => {
     const player = playerRef.current;
     if (!player) return;
@@ -164,14 +202,20 @@ const togglePlay = useCallback(() => {
     try {
       if (document.fullscreenElement === player) {
         await document.exitFullscreen();
-      } else {
-        if (document.fullscreenElement) await document.exitFullscreen();
-        await player.requestFullscreen();
+        unlockScreenOrientation();
+        return;
       }
+
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+
+      await player.requestFullscreen();
+      await requestLandscapeOrientation();
     } catch (error) {
       console.error('KOJAC video fullscreen failed', error);
     }
-  }, []);
+  }, [requestLandscapeOrientation, unlockScreenOrientation]);
 
 const retryPlayback = useCallback(() => {
   const video = videoRef.current;
@@ -334,12 +378,20 @@ useEffect(() => {
 
   useEffect(() => {
     const onFullscreenChange = () => {
-      setIsFullscreen(document.fullscreenElement === playerRef.current);
+      const nextIsFullscreen = document.fullscreenElement === playerRef.current;
+      setIsFullscreen(nextIsFullscreen);
+
+      if (!nextIsFullscreen) {
+        unlockScreenOrientation();
+      }
     };
 
     document.addEventListener('fullscreenchange', onFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
-  }, []);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      unlockScreenOrientation();
+    };
+  }, [unlockScreenOrientation]);
 
   useEffect(() => {
     clearControlsHideTimer();
@@ -616,7 +668,7 @@ onEnded={() => {
               onClick={toggleMute}
               disabled={hasError}
             >
-              {muted || volume === 0 ? <VolumeX size={20}/> : <Volume2 size={20}/>} 
+              {muted || volume === 0 ? <VolumeX size={20}/> : <Volume2 size={20}/>}
             </button>
 
             <input

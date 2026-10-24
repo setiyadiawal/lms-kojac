@@ -111,7 +111,7 @@
   display:grid;
   place-items:center;
   padding:20px;
-  overflow:auto;
+  overflow:hidden;
   overscroll-behavior:contain;
   background:rgba(20,14,16,.94);
   backdrop-filter:blur(10px);
@@ -121,8 +121,7 @@
   max-height:calc(100dvh - 40px);
   display:flex;
   flex-direction:column;
-  overflow-x:hidden;
-  overflow-y:auto;
+  overflow:hidden;
   border:1px solid rgba(255,255,255,.09);
   border-radius:18px;
   background:#171314;
@@ -202,6 +201,8 @@
   flex:0 0 auto;
   width:100%;
   min-height:0;
+  display:grid;
+  place-items:center;
   overflow:hidden;
   background:#050405;
 }
@@ -298,7 +299,7 @@
 
 .class-recording-viewer:fullscreen{
   position:relative;
-  width:100vw;
+  width:100dvw;
   max-width:none;
   height:100dvh;
   max-height:none;
@@ -347,9 +348,9 @@
   background:#000;
 }
 .class-recording-viewer:fullscreen .class-recording-video-shell{
-  width:min(100vw,calc(100dvh * 16 / 9));
+  width:min(100dvw,177.7778dvh);
   max-width:100%;
-  height:min(100dvh,calc(100vw * 9 / 16));
+  height:min(100dvh,56.25dvw);
   max-height:100%;
   aspect-ratio:16/9;
   margin:0;
@@ -428,10 +429,83 @@
   .class-recording-viewer-meta{gap:5px 10px}
 }
 
-@media(max-height:650px) and (min-width:761px){
-  .class-recording-viewer-backdrop{padding:10px}
-  .class-recording-viewer{max-height:calc(100dvh - 20px)}
-  .class-recording-viewer-description{display:none}
+@media(max-height:820px) and (min-width:761px){
+  .class-recording-viewer-backdrop{
+    padding:10px;
+    overflow:hidden;
+  }
+  .class-recording-viewer{
+    max-height:calc(100dvh - 20px);
+    overflow:hidden;
+  }
+  .class-recording-video-shell{
+    width:min(100%,calc(177.7778dvh - 327.1112px));
+  }
+  .class-recording-viewer-description{
+    max-height:58px;
+  }
+}
+
+@media(max-height:720px) and (min-width:761px){
+  .class-recording-viewer-header{
+    min-height:56px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+  .class-recording-viewer-footer{
+    min-height:40px;
+    padding-top:6px;
+    padding-bottom:6px;
+  }
+  .class-recording-viewer-description{
+    max-height:48px;
+  }
+  .class-recording-video-shell{
+    width:min(100%,calc(177.7778dvh - 298.6668px));
+  }
+}
+
+@media(max-height:500px) and (orientation:landscape){
+  .class-recording-viewer-backdrop{
+    padding:
+      max(4px,env(safe-area-inset-top))
+      max(4px,env(safe-area-inset-right))
+      max(4px,env(safe-area-inset-bottom))
+      max(4px,env(safe-area-inset-left));
+    overflow:hidden;
+  }
+  .class-recording-viewer{
+    max-height:calc(100dvh - 8px);
+    overflow:hidden;
+    border-radius:10px;
+  }
+  .class-recording-viewer-header{
+    min-height:46px;
+    padding:4px 6px 4px 10px;
+  }
+  .class-recording-viewer-heading strong{
+    font-size:12.5px;
+    line-height:1.18;
+  }
+  .class-recording-viewer-action,
+  .class-recording-viewer-close{
+    flex-basis:40px;
+    width:40px;
+    height:40px;
+  }
+  .class-recording-viewer-stage{
+    flex:0 0 auto;
+  }
+  .class-recording-video-shell{
+    width:min(100%,calc(177.7778dvh - 199.1112px));
+  }
+  .class-recording-viewer-footer{
+    min-height:34px;
+    padding:4px 10px;
+  }
+  .class-recording-viewer-description{
+    display:none;
+  }
 }
 
 /* Rekaman Kelas library controls */
@@ -835,7 +909,7 @@
 .class-recording-custom-player:fullscreen{
   position:relative;
   inset:auto;
-  width:100vw;
+  width:100dvw;
   height:100dvh;
   overflow:hidden;
   background:#000;

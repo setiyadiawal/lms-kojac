@@ -1,4 +1,4 @@
-/* KOJAC LMS v1.2 — Google Drive Video Upload */
+/* KOJAC LMS — Recording upload (primary private R2 + legacy Drive) */
 .recording-upload-page{padding-bottom:60px}
 .recording-upload-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
 .recording-upload-header h1{margin:4px 0 8px;font-size:31px;letter-spacing:-.035em}
@@ -99,4 +99,114 @@
   display:flex;
   align-items:center;
   gap:7px;
+}
+
+
+/* Phase 3C.1 — primary private R2 upload */
+.recording-upload-storage-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  padding:8px 11px;
+  border:1px solid #cfded3;
+  border-radius:11px;
+  background:#f6fbf7;
+  color:#28683c;
+  white-space:nowrap;
+}
+.recording-upload-storage-badge>svg{flex:0 0 auto}
+.recording-upload-storage-badge span,
+.recording-upload-storage-badge strong,
+.recording-upload-storage-badge small{display:block}
+.recording-upload-storage-badge strong{font-size:10px}
+.recording-upload-storage-badge small{
+  margin-top:2px;
+  color:#66816f;
+  font-size:8.4px;
+  font-weight:700;
+}
+.recording-upload-unpublished-note{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+  padding:10px 11px;
+  border:1px solid #d8dfe8;
+  border-radius:10px;
+  background:#f8faff;
+  color:#405b7a;
+}
+.recording-upload-unpublished-note>svg{flex:0 0 auto}
+.recording-upload-unpublished-note span,
+.recording-upload-unpublished-note strong,
+.recording-upload-unpublished-note small{display:block;min-width:0}
+.recording-upload-unpublished-note strong{
+  font-size:10px;
+  overflow-wrap:anywhere;
+}
+.recording-upload-unpublished-note small{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8.5px;
+  font-weight:650;
+  line-height:1.4;
+}
+.recording-upload-retry-complete{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #edd8da;
+}
+.recording-upload-retry-complete span{
+  min-width:0;
+  color:#795158;
+  font-size:8.8px;
+  line-height:1.45;
+}
+.recording-upload-retry-complete button{
+  flex:0 0 auto;
+  min-height:34px;
+  padding:7px 10px;
+  border:1px solid var(--maroon);
+  border-radius:8px;
+  background:var(--maroon);
+  color:#fff;
+  font-size:8.8px;
+  font-weight:850;
+}
+.recording-upload-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:41px;
+  padding:9px 14px;
+  border:1px solid #d7b9be;
+  border-radius:10px;
+  background:#fff;
+  color:var(--maroon);
+  font-size:10.5px;
+  font-weight:850;
+}
+.recording-upload-secondary:disabled{opacity:.5;cursor:not-allowed}
+.recording-upload-selected-file>div{min-width:0}
+.recording-upload-selected-file strong{
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+@media(max-width:800px){
+  .recording-upload-storage-badge{white-space:normal}
+  .recording-upload-retry-complete{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .recording-upload-retry-complete button{width:100%}
+}
+@media(max-width:480px){
+  .recording-upload-storage-badge{width:100%}
+  .recording-upload-secondary{width:100%}
 }

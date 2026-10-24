@@ -7,7 +7,6 @@ import {
   HardDrive,
   History,
   Link2,
-  LogIn,
   Plus,
   School,
   Square,
@@ -19,8 +18,8 @@ import '../recording-upload-background.css';
 import {
   cancelBackgroundUpload,
   clearFinishedBackgroundUpload,
-  connectBackgroundGoogleDrive,
-  startBackgroundRecordingUpload,
+  retryBackgroundUploadComplete,
+  startBackgroundR2RecordingUpload,
   useBackgroundRecordingUpload,
 } from '../features/recordings/backgroundRecordingUpload';
 import { supabase } from '../lib/supabase';
@@ -35,12 +34,19 @@ type TeachingClassRow = {
   program_name: string | null;
 };
 
+type ManagementClassRow = {
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  class_status: 'planned' | 'active' | 'completed' | 'cancelled';
+  program_name: string | null;
+};
+
 type UploadForm = {
   title: string;
   description: string;
   recordedAt: string;
   duration: string;
-  isPublished: boolean;
 };
 
 type ManualRecordingForm = {
@@ -54,6 +60,13 @@ type ManualRecordingForm = {
 
 const TEACHING_ROLES = new Set<AppRole>([
   'pengajar',
+  'administrator',
+  'manager',
+  'co_founder',
+  'founder',
+]);
+
+const MANAGEMENT_ROLES = new Set<AppRole>([
   'administrator',
   'manager',
   'co_founder',
@@ -94,7 +107,6 @@ function initialForm(): UploadForm {
     description: '',
     recordedAt: localDateTimeInput(),
     duration: '',
-    isPublished: true,
   };
 }
 
@@ -191,22 +203,34 @@ export function UploadClassRecordingPage() {
   );
 
   const loadClasses = useCallback(async () => {
-    if (!canTeach) return;
+    if (!role || !TEACHING_ROLES.has(role)) return;
 
     setLoadingClasses(true);
     setPageError('');
 
-    const { data, error } = await supabase.rpc('get_my_teaching_classes');
+    const isManagement = MANAGEMENT_ROLES.has(role);
+    const { data, error } = isManagement
+      ? await supabase.rpc('get_management_classes_overview')
+      : await supabase.rpc('get_my_teaching_classes');
 
     if (error) {
       console.error('KOJAC upload recording classes failed', error);
       setClasses([]);
-      setPageError('Kelas mengajar belum dapat dimuat.');
+      setPageError('Kelas belum dapat dimuat.');
       setLoadingClasses(false);
       return;
     }
 
-    const rows = (data ?? []) as TeachingClassRow[];
+    const rows = isManagement
+      ? ((data ?? []) as ManagementClassRow[]).map((row) => ({
+          class_id: row.class_id,
+          class_code: row.class_code,
+          class_name: row.class_name,
+          class_status: row.class_status,
+          program_name: row.program_name,
+        }))
+      : (data ?? []) as TeachingClassRow[];
+
     setClasses(rows);
 
     setSelectedClassId((current) => {
@@ -218,7 +242,7 @@ export function UploadClassRecordingPage() {
     });
 
     setLoadingClasses(false);
-  }, [canTeach]);
+  }, [role]);
 
   useEffect(() => {
     if (!authLoading && canTeach) void loadClasses();
@@ -233,27 +257,9 @@ export function UploadClassRecordingPage() {
       setFile(null);
       setForm(initialForm());
       setPageError('');
-      setPageMessage('Video berhasil diupload dan sudah masuk Rekaman Kelas.');
+      setPageMessage('Upload selesai. Status: Siap / Belum Dipublikasikan.');
     }
   }, [uploadState.job]);
-
-  const connectDrive = async () => {
-    setPageError('');
-    setPageMessage('');
-
-    try {
-      await connectBackgroundGoogleDrive();
-      setPageMessage(
-        'Google Drive terhubung. Koneksi tetap aktif setelah refresh selama sesi Google masih berlaku.',
-      );
-    } catch (error) {
-      setPageError(
-        error instanceof Error
-          ? error.message
-          : 'Google Drive belum dapat dihubungkan.',
-      );
-    }
-  };
 
   const chooseFile = async (nextFile: File | null) => {
     setPageError('');
@@ -265,9 +271,18 @@ export function UploadClassRecordingPage() {
       return;
     }
 
-    if (!nextFile.type.startsWith('video/')) {
+    const fileName = nextFile.name.toLowerCase();
+    const mimeType = nextFile.type.toLowerCase();
+
+    if (nextFile.size <= 0) {
       setFile(null);
-      setPageError('Pilih file video yang valid.');
+      setPageError('File video kosong atau tidak dapat dibaca.');
+      return;
+    }
+
+    if (!fileName.endsWith('.mp4') || (mimeType && mimeType !== 'video/mp4')) {
+      setFile(null);
+      setPageError('Format video harus MP4.');
       return;
     }
 
@@ -292,11 +307,6 @@ export function UploadClassRecordingPage() {
   const uploadVideo = async () => {
     setPageError('');
     setPageMessage('');
-
-    if (!uploadState.driveConnected) {
-      setPageError('Hubungkan Google Drive terlebih dahulu.');
-      return;
-    }
 
     if (!selectedClass) {
       setPageError('Pilih kelas terlebih dahulu.');
@@ -330,7 +340,7 @@ export function UploadClassRecordingPage() {
     }
 
     try {
-      await startBackgroundRecordingUpload({
+      await startBackgroundR2RecordingUpload({
         file,
         classId: selectedClass.class_id,
         className: selectedClass.class_name,
@@ -338,7 +348,6 @@ export function UploadClassRecordingPage() {
         description: form.description,
         recordedAt,
         durationMinutes: duration,
-        isPublished: form.isPublished,
       });
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
@@ -350,6 +359,21 @@ export function UploadClassRecordingPage() {
         error instanceof Error
           ? error.message
           : 'Upload video gagal.',
+      );
+    }
+  };
+
+  const retryComplete = async () => {
+    setPageError('');
+    setPageMessage('');
+
+    try {
+      await retryBackgroundUploadComplete();
+    } catch (error) {
+      setPageError(
+        error instanceof Error
+          ? error.message
+          : 'Penyelesaian upload belum berhasil.',
       );
     }
   };
@@ -427,44 +451,19 @@ export function UploadClassRecordingPage() {
           <p className="eyebrow">PENGAJAR KOJAC</p>
           <h1 className="title-icon"><CloudUpload/>Upload Video</h1>
           <p>
-            Upload rekaman kelas ke penyimpanan video KOJAC.
+            Upload rekaman langsung ke penyimpanan private KOJAC.
             Anda boleh membuka menu LMS lain selama proses upload berjalan.
           </p>
         </div>
 
-        <button
-          className={`recording-drive-connect ${uploadState.driveConnected ? 'is-connected' : ''}`}
-          type="button"
-          disabled={
-            uploadState.connectingDrive
-            || uploading
-            || uploadState.driveConnected
-            || !uploadState.googleClientConfigured
-          }
-          onClick={() => void connectDrive()}
-        >
-          {uploadState.driveConnected
-            ? <CheckCircle2 size={17}/>
-            : <LogIn size={17}/>}
-          {uploadState.driveConnected
-            ? 'Google Drive Terhubung'
-            : uploadState.connectingDrive
-              ? 'Menghubungkan…'
-              : 'Hubungkan Google Drive'}
-        </button>
+        <div className="recording-upload-storage-badge">
+          <HardDrive size={17}/>
+          <span>
+            <strong>KOJAC Private R2</strong>
+            <small>Tanpa login eksternal</small>
+          </span>
+        </div>
       </header>
-
-      {!uploadState.googleClientConfigured && (
-        <section className="recording-upload-config-warning" role="alert">
-          <AlertCircle size={22}/>
-          <div>
-            <strong>Google OAuth belum dikonfigurasi.</strong>
-            <p>
-              Tambahkan <code>VITE_GOOGLE_CLIENT_ID</code> pada environment Vercel.
-            </p>
-          </div>
-        </section>
-      )}
 
       {loadingClasses ? (
         <div className="recording-upload-loading">Memuat kelas mengajar…</div>
@@ -481,7 +480,7 @@ export function UploadClassRecordingPage() {
               <p className="eyebrow">VIDEO BARU</p>
               <h2>Upload Rekaman Kelas</h2>
             </div>
-            <span>Video tidak disimpan di Supabase.</span>
+            <span>Direct multipart upload ke private R2.</span>
           </div>
 
           <div className="recording-upload-form-grid">
@@ -543,21 +542,13 @@ export function UploadClassRecordingPage() {
               />
             </label>
 
-            <label className="recording-upload-toggle">
-              <input
-                type="checkbox"
-                checked={form.isPublished}
-                disabled={uploading}
-                onChange={(event) => setForm((current) => ({
-                  ...current,
-                  isPublished: event.target.checked,
-                }))}
-              />
+            <div className="recording-upload-unpublished-note" role="status">
+              <CheckCircle2 size={18}/>
               <span>
-                <strong>Publikasikan ke Rekaman Kelas</strong>
-                <small>Matikan jika video belum siap ditonton siswa.</small>
+                <strong>Status setelah upload: Belum Dipublikasikan</strong>
+                <small>Upload tidak otomatis membuat rekaman terlihat oleh siswa.</small>
               </span>
-            </label>
+            </div>
 
             <label className="is-wide">
               Deskripsi
@@ -581,7 +572,7 @@ export function UploadClassRecordingPage() {
                 <FileVideo2 size={19}/>
                 <div>
                   <strong>File Video</strong>
-                  <span>Video dikirim langsung dari browser tanpa melalui Supabase.</span>
+                  <span>MP4 dikirim langsung dari browser ke private R2; media tidak diproxy lewat Edge Function.</span>
                 </div>
               </div>
 
@@ -590,7 +581,7 @@ export function UploadClassRecordingPage() {
                 Pilih Video
                 <input
                   type="file"
-                  accept="video/*"
+                  accept=".mp4,video/mp4"
                   disabled={uploading}
                   onChange={(event) => {
                     void chooseFile(event.target.files?.[0] ?? null);
@@ -649,11 +640,26 @@ export function UploadClassRecordingPage() {
                       {' / '}
                       {bytesLabel(uploadState.job.totalBytes)}
                     </span>
-                    <button type="button" onClick={cancelBackgroundUpload}>
-                      <Square size={12}/> Batalkan
-                    </button>
+                    {uploadState.job.canCancel !== false ? (
+                      <button type="button" onClick={cancelBackgroundUpload}>
+                        <Square size={12}/> Batalkan
+                      </button>
+                    ) : (
+                      <span>Menyelesaikan…</span>
+                    )}
                   </div>
                 </>
+              )}
+
+              {uploadState.job.status === 'error' && uploadState.job.canRetryComplete && (
+                <div className="recording-upload-retry-complete">
+                  <span>
+                    Jangan mulai upload baru. Coba konfirmasi COMPLETE dengan sesi yang sama.
+                  </span>
+                  <button type="button" onClick={() => void retryComplete()}>
+                    Coba Selesaikan Lagi
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -679,7 +685,7 @@ export function UploadClassRecordingPage() {
                 || !file
                 || !selectedClass
                 || !form.title.trim()
-                || !uploadState.driveConnected
+                || Boolean(uploadState.job?.canRetryComplete)
               }
               onClick={() => void uploadVideo()}
             >
@@ -696,10 +702,10 @@ export function UploadClassRecordingPage() {
         <section className="recording-upload-panel panel recording-manual-add-panel">
           <div className="recording-upload-section-heading">
             <div>
-              <p className="eyebrow">TAMBAH REKAMAN</p>
+              <p className="eyebrow">OPSI LEGACY</p>
               <h2><Link2 size={19}/> Tambahkan dari Google Drive</h2>
             </div>
-            <span>Gunakan untuk video yang sudah tersedia sebelumnya.</span>
+            <span>Untuk video lama yang sudah tersedia di Google Drive.</span>
           </div>
 
           <div className="recording-upload-form-grid">
@@ -815,7 +821,7 @@ export function UploadClassRecordingPage() {
           <div className="recording-upload-actions">
             <button
               type="button"
-              className="recording-upload-primary"
+              className="recording-upload-secondary"
               disabled={manualSaving || !manualForm.title.trim() || !manualForm.driveLink.trim()}
               onClick={() => void addManualRecording()}
             >
@@ -861,9 +867,9 @@ export function UploadClassRecordingPage() {
         <div>
           <strong>Upload tetap berjalan saat pindah menu</strong>
           <p>
-            Anda dapat membuka menu lain selama upload berlangsung.
+            Multipart upload R2 tetap berjalan saat Anda membuka menu LMS lain.
             Jangan me-refresh atau menutup browser ketika upload masih aktif;
-            browser akan memberikan peringatan agar proses tidak terputus.
+            browser akan memperingatkan bahwa proses dapat terputus.
           </p>
         </div>
       </section>

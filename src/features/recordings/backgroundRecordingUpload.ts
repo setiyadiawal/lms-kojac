@@ -5,6 +5,11 @@ import {
   requestGoogleDriveAccessToken,
   uploadClassVideoToGoogleDrive,
 } from './googleDriveUpload';
+import {
+  R2CompleteRetryError,
+  uploadRecordingToR2,
+  type R2UploadProgress,
+} from './r2MultipartUpload';
 
 const GOOGLE_CLIENT_ID = (import.meta.env.VITE_GOOGLE_CLIENT_ID || '').trim();
 
@@ -40,6 +45,9 @@ export type BackgroundUploadJob = {
   uploadedBytes: number;
   totalBytes: number;
   message: string;
+  source?: 'drive' | 'r2';
+  canCancel?: boolean;
+  canRetryComplete?: boolean;
 };
 
 export type StartBackgroundUploadInput = {
@@ -51,6 +59,16 @@ export type StartBackgroundUploadInput = {
   recordedAt: Date;
   durationMinutes: number | null;
   isPublished: boolean;
+};
+
+export type StartBackgroundR2UploadInput = {
+  file: File;
+  classId: string;
+  className: string;
+  title: string;
+  description: string;
+  recordedAt: Date;
+  durationMinutes: number | null;
 };
 
 type UploadState = {
@@ -71,6 +89,7 @@ type ActiveMarker = {
 
 let activeUserId: string | null = null;
 let abortController: AbortController | null = null;
+let retryCompleteHandler: (() => Promise<void>) | null = null;
 let audioContext: AudioContext | null = null;
 let toastTimer: number | null = null;
 
@@ -322,7 +341,9 @@ function renderGlobalUi() {
         </div>
         <div class="kojac-upload-floating-meta">
           <span>${bytesLabel(job.uploadedBytes)} / ${bytesLabel(job.totalBytes)}</span>
-          <button type="button" data-kojac-cancel-upload>Batalkan</button>
+          ${job.canCancel === false
+            ? '<span>Menyelesaikan…</span>'
+            : '<button type="button" data-kojac-cancel-upload>Batalkan</button>'}
         </div>
       </aside>
     `;
@@ -394,6 +415,7 @@ export function initializeBackgroundUpload(userId: string | null) {
 
   activeUserId = userId;
   abortController = null;
+  retryCompleteHandler = null;
 
   if (!userId) {
     state = {
@@ -476,6 +498,352 @@ export async function connectBackgroundGoogleDrive() {
   }
 }
 
+
+function r2DraftErrorMessage(message: string) {
+  if (/recording_manage_access_denied|teacher_class_access_denied/i.test(message)) {
+    return 'Anda tidak memiliki akses mengunggah rekaman untuk kelas ini.';
+  }
+
+  if (/class_not_found/i.test(message)) {
+    return 'Kelas tidak ditemukan.';
+  }
+
+  return 'Draft rekaman belum dapat dibuat. Coba lagi.';
+}
+
+function r2ProgressMessage(progress: R2UploadProgress) {
+  if (progress.stage === 'initiating') return 'Menyiapkan sesi upload…';
+  if (progress.stage === 'signing') {
+    return `Menyiapkan part ${progress.partNumber ?? 1} dari ${progress.partCount}…`;
+  }
+  if (progress.stage === 'completing') return 'Menyelesaikan upload…';
+  return 'Mengupload video ke KOJAC…';
+}
+
+function finishR2Success(
+  id: string,
+  input: StartBackgroundR2UploadInput,
+) {
+  if (!activeUserId) return;
+
+  retryCompleteHandler = null;
+  clearActiveMarker(activeUserId);
+
+  const message = 'Upload selesai. Status: Siap / Belum Dipublikasikan.';
+
+  pushHistory({
+    id,
+    title: input.title,
+    className: input.className,
+    fileName: input.file.name,
+    status: 'success',
+    message,
+    finishedAt: new Date().toISOString(),
+  });
+
+  updateState({
+    job: {
+      id,
+      title: input.title,
+      className: input.className,
+      fileName: input.file.name,
+      status: 'success',
+      progress: 100,
+      uploadedBytes: input.file.size,
+      totalBytes: input.file.size,
+      message,
+      source: 'r2',
+      canCancel: false,
+      canRetryComplete: false,
+    },
+  });
+
+  playSuccessSound();
+  showGlobalToast(
+    'success',
+    'Upload selesai',
+    `${input.title} siap dan belum dipublikasikan.`,
+  );
+}
+
+function installR2CompleteRetry(
+  id: string,
+  input: StartBackgroundR2UploadInput,
+  pending: R2CompleteRetryError,
+) {
+  retryCompleteHandler = async () => {
+    if (!activeUserId || state.job?.id !== id) {
+      throw new Error('Sesi penyelesaian upload sudah tidak tersedia.');
+    }
+
+    updateState({
+      job: {
+        ...state.job,
+        status: 'uploading',
+        progress: 100,
+        uploadedBytes: input.file.size,
+        totalBytes: input.file.size,
+        message: 'Mengonfirmasi penyelesaian upload…',
+        source: 'r2',
+        canCancel: false,
+        canRetryComplete: false,
+      },
+    });
+
+    try {
+      await pending.retryComplete();
+      finishR2Success(id, input);
+    } catch (error) {
+      if (error instanceof R2CompleteRetryError) {
+        installR2CompleteRetry(id, input, error);
+        updateState({
+          job: {
+            id,
+            title: input.title,
+            className: input.className,
+            fileName: input.file.name,
+            status: 'error',
+            progress: 100,
+            uploadedBytes: input.file.size,
+            totalBytes: input.file.size,
+            message: error.message,
+            source: 'r2',
+            canCancel: false,
+            canRetryComplete: true,
+          },
+        });
+        throw error;
+      }
+
+      retryCompleteHandler = null;
+      await pending.abortMultipart();
+
+      if (activeUserId) {
+        clearActiveMarker(activeUserId);
+      }
+
+      const message = error instanceof Error
+        ? error.message
+        : 'Penyelesaian upload gagal.';
+
+      pushHistory({
+        id,
+        title: input.title,
+        className: input.className,
+        fileName: input.file.name,
+        status: 'error',
+        message,
+        finishedAt: new Date().toISOString(),
+      });
+
+      updateState({
+        job: {
+          id,
+          title: input.title,
+          className: input.className,
+          fileName: input.file.name,
+          status: 'error',
+          progress: 100,
+          uploadedBytes: input.file.size,
+          totalBytes: input.file.size,
+          message,
+          source: 'r2',
+          canCancel: false,
+          canRetryComplete: false,
+        },
+      });
+
+      showGlobalToast('error', 'Upload video gagal', message);
+      throw error;
+    }
+  };
+}
+
+export async function retryBackgroundUploadComplete() {
+  if (!retryCompleteHandler) {
+    throw new Error('Tidak ada penyelesaian upload yang dapat dicoba ulang.');
+  }
+
+  await retryCompleteHandler();
+}
+
+export async function startBackgroundR2RecordingUpload(
+  input: StartBackgroundR2UploadInput,
+) {
+  if (!activeUserId) {
+    throw new Error('Sesi KOJAC belum tersedia.');
+  }
+
+  if (state.job?.status === 'uploading' || abortController) {
+    throw new Error('Masih ada upload video yang sedang berjalan.');
+  }
+
+  if (retryCompleteHandler || state.job?.canRetryComplete) {
+    throw new Error(
+      'Selesaikan upload sebelumnya terlebih dahulu agar tidak membuat video duplikat.',
+    );
+  }
+
+  ensureAudioContext();
+
+  const id = crypto.randomUUID();
+  const controller = new AbortController();
+  abortController = controller;
+
+  writeActiveMarker(activeUserId, {
+    id,
+    title: input.title,
+    className: input.className,
+    fileName: input.file.name,
+    startedAt: new Date().toISOString(),
+  });
+
+  updateState({
+    job: {
+      id,
+      title: input.title,
+      className: input.className,
+      fileName: input.file.name,
+      status: 'uploading',
+      progress: 0,
+      uploadedBytes: 0,
+      totalBytes: input.file.size,
+      message: 'Membuat draft rekaman…',
+      source: 'r2',
+      canCancel: true,
+      canRetryComplete: false,
+    },
+  });
+
+  try {
+    const { data: draftId, error: draftError } = await supabase.rpc(
+      'create_class_recording_draft',
+      {
+        p_class_id: input.classId,
+        p_title: input.title,
+        p_description: input.description,
+        p_recorded_at: input.recordedAt.toISOString(),
+        p_duration_minutes: input.durationMinutes,
+      },
+    );
+
+    if (draftError) {
+      throw new Error(r2DraftErrorMessage(draftError.message || ''));
+    }
+
+    const recordingId = typeof draftId === 'string' ? draftId : '';
+    if (!recordingId) {
+      throw new Error('Draft rekaman belum dapat dibuat. Coba lagi.');
+    }
+
+    await uploadRecordingToR2({
+      recordingId,
+      file: input.file,
+      signal: controller.signal,
+      onProgress: (progress) => {
+        if (state.job?.id !== id) return;
+
+        updateState({
+          job: {
+            ...state.job,
+            progress: progress.percent,
+            uploadedBytes: progress.uploadedBytes,
+            totalBytes: progress.totalBytes,
+            message: r2ProgressMessage(progress),
+            source: 'r2',
+            canCancel: progress.stage !== 'completing',
+            canRetryComplete: false,
+          },
+        });
+      },
+    });
+
+    finishR2Success(id, input);
+  } catch (error) {
+    if (error instanceof R2CompleteRetryError) {
+      installR2CompleteRetry(id, input, error);
+
+      updateState({
+        job: {
+          id,
+          title: input.title,
+          className: input.className,
+          fileName: input.file.name,
+          status: 'error',
+          progress: 100,
+          uploadedBytes: input.file.size,
+          totalBytes: input.file.size,
+          message: error.message,
+          source: 'r2',
+          canCancel: false,
+          canRetryComplete: true,
+        },
+      });
+
+      showGlobalToast(
+        'error',
+        'Penyelesaian upload belum terkonfirmasi',
+        'Gunakan tombol Coba Selesaikan Lagi. Jangan mulai upload baru.',
+      );
+
+      throw error;
+    }
+
+    const cancelled = error instanceof DOMException && error.name === 'AbortError';
+
+    if (activeUserId) {
+      clearActiveMarker(activeUserId);
+    }
+
+    retryCompleteHandler = null;
+
+    const message = cancelled
+      ? 'Upload dibatalkan. Draft tetap belum dipublikasikan.'
+      : error instanceof Error
+        ? error.message
+        : 'Upload video gagal.';
+
+    pushHistory({
+      id,
+      title: input.title,
+      className: input.className,
+      fileName: input.file.name,
+      status: cancelled ? 'cancelled' : 'error',
+      message,
+      finishedAt: new Date().toISOString(),
+    });
+
+    updateState({
+      job: {
+        id,
+        title: input.title,
+        className: input.className,
+        fileName: input.file.name,
+        status: cancelled ? 'cancelled' : 'error',
+        progress: state.job?.progress ?? 0,
+        uploadedBytes: state.job?.uploadedBytes ?? 0,
+        totalBytes: input.file.size,
+        message,
+        source: 'r2',
+        canCancel: false,
+        canRetryComplete: false,
+      },
+    });
+
+    if (!cancelled) {
+      showGlobalToast('error', 'Upload video gagal', message);
+    }
+
+    throw error;
+  } finally {
+    if (abortController === controller) {
+      abortController = null;
+    }
+
+    renderGlobalUi();
+  }
+}
+
 export async function startBackgroundRecordingUpload(
   input: StartBackgroundUploadInput,
 ) {
@@ -518,6 +886,9 @@ export async function startBackgroundRecordingUpload(
       uploadedBytes: 0,
       totalBytes: input.file.size,
       message: 'Mengupload video…',
+      source: 'drive',
+      canCancel: true,
+      canRetryComplete: false,
     },
   });
 
@@ -612,6 +983,9 @@ export async function startBackgroundRecordingUpload(
         uploadedBytes: input.file.size,
         totalBytes: input.file.size,
         message: 'Video berhasil diupload dan sudah masuk Rekaman Kelas.',
+        source: 'drive',
+        canCancel: false,
+        canRetryComplete: false,
       },
     });
 
@@ -658,6 +1032,9 @@ export async function startBackgroundRecordingUpload(
         uploadedBytes: state.job?.uploadedBytes ?? 0,
         totalBytes: input.file.size,
         message,
+        source: 'drive',
+        canCancel: false,
+        canRetryComplete: false,
       },
     });
 
@@ -680,6 +1057,7 @@ export function cancelBackgroundUpload() {
 }
 
 export function clearFinishedBackgroundUpload() {
-  if (state.job?.status === 'uploading') return;
+  if (state.job?.status === 'uploading' || state.job?.canRetryComplete) return;
+  retryCompleteHandler = null;
   updateState({ job: null });
 }
