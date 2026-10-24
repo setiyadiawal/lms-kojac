@@ -1,0 +1,294 @@
+/* KOJAC LMS — Phase 3D recording management only.
+   Player/viewer styling remains in frozen class-recordings.css. */
+
+.recording-management-message{
+  margin:0 0 14px;
+  padding:10px 12px;
+  border:1px solid #d9e1ea;
+  border-radius:10px;
+  background:#f8fafc;
+  color:#3f5168;
+  font-size:10px;
+  font-weight:700;
+  line-height:1.45;
+}
+
+.recording-management-edit-form{
+  overflow:hidden;
+}
+
+.recording-management-source-lock{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  min-width:0;
+  padding:10px 11px;
+  border:1px solid #d8dfe8;
+  border-radius:10px;
+  background:#f8faff;
+  color:#405b7a;
+}
+
+.recording-management-source-lock>svg{
+  flex:0 0 auto;
+  margin-top:1px;
+}
+
+.recording-management-source-lock span,
+.recording-management-source-lock strong,
+.recording-management-source-lock small{
+  display:block;
+  min-width:0;
+}
+
+.recording-management-source-lock strong{
+  font-size:10px;
+  overflow-wrap:anywhere;
+}
+
+.recording-management-source-lock small{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:8.7px;
+  font-weight:650;
+  line-height:1.45;
+}
+
+.recording-management-grid{
+  align-items:stretch;
+}
+
+.recording-management-card{
+  min-width:0;
+}
+
+.recording-management-cover{
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255,255,255,.18), transparent 30%),
+    linear-gradient(145deg, #4b171d, #771f2a 58%, #3f1318);
+}
+
+.recording-management-cover.is-drive{
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255,255,255,.18), transparent 30%),
+    linear-gradient(145deg, #33475b, #496780 58%, #293b4c);
+}
+
+.recording-management-cover.is-none{
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255,255,255,.15), transparent 30%),
+    linear-gradient(145deg, #5e6269, #777d85 58%, #4c5057);
+}
+
+.recording-management-badges{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  margin-bottom:8px;
+}
+
+.recording-management-status,
+.recording-management-source{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  max-width:100%;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:8.5px;
+  font-weight:850;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+
+.recording-management-status.is-draft{
+  border:1px solid #d6d9dd;
+  background:#f5f6f7;
+  color:#59616b;
+}
+
+.recording-management-status.is-ready{
+  border:1px solid #c9d9ea;
+  background:#f1f7fd;
+  color:#345f86;
+}
+
+.recording-management-status.is-published{
+  border:1px solid #bcdcc7;
+  background:#f0faf3;
+  color:#2e7043;
+}
+
+.recording-management-source.is-r2{
+  border:1px solid #dfc1c5;
+  background:#fff7f8;
+  color:var(--maroon);
+}
+
+.recording-management-source.is-drive{
+  border:1px solid #c9d7e3;
+  background:#f4f8fb;
+  color:#42627b;
+}
+
+.recording-management-source.is-none{
+  border:1px solid #dddfe2;
+  background:#fafafa;
+  color:#6b7078;
+}
+
+.recording-management-classline{
+  min-width:0;
+}
+
+.recording-management-classline>span{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.recording-management-detail-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0;
+}
+
+.recording-management-detail-grid>span{
+  display:grid;
+  grid-template-columns:16px minmax(0,1fr);
+  align-items:start;
+  column-gap:6px;
+  row-gap:2px;
+  min-width:0;
+  padding:8px;
+  border:1px solid #ece7e8;
+  border-radius:9px;
+  background:#fbfafb;
+  color:#58606a;
+}
+
+.recording-management-detail-grid>span>svg{
+  grid-row:1 / span 2;
+  margin-top:1px;
+}
+
+.recording-management-detail-grid strong,
+.recording-management-detail-grid small{
+  display:block;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.recording-management-detail-grid strong{
+  font-size:8px;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+
+.recording-management-detail-grid small{
+  font-size:9.3px;
+  font-weight:700;
+  line-height:1.35;
+  color:#333b45;
+}
+
+.recording-management-draft-note,
+.recording-management-playback-note{
+  margin-top:10px;
+  padding:8px 9px;
+  border-radius:8px;
+  font-size:8.8px;
+  font-weight:700;
+  line-height:1.45;
+}
+
+.recording-management-draft-note{
+  border:1px solid #ead8b9;
+  background:#fffaf0;
+  color:#80612e;
+}
+
+.recording-management-playback-note{
+  border:1px solid #d9dfe7;
+  background:#f8fafc;
+  color:#5c6674;
+}
+
+.recording-management-actions{
+  flex-wrap:wrap;
+  align-items:stretch;
+}
+
+.recording-management-actions button{
+  min-width:0;
+}
+
+.recording-management-publish,
+.recording-management-unpublish{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:38px;
+  padding:8px 12px;
+  border-radius:9px;
+  font-size:9.4px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.recording-management-publish{
+  border:1px solid #2f7245;
+  background:#2f7245;
+  color:#fff;
+}
+
+.recording-management-unpublish{
+  border:1px solid #d5b8bd;
+  background:#fff;
+  color:var(--maroon);
+}
+
+.recording-management-publish:disabled,
+.recording-management-unpublish:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+}
+
+@media(max-width:800px){
+  .recording-management-detail-grid{
+    grid-template-columns:1fr;
+  }
+
+  .recording-management-actions button{
+    flex:1 1 160px;
+  }
+}
+
+@media(max-width:480px){
+  .recording-management-badges{
+    align-items:flex-start;
+  }
+
+  .recording-management-status,
+  .recording-management-source{
+    white-space:normal;
+  }
+
+  .recording-management-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .recording-management-actions button,
+  .recording-management-publish,
+  .recording-management-unpublish{
+    width:100%;
+  }
+
+  .recording-management-source-lock{
+    width:100%;
+  }
+}

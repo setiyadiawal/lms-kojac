@@ -4,19 +4,35 @@ import {
   CalendarDays,
   Clock3,
   Edit3,
+  Eye,
+  EyeOff,
   Film,
+  FileVideo,
+  HardDrive,
   Maximize2,
   Minimize2,
   Play,
   RefreshCw,
   Save,
   School,
-  Trash2,
+  UserRound,
   Video,
   X,
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import '../class-recordings.css';
+import '../recording-management.css';
+import {
+  deriveRecordingSource,
+  deriveRecordingStatus,
+  formatRecordingFileSize,
+  loadManageableRecordings,
+  recordingSourceLabel,
+  recordingStatusLabel,
+  setRecordingPublished,
+  updateRecordingMetadata,
+  type ManageableRecordingRow,
+} from '../features/recordings/recordingManagement';
 import { getRecordingPlaybackSource, type RecordingPlaybackSource } from '../features/recordings/playbackSource';
 import { RecordingVideoPlayer } from '../features/recordings/RecordingVideoPlayer';
 import { supabase } from '../lib/supabase';
@@ -35,7 +51,7 @@ type StudentRecordingRow = {
   duration_minutes: number | null;
 };
 
-type TeacherRecordingRow = StudentRecordingRow & {
+type LegacyTeacherRecordingRow = StudentRecordingRow & {
   is_published: boolean;
   created_at: string;
   updated_at: string;
@@ -49,24 +65,32 @@ type TeachingClassRow = {
   program_name: string | null;
 };
 
+type ClassRpcRow = {
+  class_id: string;
+  class_code: string | null;
+  class_name: string;
+  class_status: string;
+  program_name: string | null;
+};
+
 type RecordingForm = {
   title: string;
   description: string;
-  driveLink: string;
   recordedAt: string;
   duration: string;
-  isPublished: boolean;
 };
 
-const TEACHING_ROLES = new Set<AppRole>([
-  'pengajar',
+const MANAGEMENT_ROLES = new Set<AppRole>([
   'administrator',
   'manager',
   'co_founder',
   'founder',
 ]);
 
-const DRIVE_ID_PATTERN = /^[A-Za-z0-9_-]{10,200}$/;
+const TEACHING_ROLES = new Set<AppRole>([
+  'pengajar',
+  ...MANAGEMENT_ROLES,
+]);
 
 function localDateTimeInput(value = new Date()) {
   const adjusted = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
@@ -77,32 +101,9 @@ function emptyForm(): RecordingForm {
   return {
     title: '',
     description: '',
-    driveLink: '',
     recordedAt: localDateTimeInput(),
     duration: '',
-    isPublished: true,
   };
-}
-
-function extractDriveFileId(value: string) {
-  const trimmed = value.trim();
-  if (DRIVE_ID_PATTERN.test(trimmed)) return trimmed;
-
-  try {
-    const url = new URL(trimmed);
-    const fromQuery = url.searchParams.get('id');
-    if (fromQuery && DRIVE_ID_PATTERN.test(fromQuery)) return fromQuery;
-
-    const fileMatch = url.pathname.match(/\/file\/d\/([A-Za-z0-9_-]+)/);
-    if (fileMatch?.[1] && DRIVE_ID_PATTERN.test(fileMatch[1])) return fileMatch[1];
-
-    const dMatch = url.pathname.match(/\/d\/([A-Za-z0-9_-]+)/);
-    if (dMatch?.[1] && DRIVE_ID_PATTERN.test(dMatch[1])) return dMatch[1];
-  } catch {
-    return null;
-  }
-
-  return null;
 }
 
 function drivePreviewUrl(fileId: string) {
@@ -111,10 +112,6 @@ function drivePreviewUrl(fileId: string) {
 
 function driveThumbnailUrl(fileId: string) {
   return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w960`;
-}
-
-function driveViewUrl(fileId: string) {
-  return `https://drive.google.com/file/d/${encodeURIComponent(fileId)}/view`;
 }
 
 function formatDateTime(value: string) {
@@ -131,6 +128,16 @@ function toLocalInput(value: string) {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return localDateTimeInput();
   return localDateTimeInput(date);
+}
+
+function normalizeClassRows(rows: ClassRpcRow[]): TeachingClassRow[] {
+  return rows.map((row) => ({
+    class_id: row.class_id,
+    class_code: row.class_code,
+    class_name: row.class_name,
+    class_status: row.class_status as TeachingClassRow['class_status'],
+    program_name: row.program_name,
+  }));
 }
 
 function RecordingViewer({
@@ -351,10 +358,12 @@ function RecordingViewer({
 export function ClassRecordingsPage() {
   const { role, loading: authLoading } = useAuth();
   const canTeach = Boolean(role && TEACHING_ROLES.has(role));
+  const isManagement = Boolean(role && MANAGEMENT_ROLES.has(role));
 
   const [studentRows, setStudentRows] = useState<StudentRecordingRow[]>([]);
-  const [teacherRows, setTeacherRows] = useState<TeacherRecordingRow[]>([]);
+  const [managementRows, setManagementRows] = useState<ManageableRecordingRow[]>([]);
   const [teachingClasses, setTeachingClasses] = useState<TeachingClassRow[]>([]);
+  const [playableClassIds, setPlayableClassIds] = useState<Set<string>>(new Set());
   const [selectedClassId, setSelectedClassId] = useState('');
   const [studentClassFilter, setStudentClassFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -366,8 +375,11 @@ export function ClassRecordingsPage() {
   const [loading, setLoading] = useState(true);
   const [recordingsLoading, setRecordingsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+  const [playbackLoadingId, setPlaybackLoadingId] = useState<string | null>(null);
   const [error, setError] = useState(false);
   const [formMessage, setFormMessage] = useState('');
+  const [actionMessage, setActionMessage] = useState('');
 
   const loadStudentRecordings = useCallback(async () => {
     if (role !== 'siswa') return;
@@ -394,17 +406,22 @@ export function ClassRecordingsPage() {
     setLoading(true);
     setError(false);
 
-    const { data, error: loadError } = await supabase.rpc('get_my_teaching_classes');
+    const classRpc = isManagement
+      ? 'get_management_classes_overview'
+      : 'get_my_teaching_classes';
 
-    if (loadError) {
-      console.error('KOJAC teaching classes for recordings failed', loadError);
+    const classResult = await supabase.rpc(classRpc);
+
+    if (classResult.error) {
+      console.error('KOJAC recording management class load failed', classResult.error);
       setTeachingClasses([]);
+      setPlayableClassIds(new Set());
       setError(true);
       setLoading(false);
       return;
     }
 
-    const rows = (data ?? []) as TeachingClassRow[];
+    const rows = normalizeClassRows((classResult.data ?? []) as ClassRpcRow[]);
     setTeachingClasses(rows);
     setSelectedClassId((current) => {
       if (current && rows.some((row) => row.class_id === current)) return current;
@@ -412,31 +429,42 @@ export function ClassRecordingsPage() {
         ?? rows[0]?.class_id
         ?? '';
     });
-    setLoading(false);
-  }, [canTeach]);
 
-  const loadTeacherRecordings = useCallback(async (classId: string) => {
+    if (isManagement) {
+      const playableResult = await supabase.rpc('get_my_teaching_classes');
+      if (playableResult.error) {
+        console.error('KOJAC teacher-scoped playback class load failed', playableResult.error);
+        setPlayableClassIds(new Set());
+      } else {
+        const playableRows = (playableResult.data ?? []) as ClassRpcRow[];
+        setPlayableClassIds(new Set(playableRows.map((row) => row.class_id)));
+      }
+    } else {
+      setPlayableClassIds(new Set(rows.map((row) => row.class_id)));
+    }
+
+    setLoading(false);
+  }, [canTeach, isManagement]);
+
+  const loadManagementRecordings = useCallback(async (classId: string) => {
     if (!classId || !canTeach) {
-      setTeacherRows([]);
+      setManagementRows([]);
       return;
     }
 
     setRecordingsLoading(true);
     setError(false);
 
-    const { data, error: loadError } = await supabase.rpc('get_teaching_class_recordings', {
-      p_class_id: classId,
-    });
-
-    if (loadError) {
-      console.error('KOJAC teaching recordings load failed', loadError);
-      setTeacherRows([]);
+    try {
+      const rows = await loadManageableRecordings(classId);
+      setManagementRows(rows);
+    } catch (loadError) {
+      console.error('KOJAC manageable recordings load failed', loadError);
+      setManagementRows([]);
       setError(true);
-    } else {
-      setTeacherRows((data ?? []) as TeacherRecordingRow[]);
+    } finally {
+      setRecordingsLoading(false);
     }
-
-    setRecordingsLoading(false);
   }, [canTeach]);
 
   useEffect(() => {
@@ -447,12 +475,13 @@ export function ClassRecordingsPage() {
 
   useEffect(() => {
     if (canTeach && selectedClassId) {
-      void loadTeacherRecordings(selectedClassId);
+      void loadManagementRecordings(selectedClassId);
       setEditingId(null);
       setForm(emptyForm());
       setFormMessage('');
+      setActionMessage('');
     }
-  }, [canTeach, selectedClassId, loadTeacherRecordings]);
+  }, [canTeach, selectedClassId, loadManagementRecordings]);
 
   const studentClasses = useMemo(() => {
     const unique = new Map<string, { id: string; name: string; code: string | null }>();
@@ -477,17 +506,48 @@ export function ClassRecordingsPage() {
     [studentRows, studentClassFilter],
   );
 
-  const startEdit = (row: TeacherRecordingRow) => {
+  const normalizedSearch = searchQuery.trim().toLocaleLowerCase('id-ID');
+
+  const displayStudentRows = [...visibleStudentRows]
+    .filter((row) => {
+      if (!normalizedSearch) return true;
+      return [row.title, row.class_name, row.description]
+        .some((value) => value.toLocaleLowerCase('id-ID').includes(normalizedSearch));
+    })
+    .sort((a, b) => {
+      const aTime = new Date(a.recorded_at).getTime();
+      const bTime = new Date(b.recorded_at).getTime();
+      return sortOrder === 'newest' ? bTime - aTime : aTime - bTime;
+    });
+
+  const displayManagementRows = [...managementRows]
+    .filter((row) => {
+      if (!normalizedSearch) return true;
+      return [
+        row.title,
+        row.class_name,
+        row.class_code ?? '',
+        row.program_name ?? '',
+        row.description,
+        row.uploader_display_name ?? '',
+      ].some((value) => value.toLocaleLowerCase('id-ID').includes(normalizedSearch));
+    })
+    .sort((a, b) => {
+      const aTime = new Date(a.recorded_at).getTime();
+      const bTime = new Date(b.recorded_at).getTime();
+      return sortOrder === 'newest' ? bTime - aTime : aTime - bTime;
+    });
+
+  const startEdit = (row: ManageableRecordingRow) => {
     setEditingId(row.recording_id);
     setForm({
       title: row.title,
       description: row.description,
-      driveLink: driveViewUrl(row.drive_file_id),
       recordedAt: toLocalInput(row.recorded_at),
       duration: row.duration_minutes ? String(row.duration_minutes) : '',
-      isPublished: row.is_published,
     });
     setFormMessage('');
+    setActionMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -500,17 +560,12 @@ export function ClassRecordingsPage() {
   const saveRecording = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const fileId = extractDriveFileId(form.driveLink);
-    if (!selectedClassId) {
-      setFormMessage('Pilih kelas terlebih dahulu.');
+    if (!editingId) {
+      setFormMessage('Pilih rekaman yang ingin diedit.');
       return;
     }
     if (!form.title.trim()) {
       setFormMessage('Judul rekaman wajib diisi.');
-      return;
-    }
-    if (!fileId) {
-      setFormMessage('Link Google Drive atau File ID tidak valid.');
       return;
     }
 
@@ -529,56 +584,96 @@ export function ClassRecordingsPage() {
     setSaving(true);
     setFormMessage('');
 
-    const result = editingId
-      ? await supabase.rpc('update_class_recording', {
-          p_recording_id: editingId,
-          p_title: form.title.trim(),
-          p_description: form.description,
-          p_drive_file_id: fileId,
-          p_recorded_at: recordedAt.toISOString(),
-          p_duration_minutes: duration,
-          p_is_published: form.isPublished,
-        })
-      : await supabase.rpc('create_class_recording', {
-          p_class_id: selectedClassId,
-          p_title: form.title.trim(),
-          p_description: form.description,
-          p_drive_file_id: fileId,
-          p_recorded_at: recordedAt.toISOString(),
-          p_duration_minutes: duration,
-          p_is_published: form.isPublished,
-        });
+    try {
+      await updateRecordingMetadata({
+        recordingId: editingId,
+        title: form.title.trim(),
+        description: form.description,
+        recordedAt: recordedAt.toISOString(),
+        durationMinutes: duration,
+      });
 
-    if (result.error) {
-      console.error('KOJAC save class recording failed', result.error);
-      setFormMessage('Rekaman belum dapat disimpan. Periksa data lalu coba lagi.');
+      resetForm();
+      setActionMessage('Metadata rekaman berhasil diperbarui.');
+      await loadManagementRecordings(selectedClassId);
+    } catch (saveError) {
+      console.error('KOJAC recording metadata update failed', saveError);
+      setFormMessage('Metadata rekaman belum dapat disimpan. Coba lagi.');
+    } finally {
       setSaving(false);
-      return;
     }
-
-    setSaving(false);
-    resetForm();
-    await loadTeacherRecordings(selectedClassId);
   };
 
-  const deleteRecording = async (row: TeacherRecordingRow) => {
-    const confirmed = window.confirm(
-      `Hapus "${row.title}" dari daftar Rekaman Kelas?\n\nFile asli di Google Drive tidak akan dihapus.`,
-    );
-
-    if (!confirmed) return;
-
-    const { error: deleteError } = await supabase.rpc('delete_class_recording', {
-      p_recording_id: row.recording_id,
-    });
-
-    if (deleteError) {
-      console.error('KOJAC delete class recording failed', deleteError);
+  const changePublication = async (row: ManageableRecordingRow, nextPublished: boolean) => {
+    const status = deriveRecordingStatus(row);
+    if (nextPublished && status === 'draft') {
+      setActionMessage('Upload video terlebih dahulu sebelum dipublikasikan.');
       return;
     }
 
-    if (editingId === row.recording_id) resetForm();
-    await loadTeacherRecordings(selectedClassId);
+    setPublishingId(row.recording_id);
+    setActionMessage('');
+
+    try {
+      await setRecordingPublished(row.recording_id, nextPublished);
+      setActionMessage(nextPublished
+        ? 'Rekaman berhasil dipublikasikan.'
+        : 'Publikasi rekaman berhasil dibatalkan.');
+      await loadManagementRecordings(row.class_id);
+    } catch (publishError) {
+      console.error('KOJAC recording publish state update failed', publishError);
+      setActionMessage('Status publikasi belum dapat diperbarui. Coba lagi.');
+    } finally {
+      setPublishingId(null);
+    }
+  };
+
+  const openManagementPlayback = async (row: ManageableRecordingRow) => {
+    const source = deriveRecordingSource(row);
+    if (source === 'none' || !playableClassIds.has(row.class_id)) return;
+
+    const baseViewerRow = {
+      recording_id: row.recording_id,
+      class_id: row.class_id,
+      class_name: row.class_name,
+      class_code: row.class_code,
+      title: row.title,
+      description: row.description,
+      recorded_at: row.recorded_at,
+      duration_minutes: row.duration_minutes,
+    };
+
+    if (row.has_media_source) {
+      setViewer({ ...baseViewerRow, drive_file_id: '' });
+      return;
+    }
+
+    setPlaybackLoadingId(row.recording_id);
+    setActionMessage('');
+
+    const { data, error: playbackLoadError } = await supabase.rpc(
+      'get_teaching_class_recordings',
+      { p_class_id: row.class_id },
+    );
+
+    if (playbackLoadError) {
+      console.error('KOJAC legacy Drive playback detail load failed', playbackLoadError);
+      setActionMessage('Rekaman belum dapat dibuka. Coba lagi.');
+      setPlaybackLoadingId(null);
+      return;
+    }
+
+    const legacyRow = ((data ?? []) as LegacyTeacherRecordingRow[])
+      .find((item) => item.recording_id === row.recording_id);
+
+    if (!legacyRow?.drive_file_id) {
+      setActionMessage('Sumber Legacy Drive tidak ditemukan untuk rekaman ini.');
+      setPlaybackLoadingId(null);
+      return;
+    }
+
+    setViewer(legacyRow);
+    setPlaybackLoadingId(null);
   };
 
   if (authLoading) return <div className="full-center">Memuat KOJAC LMS…</div>;
@@ -586,30 +681,6 @@ export function ClassRecordingsPage() {
   if (role !== 'siswa' && !canTeach) {
     return <Navigate to="/" replace />;
   }
-
-  const activeRows: StudentRecordingRow[] = role === 'siswa'
-    ? visibleStudentRows
-    : teacherRows;
-
-  const normalizedSearch = searchQuery.trim().toLocaleLowerCase('id-ID');
-  const displayRows = [...activeRows]
-    .filter((row) => {
-      if (!normalizedSearch) return true;
-
-      return [
-        row.title,
-        row.class_name,
-        row.description,
-      ].some((value) => value.toLocaleLowerCase('id-ID').includes(normalizedSearch));
-    })
-    .sort((a, b) => {
-      const aTime = new Date(a.recorded_at).getTime();
-      const bTime = new Date(b.recorded_at).getTime();
-
-      return sortOrder === 'newest'
-        ? bTime - aTime
-        : aTime - bTime;
-    });
 
   return (
     <div className="page class-recordings-page">
@@ -620,7 +691,7 @@ export function ClassRecordingsPage() {
           <p>
             {role === 'siswa'
               ? 'Tonton kembali rekaman kelas KOJAC yang tersedia untuk kelas Anda.'
-              : 'Kelola dan publikasikan rekaman Google Drive untuk siswa pada kelas Anda.'}
+              : 'Kelola metadata dan status publikasi rekaman kelas KOJAC tanpa mengubah sumber medianya.'}
           </p>
         </div>
       </header>
@@ -646,7 +717,9 @@ export function ClassRecordingsPage() {
       ) : (
         <>
           <section className="class-recording-filter panel">
-            <label htmlFor="teacher-recording-class">Kelas</label>
+            <label htmlFor="teacher-recording-class">
+              {isManagement ? 'Kelas yang Dikelola' : 'Kelas'}
+            </label>
             <select
               id="teacher-recording-class"
               value={selectedClassId}
@@ -655,17 +728,18 @@ export function ClassRecordingsPage() {
               {teachingClasses.map((row) => (
                 <option value={row.class_id} key={row.class_id}>
                   {row.program_name || 'Program KOJAC'} — {row.class_name}
+                  {row.class_code ? ` (${row.class_code})` : ''}
                 </option>
               ))}
             </select>
           </section>
 
           {editingId && (
-            <section className="class-recording-form panel class-recording-edit-form">
+            <section className="class-recording-form panel class-recording-edit-form recording-management-edit-form">
               <div className="class-recording-section-heading">
                 <div>
-                  <p className="eyebrow">EDIT REKAMAN</p>
-                  <h2>Perbarui Rekaman</h2>
+                  <p className="eyebrow">EDIT METADATA</p>
+                  <h2>Perbarui Informasi Rekaman</h2>
                 </div>
                 <button className="class-recording-secondary" type="button" onClick={resetForm}>
                   Batal Edit
@@ -701,19 +775,6 @@ export function ClassRecordingsPage() {
                     />
                   </label>
 
-                  <label className="is-wide">
-                    Link Google Drive / File ID
-                    <input
-                      value={form.driveLink}
-                      disabled={saving}
-                      placeholder="https://drive.google.com/file/d/.../view"
-                      onChange={(event) => setForm((current) => ({
-                        ...current,
-                        driveLink: event.target.value,
-                      }))}
-                    />
-                  </label>
-
                   <label>
                     Durasi (menit)
                     <input
@@ -730,21 +791,13 @@ export function ClassRecordingsPage() {
                     />
                   </label>
 
-                  <label className="class-recording-publish-toggle">
-                    <input
-                      type="checkbox"
-                      checked={form.isPublished}
-                      disabled={saving}
-                      onChange={(event) => setForm((current) => ({
-                        ...current,
-                        isPublished: event.target.checked,
-                      }))}
-                    />
+                  <div className="recording-management-source-lock" role="note">
+                    <HardDrive size={17}/>
                     <span>
-                      <strong>Publikasikan ke siswa</strong>
-                      <small>Matikan jika rekaman belum siap ditonton.</small>
+                      <strong>Sumber video tidak diubah dari editor ini.</strong>
+                      <small>R2 / Legacy Drive dan status publikasi dikelola terpisah.</small>
                     </span>
-                  </label>
+                  </div>
 
                   <label className="is-wide">
                     Deskripsi
@@ -771,7 +824,7 @@ export function ClassRecordingsPage() {
                 <div className="class-recording-form-actions">
                   <button className="class-recording-primary" type="submit" disabled={saving}>
                     <Save size={16}/>
-                    {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
+                    {saving ? 'Menyimpan…' : 'Simpan Metadata'}
                   </button>
                 </div>
               </form>
@@ -780,13 +833,21 @@ export function ClassRecordingsPage() {
         </>
       )}
 
+      {role !== 'siswa' && actionMessage && (
+        <div className="recording-management-message" role="status">
+          {actionMessage}
+        </div>
+      )}
+
       <section className="class-recording-library-toolbar panel">
         <label className="class-recording-search-field">
           <span>Cari Rekaman</span>
           <input
             type="search"
             value={searchQuery}
-            placeholder="Cari judul, kelas, atau materi…"
+            placeholder={role === 'siswa'
+              ? 'Cari judul, kelas, atau materi…'
+              : 'Cari judul, kelas, program, materi, atau uploader…'}
             onChange={(event) => setSearchQuery(event.target.value)}
           />
         </label>
@@ -817,7 +878,7 @@ export function ClassRecordingsPage() {
             className="class-recording-secondary"
             onClick={() => {
               if (role === 'siswa') void loadStudentRecordings();
-              else if (selectedClassId) void loadTeacherRecordings(selectedClassId);
+              else if (selectedClassId) void loadManagementRecordings(selectedClassId);
             }}
           >
             <RefreshCw size={15}/>Coba Lagi
@@ -826,98 +887,219 @@ export function ClassRecordingsPage() {
       ) : role !== 'siswa' && teachingClasses.length === 0 ? (
         <section className="class-recording-state">
           <School size={30}/>
-          <h2>Belum ada kelas mengajar.</h2>
-          <p>Rekaman dapat ditambahkan setelah akun Anda terhubung ke kelas.</p>
+          <h2>{isManagement ? 'Belum ada kelas yang dapat dikelola.' : 'Belum ada kelas mengajar.'}</h2>
+          <p>
+            {isManagement
+              ? 'Kelas yang tersedia untuk recording management akan muncul di sini.'
+              : 'Rekaman dapat dikelola setelah akun Anda terhubung ke kelas.'}
+          </p>
         </section>
-      ) : displayRows.length === 0 ? (
+      ) : role === 'siswa' && displayStudentRows.length === 0 ? (
         <section className="class-recording-state">
           <Film size={30}/>
           <h2>Belum ada rekaman kelas.</h2>
           <p>
-            {activeRows.length === 0
-              ? (role === 'siswa'
-                  ? 'Rekaman yang dipublikasikan pengajar akan muncul di sini.'
-                  : 'Belum ada rekaman pada kelas ini.')
+            {visibleStudentRows.length === 0
+              ? 'Rekaman yang dipublikasikan pengajar akan muncul di sini.'
               : 'Tidak ada rekaman yang sesuai dengan filter atau pencarian.'}
           </p>
+        </section>
+      ) : role !== 'siswa' && displayManagementRows.length === 0 ? (
+        <section className="class-recording-state">
+          <Film size={30}/>
+          <h2>Belum ada rekaman pada kelas ini.</h2>
+          <p>
+            {managementRows.length === 0
+              ? 'Draft, rekaman siap, dan rekaman yang dipublikasikan akan muncul di sini.'
+              : 'Tidak ada rekaman yang sesuai dengan pencarian.'}
+          </p>
+        </section>
+      ) : role === 'siswa' ? (
+        <section>
+          <div className="class-recording-section-heading">
+            <div>
+              <p className="eyebrow">DAFTAR REKAMAN</p>
+              <h2>Rekaman Tersedia</h2>
+            </div>
+            <span>{displayStudentRows.length} rekaman</span>
+          </div>
+
+          <div className="class-recording-grid">
+            {displayStudentRows.map((row) => (
+              <article className="class-recording-card" key={row.recording_id}>
+                <div className="class-recording-cover">
+                  <img
+                    className="class-recording-thumbnail"
+                    src={driveThumbnailUrl(row.drive_file_id)}
+                    alt=""
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="class-recording-cover-icon"><Play size={28}/></div>
+                  <span>REKAMAN KELAS</span>
+                </div>
+
+                <div className="class-recording-card-body">
+                  <div className="class-recording-card-topline">
+                    <span>{row.class_name}</span>
+                  </div>
+
+                  <h3>{row.title}</h3>
+
+                  <div className="class-recording-meta">
+                    <span><CalendarDays size={14}/>{formatDateTime(row.recorded_at)}</span>
+                    {row.duration_minutes && (
+                      <span><Clock3 size={14}/>{row.duration_minutes} menit</span>
+                    )}
+                  </div>
+
+                  {row.description && <p>{row.description}</p>}
+
+                  <div className="class-recording-actions">
+                    <button
+                      type="button"
+                      className="class-recording-primary"
+                      onClick={() => setViewer(row)}
+                    >
+                      <Play size={15}/>Tonton
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
       ) : (
         <section>
           <div className="class-recording-section-heading">
             <div>
-              <p className="eyebrow">DAFTAR REKAMAN</p>
-              <h2>{role === 'siswa' ? 'Rekaman Tersedia' : 'Rekaman pada Kelas Ini'}</h2>
+              <p className="eyebrow">RECORDING MANAGEMENT</p>
+              <h2>Rekaman pada Kelas Ini</h2>
             </div>
-            <span>{displayRows.length} rekaman</span>
+            <span>{displayManagementRows.length} rekaman</span>
           </div>
 
-          <div className="class-recording-grid">
-            {displayRows.map((row) => {
-              const teacherRow = role === 'siswa' ? null : row as TeacherRecordingRow;
+          <div className="class-recording-grid recording-management-grid">
+            {displayManagementRows.map((row) => {
+              const status = deriveRecordingStatus(row);
+              const source = deriveRecordingSource(row);
+              const canPreview = source !== 'none' && playableClassIds.has(row.class_id);
+              const publicationBusy = publishingId === row.recording_id;
+              const playbackBusy = playbackLoadingId === row.recording_id;
 
               return (
-                <article className="class-recording-card" key={row.recording_id}>
-                  <div className="class-recording-cover">
-                    <img
-                      className="class-recording-thumbnail"
-                      src={driveThumbnailUrl(row.drive_file_id)}
-                      alt=""
-                      loading="lazy"
-                      onError={(event) => {
-                        event.currentTarget.style.display = 'none';
-                      }}
-                    />
-                    <div className="class-recording-cover-icon"><Play size={28}/></div>
-                    <span>REKAMAN KELAS</span>
+                <article className="class-recording-card recording-management-card" key={row.recording_id}>
+                  <div className={`class-recording-cover recording-management-cover is-${source}`}>
+                    <div className="class-recording-cover-icon">
+                      {source === 'r2' ? <HardDrive size={28}/> : <FileVideo size={28}/>}
+                    </div>
+                    <span>{recordingSourceLabel(source).toUpperCase()}</span>
                   </div>
 
                   <div className="class-recording-card-body">
-                    <div className="class-recording-card-topline">
-                      <span>{row.class_name}</span>
-                      {teacherRow && (
-                        <span className={`class-recording-status ${teacherRow.is_published ? 'is-published' : 'is-hidden'}`}>
-                          {teacherRow.is_published ? 'Dipublikasikan' : 'Disembunyikan'}
-                        </span>
-                      )}
+                    <div className="recording-management-badges">
+                      <span className={`recording-management-status is-${status}`}>
+                        {recordingStatusLabel(status)}
+                      </span>
+                      <span className={`recording-management-source is-${source}`}>
+                        {recordingSourceLabel(source)}
+                      </span>
+                    </div>
+
+                    <div className="class-recording-card-topline recording-management-classline">
+                      <span>{row.class_name}{row.class_code ? ` — ${row.class_code}` : ''}</span>
                     </div>
 
                     <h3>{row.title}</h3>
 
-                    <div className="class-recording-meta">
-                      <span><CalendarDays size={14}/>{formatDateTime(row.recorded_at)}</span>
-                      {row.duration_minutes && (
-                        <span><Clock3 size={14}/>{row.duration_minutes} menit</span>
-                      )}
+                    <div className="recording-management-detail-grid">
+                      <span>
+                        <School size={14}/>
+                        <strong>Program</strong>
+                        <small>{row.program_name || 'Program KOJAC'}</small>
+                      </span>
+                      <span>
+                        <UserRound size={14}/>
+                        <strong>Uploader</strong>
+                        <small>{row.uploader_display_name || 'Tidak tercatat'}</small>
+                      </span>
+                      <span>
+                        <CalendarDays size={14}/>
+                        <strong>Rekaman</strong>
+                        <small>{formatDateTime(row.recorded_at)}</small>
+                      </span>
+                      <span>
+                        <Clock3 size={14}/>
+                        <strong>Durasi</strong>
+                        <small>{row.duration_minutes ? `${row.duration_minutes} menit` : '—'}</small>
+                      </span>
+                      <span>
+                        <HardDrive size={14}/>
+                        <strong>Ukuran</strong>
+                        <small>{formatRecordingFileSize(row.media_size_bytes)}</small>
+                      </span>
                     </div>
 
                     {row.description && <p>{row.description}</p>}
 
-                    <div className="class-recording-actions">
+                    {status === 'draft' && (
+                      <div className="recording-management-draft-note">
+                        Upload video terlebih dahulu sebelum dipublikasikan.
+                      </div>
+                    )}
+
+                    {source !== 'none' && !canPreview && (
+                      <div className="recording-management-playback-note">
+                        Preview mengikuti akses pengajar kelas dan tidak diperluas pada Phase 3D.
+                      </div>
+                    )}
+
+                    <div className="class-recording-actions recording-management-actions">
+                      {canPreview && (
+                        <button
+                          type="button"
+                          className="class-recording-primary"
+                          disabled={playbackBusy}
+                          onClick={() => void openManagementPlayback(row)}
+                        >
+                          <Play size={15}/>{playbackBusy ? 'Membuka…' : 'Tonton'}
+                        </button>
+                      )}
+
                       <button
                         type="button"
-                        className="class-recording-primary"
-                        onClick={() => setViewer(row)}
+                        className="class-recording-secondary"
+                        disabled={saving || publicationBusy}
+                        onClick={() => startEdit(row)}
                       >
-                        <Play size={15}/>Tonton
+                        <Edit3 size={15}/>Edit Metadata
                       </button>
 
-                      {teacherRow && (
-                        <>
-                          <button
-                            type="button"
-                            className="class-recording-secondary"
-                            onClick={() => startEdit(teacherRow)}
-                          >
-                            <Edit3 size={15}/>Edit
-                          </button>
-                          <button
-                            type="button"
-                            className="class-recording-danger"
-                            onClick={() => void deleteRecording(teacherRow)}
-                          >
-                            <Trash2 size={15}/>Hapus
-                          </button>
-                        </>
+                      {status === 'published' ? (
+                        <button
+                          type="button"
+                          className="recording-management-unpublish"
+                          disabled={publicationBusy}
+                          onClick={() => void changePublication(row, false)}
+                        >
+                          <EyeOff size={15}/>
+                          {publicationBusy ? 'Memproses…' : 'Batalkan Publikasi'}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="recording-management-publish"
+                          disabled={status === 'draft' || publicationBusy}
+                          title={status === 'draft'
+                            ? 'Upload video terlebih dahulu sebelum dipublikasikan.'
+                            : 'Publikasikan rekaman ke siswa'}
+                          onClick={() => void changePublication(row, true)}
+                        >
+                          <Eye size={15}/>
+                          {publicationBusy ? 'Memproses…' : 'Publish'}
+                        </button>
                       )}
                     </div>
                   </div>
