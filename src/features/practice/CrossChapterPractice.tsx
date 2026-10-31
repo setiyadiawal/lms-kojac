@@ -682,8 +682,9 @@ function buildKanjiQuestions(
   const selectedKanji = kanjiRows.filter((row) => chapterByKanji.has(row.id) && row.meaning_id?.trim());
   const meanings = selectedKanji.map((row) => row.meaning_id ?? '');
   const symbols = selectedKanji.map((row) => row.prompt);
-  const allOnyomi = selectedKanji.flatMap((row) => kanjiReadings(row).onyomi);
-  const allKunyomi = selectedKanji.flatMap((row) => kanjiReadings(row).kunyomi);
+  const vocabularyReadings = selectedVocabulary
+    .map((row) => row.reading?.trim() ?? '')
+    .filter(Boolean);
 
   return selectedKanji.flatMap<PracticeQuestion>((row) => {
     const chapter = chapterByKanji.get(row.id);
@@ -729,76 +730,55 @@ function buildKanjiQuestions(
       });
     }
 
-    const onyomi = readings.onyomi[0];
-    if (onyomi) {
-      const onyomiOptions = buildOptions(onyomi, allOnyomi);
-      if (onyomiOptions.length === 4) {
+    const hasReadingMetadata = readings.onyomi.length > 0 || readings.kunyomi.length > 0;
+
+    if (hasReadingMetadata) {
+      const relatedVocabulary = selectedVocabulary.filter((vocabularyRow) => (
+        vocabularyRow.prompt.includes(symbol)
+        && Boolean(vocabularyRow.reading?.trim())
+      ));
+
+      for (const vocabularyRow of relatedVocabulary) {
+        const vocabularyPrompt = vocabularyRow.prompt.trim();
+        const vocabularyReading = vocabularyRow.reading?.trim() ?? '';
+
+        if (!vocabularyPrompt || !vocabularyReading) continue;
+
+        const readingOptions = buildOptions(vocabularyReading, vocabularyReadings);
+
+        if (readingOptions.length === 4) {
+          questions.push({
+            id: `kanji-${row.id}-vocabulary-reading-${vocabularyRow.id}`,
+            module: 'kanji',
+            reviewItemId: row.id,
+            chapter,
+            kind: 'choice',
+            instruction: 'Pilih cara baca kosakata yang benar.',
+            prompt: vocabularyPrompt,
+            promptTone: 'kanji',
+            correctAnswer: vocabularyReading,
+            acceptableAnswers: [vocabularyReading],
+            options: readingOptions,
+            typeLabel: 'Kosakata → Reading',
+          });
+        }
+
         questions.push({
-          id: `kanji-${row.id}-onyomi`,
+          id: `kanji-${row.id}-typing-vocabulary-reading-${vocabularyRow.id}`,
           module: 'kanji',
+          reviewItemId: row.id,
           chapter,
-          kind: 'choice',
-          instruction: 'Pilih Onyomi yang benar.',
-          prompt: symbol,
+          kind: 'typing',
+          instruction: 'Ketik cara baca kosakata berikut.',
+          prompt: vocabularyPrompt,
           promptTone: 'kanji',
-          correctAnswer: onyomi,
-          acceptableAnswers: readings.onyomi,
-          options: onyomiOptions,
-          typeLabel: 'Kanji → Onyomi',
+          correctAnswer: vocabularyReading,
+          acceptableAnswers: [vocabularyReading],
+          options: [],
+          typeLabel: 'Ketik: Kosakata → Reading',
         });
       }
-
-      questions.push({
-        id: `kanji-${row.id}-typing-onyomi`,
-        module: 'kanji',
-        reviewItemId: row.id,
-        chapter,
-        kind: 'typing',
-        instruction: 'Ketik salah satu Onyomi yang benar.',
-        prompt: symbol,
-        promptTone: 'kanji',
-        correctAnswer: onyomi,
-        acceptableAnswers: readings.onyomi,
-        options: [],
-        typeLabel: 'Ketik Onyomi',
-      });
     }
-
-    const kunyomi = readings.kunyomi[0];
-    if (kunyomi) {
-      const kunyomiOptions = buildOptions(kunyomi, allKunyomi);
-      if (kunyomiOptions.length === 4) {
-        questions.push({
-          id: `kanji-${row.id}-kunyomi`,
-          module: 'kanji',
-          chapter,
-          kind: 'choice',
-          instruction: 'Pilih Kunyomi yang benar.',
-          prompt: symbol,
-          promptTone: 'kanji',
-          correctAnswer: kunyomi,
-          acceptableAnswers: readings.kunyomi,
-          options: kunyomiOptions,
-          typeLabel: 'Kanji → Kunyomi',
-        });
-      }
-
-      questions.push({
-        id: `kanji-${row.id}-typing-kunyomi`,
-        module: 'kanji',
-        reviewItemId: row.id,
-        chapter,
-        kind: 'typing',
-        instruction: 'Ketik salah satu Kunyomi yang benar.',
-        prompt: symbol,
-        promptTone: 'kanji',
-        correctAnswer: kunyomi,
-        acceptableAnswers: readings.kunyomi,
-        options: [],
-        typeLabel: 'Ketik Kunyomi',
-      });
-    }
-
     return questions;
   });
 }
