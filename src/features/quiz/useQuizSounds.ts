@@ -31,55 +31,82 @@ function persistQuizSoundEnabled(enabled: boolean) {
 }
 
 class QuizSoundManager {
-  private audio = new Map<QuizSoundName, HTMLAudioElement>();
+  private preloadAudio = new Map<QuizSoundName, HTMLAudioElement>();
+  private activeAudio: HTMLAudioElement | null = null;
 
   preload() {
     if (typeof Audio === 'undefined') return;
+
     (Object.keys(SOUND_CONFIG) as QuizSoundName[]).forEach((name) => {
-      this.getAudio(name);
+      if (this.preloadAudio.has(name)) return;
+
+      const audio = new Audio(SOUND_CONFIG[name].src);
+      audio.preload = 'auto';
+      audio.volume = SOUND_CONFIG[name].volume;
+
+      this.preloadAudio.set(name, audio);
+      audio.load();
     });
   }
 
   stopAll() {
-    this.audio.forEach((audio) => {
-      audio.pause();
-      try {
-        audio.currentTime = 0;
-      } catch {
-        // Some browsers can reject currentTime changes before metadata is ready.
-      }
-    });
+    const active = this.activeAudio;
+    this.activeAudio = null;
+    active?.pause();
   }
 
   play(name: QuizSoundName) {
-    if (!readQuizSoundEnabled()) return;
-    const audio = this.getAudio(name);
-    if (!audio) return;
+    if (!readQuizSoundEnabled() || typeof Audio === 'undefined') return;
 
-    // Feedback sounds must never stack. A fast next action restarts cleanly instead.
+    // Fresh element avoids stale Android playback state and currentTime races.
     this.stopAll();
-    audio.volume = SOUND_CONFIG[name].volume;
+
+    const config = SOUND_CONFIG[name];
+    const audio = new Audio(config.src);
+
+    audio.preload = 'auto';
+    audio.volume = config.volume;
+
+    this.activeAudio = audio;
+
+    const release = () => {
+      if (this.activeAudio === audio) {
+        this.activeAudio = null;
+      }
+
+      audio.removeEventListener('ended', release);
+      audio.removeEventListener('error', release);
+    };
+
+    audio.addEventListener('ended', release);
+    audio.addEventListener('error', release);
+
     try {
-      audio.currentTime = 0;
-    } catch {
-      // Safe fallback: play from the browser's current position if reset is unavailable.
+      void audio.play().catch((error: unknown) => {
+        const wasActive = this.activeAudio === audio;
+        release();
+
+        const errorName = error instanceof Error ? error.name : '';
+
+        if (!wasActive && errorName === 'AbortError') return;
+
+        console.warn('[KOJAC Quiz Audio] play() rejected', {
+          sound: name,
+          error: error instanceof Error
+            ? `${error.name}: ${error.message}`
+            : String(error),
+        });
+      });
+    } catch (error) {
+      release();
+
+      console.warn('[KOJAC Quiz Audio] play() failed', {
+        sound: name,
+        error: error instanceof Error
+          ? `${error.name}: ${error.message}`
+          : String(error),
+      });
     }
-    void audio.play().catch(() => {
-      // Browser media policy / unsupported playback must never interrupt the quiz.
-    });
-  }
-
-  private getAudio(name: QuizSoundName) {
-    if (typeof Audio === 'undefined') return null;
-    const existing = this.audio.get(name);
-    if (existing) return existing;
-
-    const next = new Audio(SOUND_CONFIG[name].src);
-    next.preload = 'auto';
-    next.volume = SOUND_CONFIG[name].volume;
-    this.audio.set(name, next);
-    next.load();
-    return next;
   }
 }
 

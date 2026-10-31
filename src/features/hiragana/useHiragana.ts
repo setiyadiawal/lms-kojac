@@ -138,7 +138,82 @@ export function useHiragana() {
   return { items: combined, stats, loading, error, reload: load, recordReview };
 }
 
+const JAPANESE_SPEECH_CHUNK_MAX_LENGTH = 120;
+let activeJapaneseUtterances: SpeechSynthesisUtterance[] = [];
+
+function splitLongJapaneseSpeechSegment(segment: string) {
+  const naturalParts = segment.match(/[^\u3001\uFF0C,\uFF1B;\uFF1A:]+[\u3001\uFF0C,\uFF1B;\uFF1A:]?/gu) ?? [segment];
+  const chunks: string[] = [];
+  let current = '';
+
+  for (const part of naturalParts) {
+    const candidate = `${current}${part}`;
+
+    if (candidate.length <= JAPANESE_SPEECH_CHUNK_MAX_LENGTH) {
+      current = candidate;
+      continue;
+    }
+
+    if (current) {
+      chunks.push(current);
+      current = '';
+    }
+
+    if (part.length <= JAPANESE_SPEECH_CHUNK_MAX_LENGTH) {
+      current = part;
+      continue;
+    }
+
+    for (let start = 0; start < part.length; start += JAPANESE_SPEECH_CHUNK_MAX_LENGTH) {
+      chunks.push(part.slice(start, start + JAPANESE_SPEECH_CHUNK_MAX_LENGTH));
+    }
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+function chunkJapaneseSpeechText(text: string) {
+  const cleanText = text.replace(/\s+/g, ' ').trim();
+
+  if (!cleanText) return [];
+  if (cleanText.length <= JAPANESE_SPEECH_CHUNK_MAX_LENGTH) return [cleanText];
+
+  const sentences = cleanText.match(/[^\u3002\uFF01\uFF1F!?]+[\u3002\uFF01\uFF1F!?]?/gu) ?? [cleanText];
+  const chunks: string[] = [];
+  let current = '';
+
+  for (const sentence of sentences) {
+    const trimmed = sentence.trim();
+    if (!trimmed) continue;
+
+    const candidate = current ? `${current} ${trimmed}` : trimmed;
+
+    if (candidate.length <= JAPANESE_SPEECH_CHUNK_MAX_LENGTH) {
+      current = candidate;
+      continue;
+    }
+
+    if (current) {
+      chunks.push(current);
+      current = '';
+    }
+
+    if (trimmed.length <= JAPANESE_SPEECH_CHUNK_MAX_LENGTH) {
+      current = trimmed;
+      continue;
+    }
+
+    chunks.push(...splitLongJapaneseSpeechSegment(trimmed));
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+}
+
 export function stopJapaneseSpeech() {
+  activeJapaneseUtterances = [];
+
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
 }
@@ -150,26 +225,50 @@ export function speakJapanese(text: string) {
     || typeof SpeechSynthesisUtterance === 'undefined'
   ) return false;
 
-  const cleanText = text.trim();
-  if (!cleanText) return false;
+  const chunks = chunkJapaneseSpeechText(text);
+  if (!chunks.length) return false;
 
   const synth = window.speechSynthesis;
-  synth.cancel();
-  if (synth.paused) synth.resume();
 
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.lang = 'ja-JP';
-  utterance.rate = 0.78;
-  utterance.pitch = 1;
-  utterance.volume = 1;
+  synth.cancel();
+  activeJapaneseUtterances = [];
+
+  if (synth.paused) synth.resume();
 
   const voices = synth.getVoices();
   const japanese = voices.find((voice) => voice.lang.toLowerCase() === 'ja-jp')
     ?? voices.find((voice) => voice.lang.toLowerCase().startsWith('ja'));
-  if (japanese) utterance.voice = japanese;
 
-  // Keep speak() in the original click stack. Android Chrome can require a
-  // direct user gesture for speech/media playback.
-  synth.speak(utterance);
+  const utterances = chunks.map((chunk) => {
+    const utterance = new SpeechSynthesisUtterance(chunk);
+
+    utterance.lang = 'ja-JP';
+    utterance.rate = 0.78;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    if (japanese) utterance.voice = japanese;
+
+    return utterance;
+  });
+
+  const lastUtterance = utterances[utterances.length - 1];
+
+  const clearFinishedQueue = () => {
+    if (activeJapaneseUtterances === utterances) {
+      activeJapaneseUtterances = [];
+    }
+  };
+
+  if (lastUtterance) {
+    lastUtterance.onend = clearFinishedQueue;
+    lastUtterance.onerror = clearFinishedQueue;
+  }
+
+  activeJapaneseUtterances = utterances;
+
+  // Queue all chunks synchronously from the original user action.
+  utterances.forEach((utterance) => synth.speak(utterance));
+
   return true;
 }
