@@ -292,3 +292,259 @@
     width:100%;
   }
 }
+
+/* Phase 3E.1 media lifecycle UI. */
+.recording-lifecycle-panel{
+  display:grid;
+  gap:14px;
+  margin-bottom:16px;
+  overflow:hidden;
+}
+
+.recording-lifecycle-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+
+.recording-lifecycle-summary>span{
+  display:grid;
+  gap:4px;
+  min-width:0;
+  padding:10px 11px;
+  border:1px solid #e7e2e3;
+  border-radius:10px;
+  background:#fbfafb;
+}
+
+.recording-lifecycle-summary strong{
+  font-size:8px;
+  font-weight:850;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  color:#656c75;
+}
+
+.recording-lifecycle-summary small{
+  min-width:0;
+  font-size:9.4px;
+  font-weight:750;
+  line-height:1.4;
+  color:#303740;
+  overflow-wrap:anywhere;
+}
+
+.recording-lifecycle-safe-note,
+.recording-lifecycle-feedback,
+.recording-lifecycle-published-note{
+  padding:9px 11px;
+  border-radius:9px;
+  font-size:9px;
+  font-weight:700;
+  line-height:1.5;
+}
+
+.recording-lifecycle-safe-note{
+  border:1px solid #c9d9ea;
+  background:#f1f7fd;
+  color:#345f86;
+}
+
+.recording-lifecycle-feedback{
+  border:1px solid #dfd6d8;
+  background:#fffafb;
+  color:#62454a;
+}
+
+.recording-lifecycle-published-note{
+  margin-top:10px;
+  border:1px solid #ead8b9;
+  background:#fffaf0;
+  color:#80612e;
+}
+
+.recording-lifecycle-file{
+  display:grid;
+  gap:7px;
+  min-width:0;
+  font-size:9.5px;
+  font-weight:800;
+  color:#3e4650;
+}
+
+.recording-lifecycle-file input[type="file"]{
+  display:block;
+  width:100%;
+  min-width:0;
+  padding:9px;
+  border:1px dashed #cfc5c7;
+  border-radius:9px;
+  background:#fff;
+  font:inherit;
+}
+
+.recording-lifecycle-file small{
+  min-width:0;
+  color:var(--muted);
+  font-size:8.8px;
+  font-weight:650;
+  overflow-wrap:anywhere;
+}
+
+.recording-lifecycle-progress{
+  display:grid;
+  gap:7px;
+  min-width:0;
+}
+
+.recording-lifecycle-progress>div{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-width:0;
+}
+
+.recording-lifecycle-progress strong,
+.recording-lifecycle-progress span{
+  min-width:0;
+  font-size:9px;
+  overflow-wrap:anywhere;
+}
+
+.recording-lifecycle-progress progress{
+  display:block;
+  width:100%;
+  height:9px;
+}
+
+.recording-lifecycle-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:8px;
+  min-width:0;
+}
+
+.recording-lifecycle-replace,
+.recording-lifecycle-delete,
+.recording-lifecycle-replace-secondary,
+.recording-lifecycle-delete-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:38px;
+  min-width:0;
+  padding:8px 12px;
+  border-radius:9px;
+  font-size:9.4px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.recording-lifecycle-replace{
+  border:1px solid var(--maroon);
+  background:var(--maroon);
+  color:#fff;
+}
+
+.recording-lifecycle-replace-secondary{
+  border:1px solid #d7c6c9;
+  background:#fff8f9;
+  color:var(--maroon);
+}
+
+.recording-lifecycle-delete,
+.recording-lifecycle-delete-secondary{
+  border:1px solid #d8b6bb;
+  background:#fff;
+  color:#9a2636;
+}
+
+.recording-lifecycle-delete{
+  background:#9a2636;
+  color:#fff;
+}
+
+.recording-lifecycle-replace:disabled,
+.recording-lifecycle-delete:disabled,
+.recording-lifecycle-replace-secondary:disabled,
+.recording-lifecycle-delete-secondary:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.recording-lifecycle-delete-warning{
+  display:grid;
+  gap:7px;
+  min-width:0;
+  padding:12px;
+  border:1px solid #e2b9bf;
+  border-radius:10px;
+  background:#fff7f8;
+  color:#73303a;
+}
+
+.recording-lifecycle-delete-warning strong{
+  font-size:10px;
+}
+
+.recording-lifecycle-delete-warning p,
+.recording-lifecycle-delete-warning span{
+  margin:0;
+  font-size:9px;
+  font-weight:700;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+.recording-lifecycle-message{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  min-width:0;
+}
+
+.recording-lifecycle-message>span{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.recording-lifecycle-message button{
+  flex:0 0 auto;
+}
+
+@media(max-width:800px){
+  .recording-lifecycle-summary{
+    grid-template-columns:1fr;
+  }
+
+  .recording-lifecycle-actions>button{
+    flex:1 1 180px;
+  }
+}
+
+@media(max-width:480px){
+  .recording-lifecycle-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .recording-lifecycle-actions>button,
+  .recording-lifecycle-replace-secondary,
+  .recording-lifecycle-delete-secondary{
+    width:100%;
+  }
+
+  .recording-lifecycle-message{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .recording-lifecycle-message button{
+    width:100%;
+  }
+}

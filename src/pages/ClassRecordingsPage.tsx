@@ -15,6 +15,8 @@ import {
   RefreshCw,
   Save,
   School,
+  Trash2,
+  Upload,
   UserRound,
   Video,
   X,
@@ -23,6 +25,8 @@ import { Navigate } from 'react-router-dom';
 import '../class-recordings.css';
 import '../recording-management.css';
 import {
+  canDeleteRecordingLifecycle,
+  canReplaceRecordingMedia,
   deriveRecordingSource,
   deriveRecordingStatus,
   formatRecordingFileSize,
@@ -33,6 +37,13 @@ import {
   updateRecordingMetadata,
   type ManageableRecordingRow,
 } from '../features/recordings/recordingManagement';
+import {
+  deleteRecordingLifecycle,
+  replaceRecordingVideo,
+  retryRecordingMediaCleanup,
+  runDueRecordingMediaCleanup,
+  type RecordingLifecycleProgress,
+} from '../features/recordings/recordingMediaLifecycle';
 import { getRecordingPlaybackSource, type RecordingPlaybackSource } from '../features/recordings/playbackSource';
 import { RecordingVideoPlayer } from '../features/recordings/RecordingVideoPlayer';
 import { supabase } from '../lib/supabase';
@@ -377,6 +388,16 @@ export function ClassRecordingsPage() {
   const [saving, setSaving] = useState(false);
   const [publishingId, setPublishingId] = useState<string | null>(null);
   const [playbackLoadingId, setPlaybackLoadingId] = useState<string | null>(null);
+  const [lifecycleBusyId, setLifecycleBusyId] = useState<string | null>(null);
+  const [replaceTarget, setReplaceTarget] = useState<ManageableRecordingRow | null>(null);
+  const [replaceFile, setReplaceFile] = useState<File | null>(null);
+  const [replaceProgress, setReplaceProgress] = useState<RecordingLifecycleProgress | null>(null);
+  const [replaceMessage, setReplaceMessage] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<ManageableRecordingRow | null>(null);
+  const [pendingCleanupJobId, setPendingCleanupJobId] = useState<string | null>(null);
+  const [cleanupRetrying, setCleanupRetrying] = useState(false);
+  const cleanupDueTriggeredRef = useRef(false);
+  const replaceAbortRef = useRef<AbortController | null>(null);
   const [error, setError] = useState(false);
   const [formMessage, setFormMessage] = useState('');
   const [actionMessage, setActionMessage] = useState('');
@@ -474,12 +495,30 @@ export function ClassRecordingsPage() {
   }, [authLoading, role, canTeach, loadStudentRecordings, loadTeachingClasses]);
 
   useEffect(() => {
+    if (authLoading || !canTeach || cleanupDueTriggeredRef.current) return;
+
+    cleanupDueTriggeredRef.current = true;
+
+    // Best-effort lazy cleanup: never block Recording Management usability.
+    void runDueRecordingMediaCleanup(5).catch((cleanupError) => {
+      console.warn('KOJAC due recording media cleanup deferred', cleanupError);
+    });
+  }, [authLoading, canTeach]);
+
+  useEffect(() => {
     if (canTeach && selectedClassId) {
       void loadManagementRecordings(selectedClassId);
       setEditingId(null);
       setForm(emptyForm());
       setFormMessage('');
       setActionMessage('');
+      setReplaceTarget(null);
+      setReplaceFile(null);
+      setReplaceProgress(null);
+      setReplaceMessage('');
+      setDeleteTarget(null);
+      replaceAbortRef.current?.abort();
+      replaceAbortRef.current = null;
     }
   }, [canTeach, selectedClassId, loadManagementRecordings]);
 
@@ -628,6 +667,172 @@ export function ClassRecordingsPage() {
     }
   };
 
+  const startReplace = (row: ManageableRecordingRow) => {
+    const status = deriveRecordingStatus(row);
+    const source = deriveRecordingSource(row);
+
+    if (status === 'published') {
+      setActionMessage('Batalkan publikasi terlebih dahulu.');
+      return;
+    }
+    if (source === 'none') {
+      setActionMessage('Draft tanpa sumber video menggunakan alur Upload Video, bukan Ganti Video.');
+      return;
+    }
+
+    setDeleteTarget(null);
+    setReplaceTarget(row);
+    setReplaceFile(null);
+    setReplaceProgress(null);
+    setReplaceMessage('');
+    setActionMessage('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const closeReplace = () => {
+    if (replaceTarget && lifecycleBusyId === replaceTarget.recording_id) {
+      if (replaceProgress?.stage === 'completing') return;
+      replaceAbortRef.current?.abort();
+      return;
+    }
+
+    setReplaceTarget(null);
+    setReplaceFile(null);
+    setReplaceProgress(null);
+    setReplaceMessage('');
+  };
+
+  const runReplace = async () => {
+    if (!replaceTarget || !replaceFile) {
+      setReplaceMessage('Pilih satu file MP4 pengganti terlebih dahulu.');
+      return;
+    }
+
+    if (replaceTarget.is_published) {
+      setReplaceMessage('Batalkan publikasi terlebih dahulu.');
+      return;
+    }
+
+    setLifecycleBusyId(replaceTarget.recording_id);
+    setReplaceMessage('');
+    setActionMessage('');
+    const controller = new AbortController();
+    replaceAbortRef.current = controller;
+
+    try {
+      const result = await replaceRecordingVideo({
+        recordingId: replaceTarget.recording_id,
+        file: replaceFile,
+        signal: controller.signal,
+        onProgress: setReplaceProgress,
+      });
+
+      setActionMessage(result.cleanupScheduled
+        ? 'Video berhasil diganti. Rekaman tetap belum dipublikasikan. Media R2 lama dijadwalkan cleanup setelah masa aman playback.'
+        : 'Video berhasil diganti. Rekaman tetap belum dipublikasikan.');
+      setReplaceTarget(null);
+      setReplaceFile(null);
+      setReplaceProgress(null);
+      await loadManagementRecordings(replaceTarget.class_id);
+    } catch (replaceError) {
+      if (replaceError instanceof DOMException && replaceError.name === 'AbortError') {
+        setReplaceMessage('Penggantian video dibatalkan. Video lama tetap digunakan.');
+      } else {
+        console.error('KOJAC recording video replacement failed', replaceError);
+        setReplaceMessage(
+          replaceError instanceof Error
+            ? replaceError.message
+            : 'Video belum dapat diganti. Video lama tetap digunakan.',
+        );
+      }
+    } finally {
+      replaceAbortRef.current = null;
+      setLifecycleBusyId(null);
+    }
+  };
+
+  const startDelete = (row: ManageableRecordingRow) => {
+    if (row.is_published) {
+      setActionMessage('Batalkan publikasi terlebih dahulu.');
+      return;
+    }
+
+    setReplaceTarget(null);
+    setReplaceFile(null);
+    setReplaceProgress(null);
+    setReplaceMessage('');
+    setDeleteTarget(row);
+    setActionMessage('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.is_published) {
+      setActionMessage('Batalkan publikasi terlebih dahulu.');
+      return;
+    }
+
+    setLifecycleBusyId(deleteTarget.recording_id);
+    setActionMessage('');
+
+    try {
+      const result = await deleteRecordingLifecycle(deleteTarget.recording_id);
+
+      if (result.cleanupStatus === 'pending' || result.cleanupStatus === 'protected') {
+        setPendingCleanupJobId(result.cleanupJobId);
+        setActionMessage(
+          'Rekaman telah dihapus dari KOJAC. Cleanup media R2 tercatat dan masih menunggu penyelesaian.',
+        );
+      } else if (result.sourceType === 'drive') {
+        setPendingCleanupJobId(null);
+        setActionMessage(
+          'Rekaman telah dihapus dari KOJAC. File asli Google Drive tetap dipertahankan.',
+        );
+      } else {
+        setPendingCleanupJobId(null);
+        setActionMessage('Rekaman berhasil dihapus.');
+      }
+
+      setDeleteTarget(null);
+      if (editingId === deleteTarget.recording_id) resetForm();
+      await loadManagementRecordings(deleteTarget.class_id);
+    } catch (deleteError) {
+      console.error('KOJAC recording lifecycle delete failed', deleteError);
+      setActionMessage(
+        deleteError instanceof Error
+          ? deleteError.message
+          : 'Rekaman belum dapat dihapus. Coba lagi.',
+      );
+    } finally {
+      setLifecycleBusyId(null);
+    }
+  };
+
+  const retryPendingCleanup = async () => {
+    if (!pendingCleanupJobId) return;
+
+    setCleanupRetrying(true);
+    try {
+      const result = await retryRecordingMediaCleanup(pendingCleanupJobId);
+      if (result.cleanupStatus === 'completed') {
+        setPendingCleanupJobId(null);
+        setActionMessage('Cleanup media R2 berhasil diselesaikan.');
+      } else {
+        setActionMessage('Cleanup media R2 masih tertunda dan tetap tercatat aman untuk retry.');
+      }
+    } catch (cleanupError) {
+      console.error('KOJAC recording cleanup retry failed', cleanupError);
+      setActionMessage(
+        cleanupError instanceof Error
+          ? cleanupError.message
+          : 'Cleanup media R2 belum dapat diselesaikan.',
+      );
+    } finally {
+      setCleanupRetrying(false);
+    }
+  };
+
   const openManagementPlayback = async (row: ManageableRecordingRow) => {
     const source = deriveRecordingSource(row);
     if (source === 'none' || !playableClassIds.has(row.class_id)) return;
@@ -691,7 +896,7 @@ export function ClassRecordingsPage() {
           <p>
             {role === 'siswa'
               ? 'Tonton kembali rekaman kelas KOJAC yang tersedia untuk kelas Anda.'
-              : 'Kelola metadata dan status publikasi rekaman kelas KOJAC tanpa mengubah sumber medianya.'}
+              : 'Kelola metadata, publikasi, penggantian video, dan lifecycle media rekaman kelas KOJAC.'}
           </p>
         </div>
       </header>
@@ -733,6 +938,141 @@ export function ClassRecordingsPage() {
               ))}
             </select>
           </section>
+
+          {replaceTarget && (
+            <section className="panel recording-lifecycle-panel" aria-label="Ganti video rekaman">
+              <div className="class-recording-section-heading">
+                <div>
+                  <p className="eyebrow">GANTI VIDEO</p>
+                  <h2>{replaceTarget.title}</h2>
+                </div>
+                <button
+                  className="class-recording-secondary"
+                  type="button"
+                  disabled={
+                    lifecycleBusyId === replaceTarget.recording_id
+                    && replaceProgress?.stage === 'completing'
+                  }
+                  onClick={closeReplace}
+                >
+                  {lifecycleBusyId === replaceTarget.recording_id
+                    ? (replaceProgress?.stage === 'completing' ? 'Menyelesaikan…' : 'Batalkan Upload')
+                    : 'Batal'}
+                </button>
+              </div>
+
+              <div className="recording-lifecycle-summary">
+                <span>
+                  <strong>Kelas</strong>
+                  <small>{replaceTarget.class_name}{replaceTarget.class_code ? ` — ${replaceTarget.class_code}` : ''}</small>
+                </span>
+                <span>
+                  <strong>Sumber Saat Ini</strong>
+                  <small>{recordingSourceLabel(deriveRecordingSource(replaceTarget))}</small>
+                </span>
+                <span>
+                  <strong>Ukuran Saat Ini</strong>
+                  <small>{formatRecordingFileSize(replaceTarget.media_size_bytes)}</small>
+                </span>
+              </div>
+
+              <div className="recording-lifecycle-safe-note">
+                Video lama tetap digunakan sampai video baru selesai diverifikasi.
+              </div>
+
+              <label className="recording-lifecycle-file">
+                Video Pengganti MP4
+                <input
+                  type="file"
+                  accept=".mp4,video/mp4"
+                  disabled={lifecycleBusyId === replaceTarget.recording_id}
+                  onChange={(event) => {
+                    setReplaceFile(event.target.files?.[0] ?? null);
+                    setReplaceMessage('');
+                  }}
+                />
+                <small>{replaceFile ? `${replaceFile.name} · ${formatRecordingFileSize(replaceFile.size)}` : 'Pilih satu file MP4.'}</small>
+              </label>
+
+              {replaceProgress && (
+                <div className="recording-lifecycle-progress" role="status">
+                  <div>
+                    <strong>
+                      {replaceProgress.stage === 'initiating' && 'Menyiapkan upload…'}
+                      {replaceProgress.stage === 'signing' && `Menyiapkan part ${replaceProgress.partNumber ?? ''}…`}
+                      {replaceProgress.stage === 'uploading' && `Mengunggah ${replaceProgress.percent}%`}
+                      {replaceProgress.stage === 'completing' && 'Memverifikasi & mengganti media…'}
+                    </strong>
+                    <span>{formatRecordingFileSize(replaceProgress.uploadedBytes)} / {formatRecordingFileSize(replaceProgress.totalBytes)}</span>
+                  </div>
+                  <progress max={100} value={replaceProgress.percent}/>
+                </div>
+              )}
+
+              {replaceMessage && (
+                <div className="recording-lifecycle-feedback" role="status">
+                  {replaceMessage}
+                </div>
+              )}
+
+              <div className="recording-lifecycle-actions">
+                <button
+                  type="button"
+                  className="recording-lifecycle-replace"
+                  disabled={!replaceFile || lifecycleBusyId === replaceTarget.recording_id}
+                  onClick={() => void runReplace()}
+                >
+                  <Upload size={16}/>
+                  {lifecycleBusyId === replaceTarget.recording_id ? 'Memproses…' : 'Mulai Ganti Video'}
+                </button>
+              </div>
+            </section>
+          )}
+
+          {deleteTarget && (
+            <section className="panel recording-lifecycle-panel is-delete" aria-label="Konfirmasi hapus rekaman">
+              <div className="class-recording-section-heading">
+                <div>
+                  <p className="eyebrow">HAPUS REKAMAN</p>
+                  <h2>{deleteTarget.title}</h2>
+                </div>
+              </div>
+
+              <div className="recording-lifecycle-delete-warning">
+                <strong>Konfirmasi tindakan destruktif</strong>
+                <p>
+                  {deleteTarget.has_media_source && deleteTarget.has_drive_source
+                    ? 'Rekaman akan dihapus dari KOJAC dan media R2 akan masuk proses cleanup. File asli Google Drive tidak akan dihapus.'
+                    : deriveRecordingSource(deleteTarget) === 'r2'
+                      ? 'Rekaman akan dihapus dari KOJAC dan media R2 akan masuk proses cleanup.'
+                      : deriveRecordingSource(deleteTarget) === 'drive'
+                        ? 'Rekaman akan dihapus dari KOJAC. File asli Google Drive tidak akan dihapus.'
+                        : 'Draft rekaman akan dihapus.'}
+                </p>
+                <span>Sumber: {recordingSourceLabel(deriveRecordingSource(deleteTarget))}</span>
+              </div>
+
+              <div className="recording-lifecycle-actions">
+                <button
+                  type="button"
+                  className="class-recording-secondary"
+                  disabled={lifecycleBusyId === deleteTarget.recording_id}
+                  onClick={() => setDeleteTarget(null)}
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  className="recording-lifecycle-delete"
+                  disabled={lifecycleBusyId === deleteTarget.recording_id}
+                  onClick={() => void confirmDelete()}
+                >
+                  <Trash2 size={16}/>
+                  {lifecycleBusyId === deleteTarget.recording_id ? 'Menghapus…' : 'Ya, Hapus Rekaman'}
+                </button>
+              </div>
+            </section>
+          )}
 
           {editingId && (
             <section className="class-recording-form panel class-recording-edit-form recording-management-edit-form">
@@ -834,8 +1174,19 @@ export function ClassRecordingsPage() {
       )}
 
       {role !== 'siswa' && actionMessage && (
-        <div className="recording-management-message" role="status">
-          {actionMessage}
+        <div className="recording-management-message recording-lifecycle-message" role="status">
+          <span>{actionMessage}</span>
+          {pendingCleanupJobId && (
+            <button
+              type="button"
+              className="class-recording-secondary"
+              disabled={cleanupRetrying}
+              onClick={() => void retryPendingCleanup()}
+            >
+              <RefreshCw size={14}/>
+              {cleanupRetrying ? 'Mencoba Cleanup…' : 'Coba Cleanup Lagi'}
+            </button>
+          )}
         </div>
       )}
 
@@ -988,6 +1339,7 @@ export function ClassRecordingsPage() {
               const canPreview = source !== 'none' && playableClassIds.has(row.class_id);
               const publicationBusy = publishingId === row.recording_id;
               const playbackBusy = playbackLoadingId === row.recording_id;
+              const lifecycleBusy = lifecycleBusyId === row.recording_id;
 
               return (
                 <article className="class-recording-card recording-management-card" key={row.recording_id}>
@@ -1056,12 +1408,18 @@ export function ClassRecordingsPage() {
                       </div>
                     )}
 
+                    {status === 'published' && (
+                      <div className="recording-lifecycle-published-note">
+                        Batalkan publikasi terlebih dahulu untuk mengganti video atau menghapus rekaman.
+                      </div>
+                    )}
+
                     <div className="class-recording-actions recording-management-actions">
                       {canPreview && (
                         <button
                           type="button"
                           className="class-recording-primary"
-                          disabled={playbackBusy}
+                          disabled={playbackBusy || lifecycleBusy}
                           onClick={() => void openManagementPlayback(row)}
                         >
                           <Play size={15}/>{playbackBusy ? 'Membuka…' : 'Tonton'}
@@ -1071,7 +1429,7 @@ export function ClassRecordingsPage() {
                       <button
                         type="button"
                         className="class-recording-secondary"
-                        disabled={saving || publicationBusy}
+                        disabled={saving || publicationBusy || lifecycleBusy}
                         onClick={() => startEdit(row)}
                       >
                         <Edit3 size={15}/>Edit Metadata
@@ -1081,7 +1439,7 @@ export function ClassRecordingsPage() {
                         <button
                           type="button"
                           className="recording-management-unpublish"
-                          disabled={publicationBusy}
+                          disabled={publicationBusy || lifecycleBusy}
                           onClick={() => void changePublication(row, false)}
                         >
                           <EyeOff size={15}/>
@@ -1091,7 +1449,7 @@ export function ClassRecordingsPage() {
                         <button
                           type="button"
                           className="recording-management-publish"
-                          disabled={status === 'draft' || publicationBusy}
+                          disabled={status === 'draft' || publicationBusy || lifecycleBusy}
                           title={status === 'draft'
                             ? 'Upload video terlebih dahulu sebelum dipublikasikan.'
                             : 'Publikasikan rekaman ke siswa'}
@@ -1101,6 +1459,32 @@ export function ClassRecordingsPage() {
                           {publicationBusy ? 'Memproses…' : 'Publish'}
                         </button>
                       )}
+
+                      {source !== 'none' && (
+                        <button
+                          type="button"
+                          className="recording-lifecycle-replace-secondary"
+                          disabled={!canReplaceRecordingMedia(row) || lifecycleBusy || publicationBusy}
+                          title={status === 'published'
+                            ? 'Batalkan publikasi terlebih dahulu.'
+                            : 'Ganti video dengan kandidat R2 baru'}
+                          onClick={() => startReplace(row)}
+                        >
+                          <Upload size={15}/>Ganti Video
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className="recording-lifecycle-delete-secondary"
+                        disabled={!canDeleteRecordingLifecycle(row) || lifecycleBusy || publicationBusy}
+                        title={status === 'published'
+                          ? 'Batalkan publikasi terlebih dahulu.'
+                          : 'Hapus rekaman dari KOJAC'}
+                        onClick={() => startDelete(row)}
+                      >
+                        <Trash2 size={15}/>Hapus Rekaman
+                      </button>
                     </div>
                   </div>
                 </article>

@@ -90,6 +90,18 @@ export function recordingSourceLabel(source: RecordingManagementSource) {
   return 'Tidak Ada Sumber';
 }
 
+export function canReplaceRecordingMedia(
+  row: Pick<ManageableRecordingRow, 'is_published' | 'has_drive_source' | 'has_media_source'>,
+) {
+  return !row.is_published && deriveRecordingSource(row) !== 'none';
+}
+
+export function canDeleteRecordingLifecycle(
+  row: Pick<ManageableRecordingRow, 'is_published'>,
+) {
+  return !row.is_published;
+}
+
 export function formatRecordingFileSize(bytes: number | null) {
   if (bytes === null || !Number.isFinite(bytes) || bytes < 0) return '—';
   if (bytes < 1024) return `${bytes} B`;
