@@ -519,7 +519,7 @@ function buildVocabularyQuestions(
         promptTone: hasKanji ? 'kanji' : 'kana',
         correctAnswer: meaning,
         options: meaningOptions,
-        typeLabel: hasKanji ? 'Kanji → Arti' : 'Kana → Arti',
+        typeLabel: 'Kosakata → Arti',
       });
     }
 
@@ -535,7 +535,7 @@ function buildVocabularyQuestions(
         promptTone: 'meaning',
         correctAnswer: prompt,
         options: japaneseOptions,
-        typeLabel: 'Arti → Jepang',
+        typeLabel: 'Arti → Kosakata',
       });
     }
 
@@ -551,7 +551,7 @@ function buildVocabularyQuestions(
         promptTone: 'kanji',
         correctAnswer: reading,
         options: kanaOptions,
-        typeLabel: 'Kanji → Kana',
+        typeLabel: 'Kosakata → Kana',
       });
     }
 
@@ -599,7 +599,7 @@ function buildVocabularyQuestions(
         promptTone: 'kana',
         correctAnswer: prompt,
         options: japaneseOptions,
-        typeLabel: 'Kana → Kanji',
+        typeLabel: 'Kana → Kosakata',
       });
     }
 
@@ -616,7 +616,7 @@ function buildVocabularyQuestions(
         correctAnswer: reading,
         acceptableAnswers: [reading],
         options: [],
-        typeLabel: 'Ketik: Kanji → Kana',
+        typeLabel: 'Ketik: Kosakata → Kana',
       });
     }
 

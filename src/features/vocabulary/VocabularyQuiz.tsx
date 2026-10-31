@@ -73,12 +73,12 @@ type MatchingRound = {
 const QUIZ_COUNTS: Exclude<QuizCount, 'all'>[] = [5, 10, 15, 20, 25, 30, 40, 50];
 
 const QUIZ_MODES: Array<{ mode: QuizMode; title: string; description: string }> = [
-  { mode: 'kanji-meaning', title: 'Kanji → Arti', description: 'Pilih arti Indonesia dari Kanji.' },
-  { mode: 'meaning-kanji', title: 'Arti → Kanji', description: 'Pilih Kanji berdasarkan arti.' },
-  { mode: 'kanji-kana', title: 'Kanji → Kana', description: 'Pilih reading Kana yang benar.' },
+  { mode: 'kanji-meaning', title: 'Kosakata → Arti', description: 'Pilih arti Indonesia dari kosakata.' },
+  { mode: 'meaning-kanji', title: 'Arti → Kosakata', description: 'Pilih kosakata Jepang berdasarkan arti.' },
+  { mode: 'kanji-kana', title: 'Kosakata → Kana', description: 'Pilih reading Kana dari kosakata yang benar.' },
   { mode: 'kana-meaning', title: 'Kana → Arti', description: 'Pilih arti Indonesia dari Kana.' },
   { mode: 'meaning-kana', title: 'Arti → Kana', description: 'Pilih reading Kana berdasarkan arti.' },
-  { mode: 'kana-kanji', title: 'Kana → Kanji', description: 'Pilih Kanji berdasarkan reading Kana.' },
+  { mode: 'kana-kanji', title: 'Kana → Kosakata', description: 'Pilih kosakata Jepang berdasarkan reading Kana.' },
   { mode: 'typing', title: 'Ketik Jawaban', description: 'Ketik Kana atau Romaji sesuai soal.' },
   { mode: 'audio', title: 'Dengarkan & Pilih', description: 'Dengarkan bunyi lalu pilih jawaban.' },
   { mode: 'matching', title: 'Matching', description: 'Cocokkan bahasa Jepang dengan arti.' },
@@ -407,8 +407,8 @@ function quizModeLabel(mode: QuizMode) {
 
 function questionKindLabel(kind: QuestionKind) {
   if (kind === 'matching') return 'Matching';
-  if (kind === 'typing-kanji-romaji') return 'Ketik: Kanji → Romaji';
-  if (kind === 'typing-kanji-kana') return 'Ketik: Kanji → Kana';
+  if (kind === 'typing-kanji-romaji') return 'Ketik: Kosakata → Romaji';
+  if (kind === 'typing-kanji-kana') return 'Ketik: Kosakata → Kana';
   if (kind === 'typing-meaning-kana') return 'Ketik: Arti → Kana';
   if (kind === 'typing-meaning-romaji') return 'Ketik: Arti → Romaji';
   if (kind === 'audio-meaning') return 'Dengarkan → Arti';
