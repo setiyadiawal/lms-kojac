@@ -76,10 +76,6 @@ const QUIZ_COUNTS: Exclude<QuizCount, 'all'>[] = [5, 10, 15, 20, 25, 30, 40, 50]
 const QUIZ_MODES: Array<{ mode: QuizMode; title: string; description: string }> = [
   { mode: 'kanji-meaning', title: 'Kanji → Arti', description: 'Pilih arti Indonesia dari Kanji.' },
   { mode: 'meaning-kanji', title: 'Arti → Kanji', description: 'Pilih Kanji berdasarkan arti.' },
-  { mode: 'kanji-onyomi', title: 'Kanji → Onyomi', description: 'Pilih 音読み yang benar.' },
-  { mode: 'kanji-kunyomi', title: 'Kanji → Kunyomi', description: 'Pilih 訓読み yang benar.' },
-  { mode: 'onyomi-kanji', title: 'Onyomi → Kanji', description: 'Pilih Kanji dari 音読み yang unik.' },
-  { mode: 'kunyomi-kanji', title: 'Kunyomi → Kanji', description: 'Pilih Kanji dari 訓読み yang unik.' },
   { mode: 'typing', title: 'Ketik Cara Baca', description: 'Ketik cara baca kosakata yang menggunakan Kanji.' },
   { mode: 'vocabulary', title: 'Kosakata Kanji', description: 'Latih Kanji melalui kosakata nyata.' },
   { mode: 'matching', title: 'Matching', description: 'Cocokkan Kanji dengan arti.' },
@@ -527,10 +523,6 @@ function mixedBuildersForItem(item: KanjiItem, items: KanjiItem[], vocabPool: Vo
   const fixedKinds: FixedChoiceKind[] = [
     'kanji-meaning',
     'meaning-kanji',
-    'kanji-onyomi',
-    'kanji-kunyomi',
-    'onyomi-kanji',
-    'kunyomi-kanji',
   ];
 
   for (const kind of fixedKinds) {
@@ -580,10 +572,6 @@ function buildEligibleItemsByMode(items: KanjiItem[]) {
   const fixedKinds: FixedChoiceKind[] = [
     'kanji-meaning',
     'meaning-kanji',
-    'kanji-onyomi',
-    'kanji-kunyomi',
-    'onyomi-kanji',
-    'kunyomi-kanji',
   ];
 
   // Prime normalized indexes once.
