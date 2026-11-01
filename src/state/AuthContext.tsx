@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { AppRole, Profile } from '../types';
@@ -39,10 +39,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const loadedAccountUserIdRef = useRef<string | null>(null);
+  const activeUserIdRef = useRef<string | null>(null);
 
   const applySession = async (nextSession: Session | null) => {
     setSession(nextSession);
+    activeUserIdRef.current = nextSession?.user?.id ?? null;
     if (!nextSession?.user) {
+      loadedAccountUserIdRef.current = null;
       setProfile(null);
       setRole(null);
       setLoading(false);
@@ -53,8 +57,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const account = await loadAccount(nextSession.user.id);
       setProfile(account.profile);
       setRole(account.role);
+      loadedAccountUserIdRef.current = nextSession.user.id;
     } catch (error) {
       console.error('Gagal memuat akun KOJAC', error);
+      loadedAccountUserIdRef.current = null;
       setProfile(null);
       setRole(null);
     } finally {
@@ -69,11 +75,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (active) void applySession(data.session);
     });
 
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (active) {
-        setLoading(true);
-        void applySession(nextSession);
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (!active) return;
+
+      const nextUserId = nextSession?.user?.id ?? null;
+      const sameAuthenticatedUser = Boolean(
+        nextUserId && activeUserIdRef.current === nextUserId,
+      );
+
+      if (
+        sameAuthenticatedUser
+        && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')
+      ) {
+        setSession(nextSession);
+        return;
       }
+
+      setLoading(true);
+      void applySession(nextSession);
     });
 
     return () => {
